@@ -1,0 +1,49 @@
+/*
+   *  CAmkES configuration file for the CloudConnector component.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+
+import "CloudConnectorInf.camkes";
+import <seos_if_socket.camkes>;
+import <seos_if_configuration.camkes>;
+import "../TimeServer/TimeServerInf.camkes";
+import "../LogServer/LogSrvInf.camkes";
+
+
+component CloudConnector {
+    control;
+
+    dataport    Buf                         sensorDataPort;
+
+    provides    CloudConnector_inf          cloudConnector_interface;
+
+    uses        time_server_inf             api_time_server;
+
+    //-------------------------------------------------
+    // Networking
+    uses        seos_if_socket              network_stack_rpc;
+    dataport    Buf                         NwAppDataPort;
+    consumes    ServiceReady                event_network_stack_init_done;
+
+    //-------------------------------------------------
+    // ConfigServer
+    dataport Buf                            cfg_dataport_buf;
+    consumes DataAvailableEvent             config_server_ready;
+    uses     configuration_server_interface server;
+
+    //-------------------------------------------------
+    // interface to log server
+    dataport Buf                            logServer_dataport_buf;
+    consumes DataAvailableEvent             logServer_ready;
+    uses     LogSrvInf                      log_server_interface;
+
+    //-------------------------------------------------
+    // Admin
+    consumes DataAvailableEvent admin_system_config_set;
+
+    //-------------------------------------------------
+    // Synchronization Primitives
+    has binary_semaphore sem;
+}

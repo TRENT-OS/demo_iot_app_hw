@@ -1,0 +1,36 @@
+/*
+   *  CAmkES configuration file for the ConfigServer component.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+
+import <seos_if_configuration.camkes>;
+import <seos_if_partitionManager.camkes>;
+import "../LogServer/LogSrvInf.camkes";
+
+component ConfigServer {
+    control;
+
+    provides configuration_server_interface server;
+    emits    DataAvailableEvent             config_server_ready;
+    emits    DataAvailableEvent             config_backend_ready;
+
+    //-------------------------------------------------
+    // dataports for clients
+    dataport Buf cfg_dataport_sensorTemp;
+    dataport Buf cfg_dataport_cloudConnector;
+    dataport Buf cfg_dataport_nwStack;
+    dataport Buf cfg_dataport_admin;
+
+    //-------------------------------------------------
+    // PartitionManager
+    dataport Buf pm_dataport_buf;
+    uses     partition_manager_interface api_pm_component;
+
+    //-------------------------------------------------
+    // interface to log server
+    dataport Buf                logServer_dataport_buf;
+    consumes DataAvailableEvent logServer_ready;
+    uses     LogSrvInf          log_server_interface;
+}

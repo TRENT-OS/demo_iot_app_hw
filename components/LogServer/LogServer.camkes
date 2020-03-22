@@ -1,0 +1,29 @@
+/*
+   *  CAmkES configuration file for the LogServer component.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+
+import <seos_if_partitionManager.camkes>;
+import "LogSrvInf.camkes";
+import "../TimeServer/TimeServerInf.camkes";
+
+
+component LogServer {
+    dataport Buf                     dataport_buf_admin;
+    dataport Buf                     dataport_buf_configServer;
+    dataport Buf                     dataport_buf_cloudConnector;
+    dataport Buf                     dataport_buf_sensorTemp;
+    dataport Buf                     dataport_buf_nwDriver;
+    dataport Buf                     dataport_buf_nwStack;
+
+    emits    DataAvailableEvent      logServer_ready;
+
+    provides LogSrvInf               log_server_interface;
+
+    uses     time_server_inf         api_time_server;
+
+    dataport Buf                     pm_dataport_buf;
+    uses partition_manager_interface api_pm_component;
+}

@@ -1,0 +1,25 @@
+/*
+   *  CAmkES configuration file for the ConfigFileInjector component.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+import "../LogServer/LogSrvInf.camkes";
+
+component Admin {
+    control;
+
+    emits DataAvailableEvent system_config_set;
+
+    //-------------------------------------------------
+    // interface to log server
+    dataport Buf                logServer_dataport_buf;
+    consumes DataAvailableEvent logServer_ready;
+    uses     LogSrvInf          log_server_interface;
+
+    //---------------------------------------------------
+    // Configuration server
+    uses         configuration_server_interface server;
+    consumes     DataAvailableEvent             config_backend_ready;
+    dataport     Buf                            cfg_dataport_buf;
+}

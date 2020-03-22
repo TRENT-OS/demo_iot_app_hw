@@ -1,0 +1,22 @@
+/*
+   *  CAmkES configuration file for PartitionManager component.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+
+import <seos_if_chanMux.camkes>;
+import <seos_if_partitionManager.camkes>;
+
+
+component PartitionManager {
+    provides  partition_manager_interface api_pm_component;
+
+    dataport  Buf                   chanMuxDataPort;
+    uses      ChanMuxDriverInf      ChanMuxRpc;
+    consumes  DataAvailableEvent    ChanMuxSignal_dataAvailable;
+
+    dataport  Buf                   pm_dataport_buf_logServer;
+    dataport  Buf                   pm_dataport_buf_configServer;
+}
+

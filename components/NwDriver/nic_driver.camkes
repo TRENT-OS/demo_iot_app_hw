@@ -1,0 +1,36 @@
+/*
+   *  Network TAP Chanmux Drive
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+import <seos_if_chanMux.camkes>;
+import <seos_if_nic.camkes>;
+
+
+//------------------------------------------------------------------------------
+component NwDriver {
+
+    control;
+
+    uses        ChanMuxDriverInf        ChanMux;
+    consumes    NwDriver_DataAvailable  event_chanMux_hasData;
+    dataport    Buf                     port_chanMux_ctrl;
+    dataport    Buf                     port_chanMux_data_read;
+    dataport    Buf                     port_chanMux_data_write;
+
+    provides    seos_if_nic             nic_driver;
+    emits       ServiceReady            event_init_done;
+    emits       NwStack_DataAvailable   event_nwstack_hasData;
+    dataport    Buf                     port_nwStack_to;   // driver -> network stack
+    dataport    Buf                     port_nwStack_from; // network stack -> driver
+
+    //-------------------------------------------------
+    // interface to log server
+    dataport Buf                logServer_dataport_buf;
+    consumes DataAvailableEvent logServer_ready;
+    uses     LogSrvInf          log_server_interface;
+
+    has      mutex              nic_control_channel_mutex;
+
+}

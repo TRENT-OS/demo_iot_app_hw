@@ -1,0 +1,37 @@
+/*
+   *  CAmkES configuration file of the Sensor component.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+import <seos_if_configuration.camkes>;
+import "../CloudConnector/CloudConnectorInf.camkes";
+import "../TimeServer/TimeServerInf.camkes";
+import "../LogServer/LogSrvInf.camkes";
+
+component SensorTemp {
+    control;
+
+    dataport    Buf                 cloudConnectorDataPort;
+
+    emits       SensorInit          sensor_init;
+
+    uses        CloudConnector_inf  cloudConnector_interface;
+    uses        time_server_inf     api_time_server;
+
+    //-------------------------------------------------
+    // ConfigServer
+    dataport Buf cfg_dataport_buf;
+    consumes DataAvailableEvent             config_server_ready;
+    uses     configuration_server_interface server;
+
+    //-------------------------------------------------
+    // interface to log server
+    dataport Buf                logServer_dataport_buf;
+    consumes DataAvailableEvent logServer_ready;
+    uses     LogSrvInf          log_server_interface;
+
+    //-------------------------------------------------
+    // Admin
+    consumes DataAvailableEvent admin_system_config_set;
+}

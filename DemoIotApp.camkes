@@ -1,0 +1,229 @@
+/**
+ * Main CAmkES configuration file of the IoT demo application.
+ *
+ * Copyright (C) 2020, Hensoldt Cyber GmbH
+ */
+
+import <std_connector.camkes>;
+
+import "components/ChanMux/ChanMux.camkes";
+import "components/PartitionManager/PartitionManager.camkes";
+import "components/Sensor/Sensor.camkes";
+import "components/CloudConnector/CloudConnector.camkes";
+import "components/UART/Uart.camkes";
+import "components/TimerClient/TimerClient.camkes";
+import "components/TimeServer/TimeServer.camkes";
+import "components/LogServer/LogServer.camkes";
+import "components/NwDriver/nic_driver.camkes";
+import "components/NwStack/network_stack.camkes";
+import "components/ConfigServer/ConfigServer.camkes";
+import "components/Admin/Admin.camkes";
+
+
+assembly {
+    composition {
+        //----------------------------------------------------------------------
+        // Admin
+        //----------------------------------------------------------------------
+        component  Admin admin;
+
+        connection seL4RPCCall       admin_logServer             (from admin.log_server_interface, to logServer.log_server_interface);
+        connection seL4SharedData    admin_logServer_data        (from admin.logServer_dataport_buf, to logServer.dataport_buf_admin);
+
+        connection seL4RPCCall       admin_configuration_server  (from admin.server,            to configServer.server);
+        connection seL4SharedData    admin_config_data           (from admin.cfg_dataport_buf,  to configServer.cfg_dataport_admin);
+
+        connection  seL4Notification nwStack_admin_ready         (from admin.system_config_set, to nwStack.admin_system_config_set);
+        connection  seL4Notification sensorTemp_admin_ready      (from admin.system_config_set, to sensorTemp.admin_system_config_set);
+        connection  seL4Notification cloudCon_admin_ready        (from admin.system_config_set, to cloudConnector.admin_system_config_set);
+
+        //----------------------------------------------------------------------
+        // LogServer
+        //----------------------------------------------------------------------
+        component  LogServer        logServer;
+
+        connection seL4Notification admin_logServer_dataReady           (from logServer.logServer_ready, to admin.logServer_ready);
+        connection seL4Notification configSrv_logServer_dataReady       (from logServer.logServer_ready, to configServer.logServer_ready);
+        connection seL4Notification cloudCon_logServer_dataReady        (from logServer.logServer_ready, to cloudConnector.logServer_ready);
+        connection seL4Notification sensorTemp_logServer_dataReady      (from logServer.logServer_ready, to sensorTemp.logServer_ready);
+        connection seL4Notification nwDriver_logServer_dataReady        (from logServer.logServer_ready, to nwDriver.logServer_ready);
+        connection seL4Notification nwStack_logServer_dataReady         (from logServer.logServer_ready, to nwStack.logServer_ready);
+
+        connection seL4RPCCall      logServer_timeServer                (from logServer.api_time_server, to timeServer.api_time_server);
+
+        connection seL4RPCCall      logServer_partitionManager_inf      (from logServer.api_pm_component, to partitionManager.api_pm_component);
+        connection seL4SharedData   logServer_partitionManager_data     (from logServer.pm_dataport_buf,  to partitionManager.pm_dataport_buf_logServer);
+
+
+        //----------------------------------------------------------------------
+        // PartitionManager
+        //----------------------------------------------------------------------
+        component   PartitionManager  partitionManager;
+
+        connection  seL4RPCCall       partitionManger_chanMux      (from partitionManager.ChanMuxRpc, to chanMux.ChanMux_driver);
+        connection  seL4SharedData    partitionManger_chanMux_data (from partitionManager.chanMuxDataPort, to chanMux.pm_data_buf);
+
+
+        //----------------------------------------------------------------------
+        // SensorTemp
+        //----------------------------------------------------------------------
+        component  SensorTemp       sensorTemp;
+
+        connection seL4SharedData   cloudConnectorData_sensorTempData   (from sensorTemp.cloudConnectorDataPort, to cloudConnector.sensorDataPort);
+        connection seL4RPCCall      cloudConnector_sensorTemp           (from sensorTemp.cloudConnector_interface, to cloudConnector.cloudConnector_interface);
+
+        connection seL4RPCCall      sensorTemp_timeServer               (from sensorTemp.api_time_server, to timeServer.api_time_server);
+
+        connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.server, to configServer.server);
+        connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.cfg_dataport_buf, to configServer.cfg_dataport_sensorTemp);
+
+        connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.log_server_interface, to logServer.log_server_interface);
+        connection seL4SharedData   sensorTemp_logServer_data           (from sensorTemp.logServer_dataport_buf, to logServer.dataport_buf_sensorTemp);
+
+
+        //----------------------------------------------------------------------
+        // CloudConnector
+        //----------------------------------------------------------------------
+        component  CloudConnector       cloudConnector;
+
+        connection seL4RPCCall          cloudConnector_timeServer        (from cloudConnector.api_time_server, to timeServer.api_time_server);
+
+        connection seL4Notification     NwAppInitDone                    (from nwStack.event_network_init_done,   to cloudConnector.event_network_stack_init_done);
+        connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.network_stack_rpc,    to nwStack.network_stack_rpc);
+        connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.NwAppDataPort,        to nwStack.port_app_io);
+
+        connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.server,               to configServer.server);
+        connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.cfg_dataport_buf,     to configServer.cfg_dataport_cloudConnector);
+
+        connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface, to logServer.log_server_interface);
+        connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_dataport_buf, to logServer.dataport_buf_cloudConnector);
+
+
+        //----------------------------------------------------------------------
+        // Network Driver #1
+        //----------------------------------------------------------------------
+        component  NwDriver         nwDriver;
+
+        connection seL4Notification NwDriver_Chanmux_dataAvail       (from chanMux.event_nic_hasData,        to nwDriver.event_chanMux_hasData);
+        connection seL4RPCCall      nwDriver_chanmux                 (from nwDriver.ChanMux,                 to chanMux.ChanMux_driver);
+        connection seL4SharedData   NwDriver_Chanmux_port_ctrl       (from nwDriver.port_chanMux_ctrl,       to chanMux.port_nic_ctrl);
+        connection seL4SharedData   NwDriver_Chanmux_port_data_read  (from nwDriver.port_chanMux_data_read,  to chanMux.port_nic_data_read);
+        connection seL4SharedData   NwDriver_Chanmux_port_data_write (from nwDriver.port_chanMux_data_write, to chanMux.port_nic_data_write);
+
+        connection seL4RPCCall      NwDriver_logServer               (from nwDriver.log_server_interface, to logServer.log_server_interface);
+        connection seL4SharedData   NwDriver_logServer_data          (from nwDriver.logServer_dataport_buf, to logServer.dataport_buf_nwDriver);
+
+
+        //----------------------------------------------------------------------
+        // Network Stack
+        //----------------------------------------------------------------------
+        component  NwStack                nwStack;
+
+        connection seL4NotificationNative NwStackdataAvail2                (from nwStack.event_internal, to nwStack.event_tick_or_data);
+        connection seL4Notification       NwStackEventsRxd1                (from nwStack.e_write,        to nwStack.c_write);
+        connection seL4Notification       NwStackEventsRxd2                (from nwStack.e_read,         to nwStack.c_read);
+
+        connection seL4RPCCall            nwStack_timerClient              (from nwStack.Timer,          to timerClient.TimerClient);
+
+        connection seL4NotificationNative NwStackdataAvail3                (from timerClient.e_timeout_nwstacktick, to nwStack.event_tick_or_data);
+
+        connection seL4NotificationNative NwStackdataAvail1                (from nwDriver.event_nwstack_hasData, to nwStack.event_tick_or_data);
+        connection seL4Notification       NwDriver_NwStack_initdone        (from nwDriver.event_init_done,       to nwStack.event_nic_init_done);
+        connection seL4RPCCall            nwStack_NwDriver                 (from nwStack.nic_driver,             to nwDriver.nic_driver);
+        connection seL4SharedData         NwDriver_NwStack_ReadConnection  (from nwDriver.port_nwStack_to,       to nwStack.port_nic_from);
+        connection seL4SharedData         NwDriver_NwStack_WriteConnection (from nwDriver.port_nwStack_from,     to nwStack.port_nic_to);
+
+        connection seL4RPCCall            NwStack_configuration_server     (from nwStack.server,                 to configServer.server);
+        connection seL4SharedData         NwStack_config_data              (from nwStack.cfg_dataport_buf,       to configServer.cfg_dataport_nwStack);
+
+        connection seL4RPCCall            NwStack_logServer                (from nwStack.log_server_interface,   to logServer.log_server_interface);
+        connection seL4SharedData         NwStack_logServer_data           (from nwStack.logServer_dataport_buf, to logServer.dataport_buf_nwStack);
+
+
+        //----------------------------------------------------------------------
+        // MUX
+        //----------------------------------------------------------------------
+        component   ChanMux           chanMux;
+
+        /* output */
+        connection  seL4RPCCall       chanmux_uart                (from chanMux.Output, to uartDrv.UartDrv);
+        connection  seL4SharedData    uart_dataConnection         (from chanMux.outputDataPort, to uartDrv.inputDataPort);
+        connection  seL4Notification  dataAvailable_chanMux       (from chanMux.dataAvailable_pm, to partitionManager.ChanMuxSignal_dataAvailable);
+
+
+        //----------------------------------------------------------------------
+        // TimerClient
+        //----------------------------------------------------------------------
+        component  TimerClient timerClient;
+
+        connection seL4RPCCall timerClient_timeServer        (from timerClient.api_time_server, to timeServer.api_time_server);
+
+        //----------------------------------------------------------------------
+        // TimeServer
+        //----------------------------------------------------------------------
+        component  Timebase      timebase;
+        component  TimeServer    timeServer;
+
+        connection seL4HardwareMMIO      timeServer_mem       (from timeServer.reg, to timebase.reg);
+        connection seL4HardwareInterrupt timeServer_irq_ticks (from timebase.irq_ticks, to timeServer.irq_ticks);
+        connection seL4HardwareInterrupt timeServer_irq_sleep (from timebase.irq_sleep, to timeServer.irq_sleep);
+
+
+        //----------------------------------------------------------------------
+        // ConfigServer
+        //----------------------------------------------------------------------
+        component   ConfigServer     configServer;
+
+        connection  seL4RPCCall      configServer_pm                   (from configServer.api_pm_component, to partitionManager.api_pm_component);
+        connection  seL4SharedData   configServer_pm_data              (from configServer.pm_dataport_buf, to partitionManager.pm_dataport_buf_configServer);
+
+        connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface, to logServer.log_server_interface);
+        connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_dataport_buf, to logServer.dataport_buf_configServer);
+
+        connection  seL4Notification nwStack_configServer_ready        (from configServer.config_server_ready, to nwStack.config_server_ready);
+        connection  seL4Notification sensorTemp_configServer_ready     (from configServer.config_server_ready, to sensorTemp.config_server_ready);
+        connection  seL4Notification cloudCon_configServer_ready       (from configServer.config_server_ready, to cloudConnector.config_server_ready);
+        connection  seL4Notification admin_configServer_ready          (from configServer.config_backend_ready, to admin.config_backend_ready);
+
+
+        //----------------------------------------------------------------------
+        // UART
+        //----------------------------------------------------------------------
+        component  UartDev          uartDev;
+        component  UartDrv          uartDrv;
+
+        connection seL4HardwareMMIO uart_memio                      (from uartDrv.uartRegBase, to uartDev.uartRegBase);
+        connection seL4RPCCall      uart_chanmux                    (from uartDrv.Output, to chanMux.ChanMuxOut);
+    }
+    configuration {
+        /* client id's */
+        admin.log_server_interface_attributes =              10;
+        configServer.log_server_interface_attributes =       20;
+        cloudConnector.log_server_interface_attributes =     30;
+        sensorTemp.log_server_interface_attributes =         40;
+        nwDriver.log_server_interface_attributes =           50;
+        nwStack.log_server_interface_attributes =            60;
+
+        // assign endpoint badges for n:1 RPC interface of ChanMUX. The generic
+        // naming scheme is <component>.<interface>_attributes = <badge ID>
+        nwDriver.ChanMux_attributes = 1;
+        partitionManager.ChanMux_attributes = 2;
+
+        /* timer */
+        uartDev.uartRegBase_paddr  = 0xE0000000;
+        uartDev.uartRegBase_size   = 0x1000;
+        uartDrv.inputDataPort       = "R";
+
+        /* timer */
+        timebase.reg_paddr = 0xF8001000;    // paddr of mmio registers
+        timebase.reg_size = 0x1000;         // size of mmio registers
+        timebase.irq_ticks_irq_number = 42; // timeServer irq number
+        timebase.irq_sleep_irq_number = 43; // timeServer irq number
+
+        /* assign an initial value to semaphore */
+        timeServer.sem_ticks_value = 0;
+        timeServer.sem_sleep_value = 0;
+        cloudConnector.sem_value = 0;
+    }
+}
+

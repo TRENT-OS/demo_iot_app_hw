@@ -1,0 +1,35 @@
+/*
+ *  SEOS ChanMUX
+ *
+ *  Copyright (C) 2020, Hensoldt Cyber GmbH
+ *
+ */
+
+import <seos_if_chanMux.camkes>;
+import "../UART/UartInf.camkes";
+
+
+component ChanMux {
+
+    provides       ChanMuxDriverInf         ChanMux_driver;
+
+    //-------------------------------------------------
+    // interface Ethernet NIC driver
+    dataport       Buf                      port_nic_ctrl;
+    dataport       Buf                      port_nic_data_read;
+    dataport       Buf                      port_nic_data_write;
+    emits          NwDriver_DataAvailable   event_nic_hasData;
+
+
+    //-------------------------------------------------
+    // interface UART
+    dataport      Buf                       outputDataPort;
+    uses          UartInf                   Output;
+    provides      ChanMuxOutInf             ChanMuxOut;
+
+
+    //-------------------------------------------------
+    // interface to PartitionManager
+    emits          DataAvailableEvent       dataAvailable_pm;
+    dataport       Buf                      pm_data_buf;
+}

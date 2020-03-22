@@ -1,0 +1,11 @@
+/*
+   *  CAmkES configuration file for the CloudConnector component interface.
+   *
+   *  Copyright (C) 2020, Hensoldt Cyber GmbH
+*/
+
+procedure CloudConnector_inf {
+    include "SeosError.h";
+
+    seos_err_t      write    ();
+};
