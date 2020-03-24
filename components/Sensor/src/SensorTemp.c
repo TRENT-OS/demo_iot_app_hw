@@ -23,8 +23,8 @@
 #define DATABUFFER_CLIENT       (void *)logServer_dataport_buf
 
 /* Instance variables --------------------------------------------------------*/
-static Log_filter_t filter;
-static Log_emitter_callback_t reg;
+static OS_LoggerFilter_Handle_t filter;
+static OS_LoggerEmitterCallback_Handle_t reg;
 
 OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
@@ -38,7 +38,7 @@ logServer_init(void)
     logServer_ready_wait();
 
     // set up registered functions layer
-    if (Log_emitter_callback_ctor(&reg, logServer_ready_wait,
+    if (OS_LoggerEmitterCallback_ctor(&reg, logServer_ready_wait,
                                   API_LOG_SERVER_EMIT) == false)
     {
         Debug_LOG_ERROR("Failed to set up registered functions layer");
@@ -46,13 +46,13 @@ logServer_init(void)
     }
 
     // set up log filter layer
-    if (Log_filter_ctor(&filter, Debug_LOG_LEVEL_DEBUG) == false)
+    if (OS_LoggerFilter_ctor(&filter, Debug_LOG_LEVEL_DEBUG) == false)
     {
         Debug_LOG_ERROR("Failed to set up log filter layer");
         return false;
     }
 
-    get_instance_Log_emitter(DATABUFFER_CLIENT, &filter, &reg);
+    OS_LoggerEmitter_getInstance(DATABUFFER_CLIENT, &filter, &reg);
 
     return true;
 }
