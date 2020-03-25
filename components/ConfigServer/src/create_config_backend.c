@@ -518,7 +518,7 @@ create_system_config_backend(void)
     }
 
     SeosConfigInstanceStore* serverInstanceStore =
-        server_seos_configuration_getInstances();
+        seos_configuration_getInstances();
     SeosConfigLib* configLib =
         seos_configuration_instance_store_getInstance(serverInstanceStore, 0);
 

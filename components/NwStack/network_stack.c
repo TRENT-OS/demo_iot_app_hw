@@ -10,7 +10,7 @@
 #include "LibDebug/Debug.h"
 #include "SeosError.h"
 #include "seos_api_network_stack.h"
-#include "seos_config_client.h"
+#include "seos_config.h"
 #include "helper_func.h"
 #include <camkes.h>
 

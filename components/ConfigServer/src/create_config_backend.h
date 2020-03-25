@@ -6,7 +6,7 @@
 
 #include "LibDebug/Debug.h"
 
-#include "seos_config_server.h"
+#include "seos_config.h"
 
 
 seos_err_t

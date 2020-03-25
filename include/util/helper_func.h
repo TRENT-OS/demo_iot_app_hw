@@ -6,10 +6,7 @@
 
 #include "LibDebug/Debug.h"
 
-#include "SeosConfigLib.h"
-#include "SeosConfigBackend.h"
-
-#include "seos_config_client.h"
+#include "seos_config.h"
 
 
 //------------------------------------------------------------------------------

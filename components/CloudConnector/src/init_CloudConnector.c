@@ -9,7 +9,7 @@
 
 #include "LibDebug/Debug.h"
 
-#include "seos_config_client.h"
+#include "seos_config.h"
 
 /* Defines -------------------------------------------------------------------*/
 #define DATABUFFER_CLIENT       (void *)logServer_dataport_buf

@@ -6,7 +6,7 @@
 
 #include "LibDebug/Debug.h"
 
-#include "seos_config_client.h"
+#include "seos_config.h"
 
 #include "helper_func.h"
 

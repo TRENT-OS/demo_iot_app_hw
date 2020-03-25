@@ -8,7 +8,7 @@
 
 #include "LibDebug/Debug.h"
 #include "helper_func.h"
-#include "seos_config_client.h"
+#include "seos_config.h"
 
 
 typedef struct
