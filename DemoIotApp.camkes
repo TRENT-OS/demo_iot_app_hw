@@ -104,8 +104,8 @@ assembly {
         //----------------------------------------------------------------------
         component  NwDriver         nwDriver;
 
-        connection seL4Notification NwDriver_Chanmux_dataAvail       (from chanMux.event_nic_hasData,        to nwDriver.event_chanMux_hasData);
-        connection seL4RPCCall      nwDriver_chanmux                 (from nwDriver.ChanMux,                 to chanMux.ChanMux_driver);
+        connection seL4Notification NwDriver_Chanmux_dataAvail       (from chanMux.event_nic_hasData,        to nwDriver.ChanMuxSignal_dataAvailable);
+        connection seL4RPCCall      nwDriver_chanmux                 (from nwDriver.ChanMuxRpc,              to chanMux.ChanMux_driver);
         connection seL4SharedData   NwDriver_Chanmux_port_ctrl       (from nwDriver.port_chanMux_ctrl,       to chanMux.port_nic_ctrl);
         connection seL4SharedData   NwDriver_Chanmux_port_data_read  (from nwDriver.port_chanMux_data_read,  to chanMux.port_nic_data_read);
         connection seL4SharedData   NwDriver_Chanmux_port_data_write (from nwDriver.port_chanMux_data_write, to chanMux.port_nic_data_write);
