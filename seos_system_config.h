@@ -79,6 +79,7 @@ typedef struct
 {
     const char* partition_name;
     int partition_size;
+    int block_size;
 } Partition_config_t;
 
 typedef struct
@@ -90,8 +91,10 @@ static const Partition_cat_t partition_conf =
 {
     .partition[0].partition_name = "",
     .partition[0].partition_size = 0x300000,
+    .partition[0].block_size = 512,
     .partition[1].partition_name = "",
-    .partition[1].partition_size = 0x300000
+    .partition[1].partition_size = 0x300000,
+    .partition[1].block_size = 512
 };
 
 
@@ -102,12 +105,13 @@ static const Partition_cat_t partition_conf =
 
 #define GET_PROPERTY_PARTITION_NAME_AT(x)       PARTITION_CONFIGURATION_AT(x).partition_name
 #define GET_PROPERTY_PARTITION_SIZE_AT(x)       PARTITION_CONFIGURATION_AT(x).partition_size
+#define GET_PROPERTY_BLOCK_SIZE_AT(x)           PARTITION_CONFIGURATION_AT(x).block_size
 
 // setup disk/partition
 #define GET_PROPERTY_PARTITION_COUNT            PM_CONF_ARRAY_SIZE(partition_conf.partition)
-#define GET_PROPERTY_BLOCK_SIZE                 512
 #define GET_PROPERTY_PARTITION_NAME(x)          GET_PROPERTY_PARTITION_NAME_AT(x)
 #define GET_PROPERTY_PARTITION_SIZE(x)          GET_PROPERTY_PARTITION_SIZE_AT(x)
+#define GET_PROPERTY_BLOCK_SIZE(x)              GET_PROPERTY_BLOCK_SIZE_AT(x)
 
 // setup partition manager dataport
 #define GET_PROPERTY_PM_DATAPORT_BUFFER         (void *)pm_dataport_buf
