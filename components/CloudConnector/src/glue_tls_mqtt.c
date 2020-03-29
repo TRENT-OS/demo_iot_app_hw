@@ -12,7 +12,7 @@
 //------------------------------------------------------------------------------
 static SeosTlsApiH tlsContext;
 static SeosCryptoApiH hCrypto;
-static OS_NetworkSocket_handle_t socket;
+static OS_NetworkSocket_Handle_t socket;
 
 static int
 sendFunc(
@@ -65,7 +65,7 @@ static SeosCryptoApi_Config cryptoCfg =
 
 // Private static functions ----------------------------------------------------
 static seos_err_t
-init_socket_config(OS_NetworkClient_socket_t* socketConfig,
+init_socket_config(OS_Network_Socket_t* socketConfig,
                    const char* serverIpAddress,
                    uint32_t serverPort)
 {
@@ -90,7 +90,7 @@ sendFunc(
     size_t               len)
 {
     seos_err_t err;
-    OS_NetworkSocket_handle_t* sockHandle = (OS_NetworkSocket_handle_t*) ctx;
+    OS_NetworkSocket_Handle_t* sockHandle = (OS_NetworkSocket_Handle_t*) ctx;
     size_t n;
 
     n = len > MAX_NW_SIZE ? MAX_NW_SIZE : len;
@@ -110,7 +110,7 @@ recvFunc(
     size_t         len)
 {
     seos_err_t err;
-    OS_NetworkSocket_handle_t* sockHandle = (OS_NetworkSocket_handle_t*) ctx;
+    OS_NetworkSocket_Handle_t* sockHandle = (OS_NetworkSocket_Handle_t*) ctx;
     size_t n;
 
     n = len > MAX_NW_SIZE ? MAX_NW_SIZE : len;
@@ -144,7 +144,7 @@ glue_tls_init(const char* serverIpAddress,
 
     seos_err_t ret;
 
-    OS_NetworkClient_socket_t socketCfg;
+    OS_Network_Socket_t socketCfg;
 
     if (caCertSize > SeosTlsLib_SIZE_CA_CERT_MAX)
     {
@@ -181,7 +181,7 @@ glue_tls_init(const char* serverIpAddress,
         return ret;
     }
 
-    ret = OS_NetworkClientSocket_create(NULL, &socketCfg, &socket);
+    ret = OS_NetworkSocket_create(NULL, &socketCfg, &socket);
 
     return ret;
 }

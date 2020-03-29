@@ -83,7 +83,7 @@ seos_err_t init_config_handle(SeosConfigHandle* configHandle);
 bool logServer_init(void);
 
 extern seos_err_t OS_NetworkAPP_RT(
-    OS_Network_context_t ctx);
+    OS_Network_Context_t ctx);
 
 //==============================================================================
 // internal functions
