@@ -82,8 +82,8 @@ seos_err_t init_config_handle(SeosConfigHandle* configHandle);
 
 bool logServer_init(void);
 
-extern seos_err_t Seos_NwAPP_RT(
-    Seos_nw_context ctx);
+extern seos_err_t OS_NetworkAPP_RT(
+    OS_Network_context_t ctx);
 
 //==============================================================================
 // internal functions
@@ -367,7 +367,7 @@ static int handle_MQTT_PUBLISH(CC_FSM_t* self)
 static int handle_CC_FSM_INIT(CC_FSM_t* self)
 {
     Debug_LOG_DEBUG("Waiting on NwStack init ..." );
-    Seos_NwAPP_RT(NULL);
+    OS_NetworkAPP_RT(NULL);
 
     seos_err_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                                     DOMAIN_CLOUDCONNECTOR,

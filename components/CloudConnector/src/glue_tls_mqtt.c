@@ -12,7 +12,7 @@
 //------------------------------------------------------------------------------
 static SeosTlsApiH tlsContext;
 static SeosCryptoApiH hCrypto;
-static seos_socket_handle_t socket;
+static OS_NetworkSocket_handle_t socket;
 
 static int
 sendFunc(
@@ -65,7 +65,7 @@ static SeosCryptoApi_Config cryptoCfg =
 
 // Private static functions ----------------------------------------------------
 static seos_err_t
-init_socket_config(seos_nw_client_struct* socketConfig,
+init_socket_config(OS_NetworkClient_socket_t* socketConfig,
                    const char* serverIpAddress,
                    uint32_t serverPort)
 {
@@ -74,8 +74,8 @@ init_socket_config(seos_nw_client_struct* socketConfig,
         return SEOS_ERROR_INVALID_PARAMETER;
     }
 
-    socketConfig->domain = SEOS_AF_INET;
-    socketConfig->type   = SEOS_SOCK_STREAM;
+    socketConfig->domain = OS_AF_INET;
+    socketConfig->type   = OS_SOCK_STREAM;
     socketConfig->port   = serverPort;
     socketConfig->name   = serverIpAddress;
 
@@ -90,11 +90,11 @@ sendFunc(
     size_t               len)
 {
     seos_err_t err;
-    seos_socket_handle_t* sockHandle = (seos_socket_handle_t*) ctx;
+    OS_NetworkSocket_handle_t* sockHandle = (OS_NetworkSocket_handle_t*) ctx;
     size_t n;
 
     n = len > MAX_NW_SIZE ? MAX_NW_SIZE : len;
-    if ((err = Seos_socket_write(*sockHandle, buf, &n)) != SEOS_SUCCESS)
+    if ((err = OS_NetworkSocket_write(*sockHandle, buf, &n)) != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("Error during socket write...error:%d", err);
         return -1;
@@ -110,11 +110,11 @@ recvFunc(
     size_t         len)
 {
     seos_err_t err;
-    seos_socket_handle_t* sockHandle = (seos_socket_handle_t*) ctx;
+    OS_NetworkSocket_handle_t* sockHandle = (OS_NetworkSocket_handle_t*) ctx;
     size_t n;
 
     n = len > MAX_NW_SIZE ? MAX_NW_SIZE : len;
-    if ((err = Seos_socket_read(*sockHandle, buf, &n)) != SEOS_SUCCESS)
+    if ((err = OS_NetworkSocket_read(*sockHandle, buf, &n)) != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("Error during socket read...error:%d", err);
         return -1;
@@ -144,7 +144,7 @@ glue_tls_init(const char* serverIpAddress,
 
     seos_err_t ret;
 
-    seos_nw_client_struct socketCfg;
+    OS_NetworkClient_socket_t socketCfg;
 
     if (caCertSize > SeosTlsLib_SIZE_CA_CERT_MAX)
     {
@@ -181,7 +181,7 @@ glue_tls_init(const char* serverIpAddress,
         return ret;
     }
 
-    ret = Seos_client_socket_create(NULL, &socketCfg, &socket);
+    ret = OS_NetworkClientSocket_create(NULL, &socketCfg, &socket);
 
     return ret;
 }
