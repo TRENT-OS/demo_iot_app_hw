@@ -4,7 +4,7 @@
    *  Copyright (C) 2020, Hensoldt Cyber GmbH
 */
 
-import "../LogServer/LogSrvInf.camkes";
+import <if_OS_Logger.camkes>;
 
 component Admin {
     control;
@@ -15,7 +15,7 @@ component Admin {
     // interface to log server
     dataport Buf                logServer_dataport_buf;
     consumes DataAvailableEvent logServer_ready;
-    uses     LogSrvInf          log_server_interface;
+    uses     if_OS_Logger       log_server_interface;
 
     //---------------------------------------------------
     // Configuration server

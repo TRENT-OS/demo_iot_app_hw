@@ -6,7 +6,7 @@
 
 
 import <seos_if_partitionManager.camkes>;
-import "LogSrvInf.camkes";
+import <if_OS_Logger.camkes>;
 import "../TimeServer/TimeServerInf.camkes";
 
 
@@ -20,7 +20,7 @@ component LogServer {
 
     emits    DataAvailableEvent      logServer_ready;
 
-    provides LogSrvInf               log_server_interface;
+    provides if_OS_Logger            log_server_interface;
 
     uses     time_server_inf         api_time_server;
 

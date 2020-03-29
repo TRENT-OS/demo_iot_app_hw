@@ -7,7 +7,7 @@
 
 import <seos_if_configuration.camkes>;
 import <seos_if_partitionManager.camkes>;
-import "../LogServer/LogSrvInf.camkes";
+import <if_OS_Logger.camkes>;
 
 component ConfigServer {
     control;
@@ -32,5 +32,5 @@ component ConfigServer {
     // interface to log server
     dataport Buf                logServer_dataport_buf;
     consumes DataAvailableEvent logServer_ready;
-    uses     LogSrvInf          log_server_interface;
+    uses     if_OS_Logger       log_server_interface;
 }
