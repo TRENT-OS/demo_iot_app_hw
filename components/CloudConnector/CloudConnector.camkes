@@ -6,7 +6,7 @@
 
 
 import "CloudConnectorInf.camkes";
-import <seos_if_socket.camkes>;
+import <if_OS_socket.camkes>;
 import <seos_if_configuration.camkes>;
 import "../TimeServer/TimeServerInf.camkes";
 import "../LogServer/LogSrvInf.camkes";
@@ -23,7 +23,7 @@ component CloudConnector {
 
     //-------------------------------------------------
     // Networking
-    uses        seos_if_socket              network_stack_rpc;
+    uses        if_OS_socket                network_stack_rpc;
     dataport    Buf                         NwAppDataPort;
     consumes    ServiceReady                event_network_stack_init_done;
 
