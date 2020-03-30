@@ -10,8 +10,8 @@
 #define MAX_NW_SIZE 2048
 
 //------------------------------------------------------------------------------
-static SeosTlsApiH tlsContext;
-static SeosCryptoApiH hCrypto;
+static OS_Tls_Handle_t tlsContext;
+static OS_Crypto_Handle_t hCrypto;
 static OS_NetworkSocket_Handle_t socket;
 
 static int
@@ -33,29 +33,29 @@ entropy(
     size_t         len);
 
 
-static SeosTlsApi_Config tlsCfg =
+static OS_Tls_Config_t tlsCfg =
 {
-    .mode = SeosTlsApi_Mode_LIBRARY,
+    .mode = OS_Tls_MODE_LIBRARY,
     .config.library = {
         .socket = {
             .recv   = recvFunc,
             .send   = sendFunc,
         },
-        .flags = SeosTlsLib_Flag_DEBUG,
+        .flags = OS_TlsLib_FLAG_DEBUG,
         .crypto = {
             .policy = NULL,
             .cipherSuites = {
-                SeosTlsLib_CipherSuite_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                SeosTlsLib_CipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256
+                OS_TlsLib_CIPHERSUITE_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                OS_TlsLib_CIPHERSUITE_DHE_RSA_WITH_AES_128_GCM_SHA256
             },
             .cipherSuitesLen = 2
         }
     }
 };
 
-static SeosCryptoApi_Config cryptoCfg =
+static OS_Crypto_Config_t cryptoCfg =
 {
-    .mode = SeosCryptoApi_Mode_LIBRARY,
+    .mode = OS_Crypto_MODE_LIBRARY,
     .mem = {
         .malloc = malloc,
         .free = free,
@@ -146,7 +146,7 @@ glue_tls_init(const char* serverIpAddress,
 
     OS_Network_Socket_t socketCfg;
 
-    if (caCertSize > SeosTlsLib_SIZE_CA_CERT_MAX)
+    if (caCertSize > OS_TlsLib_SIZE_CA_CERT_MAX)
     {
         Debug_LOG_ERROR("Server caCert size not supported!");
         return SEOS_ERROR_INSUFFICIENT_SPACE;
@@ -159,10 +159,10 @@ glue_tls_init(const char* serverIpAddress,
         return ret;
     }
 
-    ret = SeosCryptoApi_init(&hCrypto, &cryptoCfg);
+    ret = OS_Crypto_init(&hCrypto, &cryptoCfg);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("SeosCryptoApi_init failed with: %d", ret);
+        Debug_LOG_ERROR("OS_Crypto_init failed with: %d", ret);
         return ret;
     }
 
@@ -174,10 +174,10 @@ glue_tls_init(const char* serverIpAddress,
     Debug_LOG_DEBUG("Assigned ServerCert: %s",
                     tlsCfg.config.server.library.crypto.caCert);
 
-    ret = SeosTlsApi_init(&tlsContext, &tlsCfg);
+    ret = OS_Tls_init(&tlsContext, &tlsCfg);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("SeosTlsApi_init failed with: %d", ret);
+        Debug_LOG_ERROR("OS_Tls_init failed with: %d", ret);
         return ret;
     }
 
@@ -192,9 +192,9 @@ glue_tls_handshake(void)
 {
     seos_err_t ret;
 
-    if ((ret = SeosTlsApi_handshake(tlsContext)) != SEOS_SUCCESS)
+    if ((ret = OS_Tls_handshake(tlsContext)) != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("SeosTlsApi_handshake failed with err=%i", ret);
+        Debug_LOG_WARNING("OS_Tls_handshake failed with err=%i", ret);
         return ret;
     }
 
@@ -211,9 +211,9 @@ int glue_tls_mqtt_write(Network* n,
 
     int ret = 0;
 
-    if ((ret = SeosTlsApi_write(tlsContext, buf, len)) != SEOS_SUCCESS)
+    if ((ret = OS_Tls_write(tlsContext, buf, len)) != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("SeosTlsApi_write failed with err=%i", ret);
+        Debug_LOG_WARNING("OS_Tls_write failed with err=%i", ret);
         return ret;
     }
 
@@ -238,9 +238,9 @@ int glue_tls_mqtt_read(Network* n,
 
     memset ( buf, 0, len );
 
-    if ((ret = SeosTlsApi_read(tlsContext, buf, &lengthRead)) != SEOS_SUCCESS)
+    if ((ret = OS_Tls_read(tlsContext, buf, &lengthRead)) != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("SeosTlsApi_read failed with err=%i", ret);
+        Debug_LOG_WARNING("OS_Tls_read failed with err=%i", ret);
         return ret;
     }
 

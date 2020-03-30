@@ -10,8 +10,8 @@
 
 #include "LibDebug/Debug.h"
 
-#include "SeosTlsApi.h"
-#include "SeosCryptoApi.h"
+#include "OS_Tls.h"
+#include "OS_Crypto.h"
 
 #include "OS_Network.h"
 

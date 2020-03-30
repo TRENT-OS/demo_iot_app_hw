@@ -28,7 +28,7 @@ static char cloudDeviceName[128];
 static char cloudUsername[128];
 static char cloudSAS[192];
 static char serverIP[32];
-static char serverCert[SeosTlsLib_SIZE_CA_CERT_MAX];
+static char serverCert[OS_TlsLib_SIZE_CA_CERT_MAX];
 
 /* Instance variables --------------------------------------------------------*/
 OS_ConfigServiceHandle_t serverLibWithFSBackend;
