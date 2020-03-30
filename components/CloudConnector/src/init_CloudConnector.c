@@ -9,14 +9,14 @@
 
 #include "LibDebug/Debug.h"
 
-#include "seos_config.h"
+#include "OS_ConfigService.h"
 
 /* Defines -------------------------------------------------------------------*/
 #define DATABUFFER_CLIENT       (void *)logServer_dataport_buf
 
 
 /* Instance variables --------------------------------------------------------*/
-SeosConfigHandle serverLibWithMemBackend;
+OS_ConfigServiceHandle_t serverLibWithMemBackend;
 
 static Log_filter_t filter;
 static Log_emitter_callback_t reg;
@@ -49,12 +49,12 @@ logServer_init(void)
 }
 
 seos_err_t
-init_config_handle(SeosConfigHandle* configHandle)
+init_config_handle(OS_ConfigServiceHandle_t* configHandle)
 {
     seos_err_t err = SEOS_SUCCESS;
 
-    err = seos_configuration_createHandle(
-              SEOS_CONFIG_HANDLE_KIND_RPC,
+    err = OS_ConfigService_createHandle(
+              OS_CONFIG_HANDLE_KIND_RPC,
               0,
               configHandle);
     if (err != SEOS_SUCCESS)

@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2020, Hensoldt Cyber GmbH
  *
- * SEOS libraries configurations
+ * System libraries configurations
  *
  */
 #pragma once
@@ -154,8 +154,8 @@ static const Partition_cat_t partition_conf =
 #define SERVER_PORT_NAME        "ServerPort"
 #define SERVER_PORT_VALUE       8883
 
-#define CLOUD_DEVICE_NAME        "IoT-Device"
-#define CLOUD_DEVICE_VALUE       "test_dev"
+#define CLOUD_DEVICE_NAME       "IoT-Device"
+#define CLOUD_DEVICE_VALUE      "test_dev"
 
 #define SERVER_CA_CERT_NAME     "ServerCaCert"
 #define Microsoft_IT_TLS_CA_4_PEM                                         \

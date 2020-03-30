@@ -5,12 +5,12 @@
  *
  */
 
-#include "seos_system_config.h"
+#include "system_config.h"
 
 #include "LibDebug/Debug.h"
 #include "SeosError.h"
 #include "seos_api_network_stack.h"
-#include "seos_config.h"
+#include "OS_ConfigService.h"
 #include "helper_func.h"
 #include <camkes.h>
 
@@ -140,14 +140,14 @@ int run()
     seos_err_t ret;
 
     // Create a handle to the remote library instance.
-    SeosConfigHandle serverLibWithFSBackend;
+    OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
-    ret = seos_configuration_createHandle(SEOS_CONFIG_HANDLE_KIND_RPC,
+    ret = OS_ConfigService_createHandle(OS_CONFIG_HANDLE_KIND_RPC,
                                           0,
                                           &serverLibWithFSBackend);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 

@@ -29,22 +29,22 @@ void initializeName(char* buf, size_t bufSize, char const* name)
 
 static
 void
-initializeDomain(SeosConfigLib_Domain* domain, char const* name)
+initializeDomain(OS_ConfigServiceLibTypes_Domain_t* domain, char const* name)
 {
-    initializeName(domain->name.name, SEOS_CONFIG_LIB_DOMAIN_NAME_LEN, name);
+    initializeName(domain->name.name, OS_CONFIG_LIB_DOMAIN_NAME_LEN, name);
     domain->enumerator.index = 0;
 }
 
 static
 seos_err_t
-SeosConfigLib_writeVariableLengthBlob(
-    SeosConfigBackend* backend,
+OS_ConfigService_writeVariableLengthBlob(
+    OS_ConfigServiceBackend_t* backend,
     uint32_t index,
     uint32_t numberOfBlocks,
     void const* buffer,
     size_t bufferLength)
 {
-    size_t blobBlockSize = SeosConfigBackend_getSizeOfRecords(backend);
+    size_t blobBlockSize = OS_ConfigServiceBackend_getSizeOfRecords(backend);
     size_t blobCapacity = blobBlockSize * numberOfBlocks;
 
     if (bufferLength > blobCapacity)
@@ -54,7 +54,7 @@ SeosConfigLib_writeVariableLengthBlob(
     }
 
     // We anticipate a maximum size here which should be ok to place on the stack.
-    char tmpBuf[SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH];
+    char tmpBuf[OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH];
     size_t bytesCopied = 0;
 
     while (bytesCopied < bufferLength)
@@ -72,7 +72,7 @@ SeosConfigLib_writeVariableLengthBlob(
 
         memcpy(tmpBuf, (char*)buffer + bytesCopied, bytesToCopy);
 
-        seos_err_t fetchResult = SeosConfigBackend_writeRecord(
+        seos_err_t fetchResult = OS_ConfigServiceBackend_writeRecord(
                                      backend,
                                      index,
                                      tmpBuf,
@@ -92,15 +92,15 @@ SeosConfigLib_writeVariableLengthBlob(
 }
 
 seos_err_t
-initializeDomainsAndParameters(SeosConfigLib* configLib)
+initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 {
     int result;
 
     // initialize CloudConnector Domain
     Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_SENSOR);
-    SeosConfigLib_Domain domain;
+    OS_ConfigServiceLibTypes_Domain_t domain;
     initializeDomain(&domain, DOMAIN_SENSOR);
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
                  0,
                  &domain,
@@ -111,25 +111,25 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     // Initialize the parameters
-    SeosConfigLib_Parameter parameter;
-    SeosConfigAccessRights_SetAll(&parameter.readAccess);
-    SeosConfigAccessRights_SetAll(&parameter.writeAccess);
+    OS_ConfigServiceLibTypes_Parameter_t parameter;
+    OS_ConfigServiceAccessRights_SetAll(&parameter.readAccess);
+    OS_ConfigServiceAccessRights_SetAll(&parameter.writeAccess);
 
     // Initialize an array large enough to store the biggest blob of the config
     char largeBlob[3072];
     memset(largeBlob, 0, sizeof(largeBlob));
 
     /* MQTT Message Payload  -------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    MQTT_PAYLOAD_NAME);
     parameter.parameterValue.valueBlob.index = 0;
     parameter.parameterValue.valueBlob.numberOfBlocks = 2;
     parameter.parameterValue.valueBlob.size =
-        (SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
+        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
          parameter.parameterValue.valueBlob.numberOfBlocks);
     parameter.domain.index = 0;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  0,
                  &parameter,
@@ -139,7 +139,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
         Debug_LOG_ERROR("SeosConfigBackend_writeRecord1 failed with: %d\n", result);
         return result;
     }
-    result = SeosConfigLib_writeVariableLengthBlob(
+    result = OS_ConfigService_writeVariableLengthBlob(
                  &configLib->blobBackend,
                  parameter.parameterValue.valueBlob.index,
                  parameter.parameterValue.valueBlob.numberOfBlocks,
@@ -151,16 +151,16 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* MQTT Message Topic  ---------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    MQTT_TOPIC_NAME);
     parameter.parameterValue.valueBlob.index = 2;
     parameter.parameterValue.valueBlob.numberOfBlocks = 2;
     parameter.parameterValue.valueBlob.size =
-        (SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
+        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
          parameter.parameterValue.valueBlob.numberOfBlocks);
     parameter.domain.index = 0;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  1,
                  &parameter,
@@ -170,7 +170,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
         Debug_LOG_ERROR("SeosConfigBackend_writeRecord1 failed with: %d\n", result);
         return result;
     }
-    result = SeosConfigLib_writeVariableLengthBlob(
+    result = OS_ConfigService_writeVariableLengthBlob(
                  &configLib->blobBackend,
                  parameter.parameterValue.valueBlob.index,
                  parameter.parameterValue.valueBlob.numberOfBlocks,
@@ -184,7 +184,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     // initialize CloudConnector Domain
     Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_CLOUDCONNECTOR);
     initializeDomain(&domain, DOMAIN_CLOUDCONNECTOR);
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
                  1,
                  &domain,
@@ -195,12 +195,12 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* Server Port  ----------------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_INTEGER32;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_INTEGER32;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    SERVER_PORT_NAME);
     parameter.parameterValue.valueInteger32 = 0;
     parameter.domain.index = 1;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  2,
                  &parameter,
@@ -211,16 +211,16 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* Azure Cloud SAS -------------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_SAS_NAME);
     parameter.parameterValue.valueBlob.index = 4;
     parameter.parameterValue.valueBlob.numberOfBlocks = 3;
     parameter.parameterValue.valueBlob.size =
-        (SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
+        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
          parameter.parameterValue.valueBlob.numberOfBlocks);
     parameter.domain.index = 1;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  3,
                  &parameter,
@@ -229,7 +229,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigLib_writeVariableLengthBlob(
+    result = OS_ConfigService_writeVariableLengthBlob(
                  &configLib->blobBackend,
                  parameter.parameterValue.valueBlob.index,
                  parameter.parameterValue.valueBlob.numberOfBlocks,
@@ -241,17 +241,17 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* Azure Cloud Domain ----------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_DOMAIN_NAME);
 
     parameter.parameterValue.valueBlob.index = 7;
     parameter.parameterValue.valueBlob.numberOfBlocks = 1;
     parameter.parameterValue.valueBlob.size =
-        (SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
+        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
          parameter.parameterValue.valueBlob.numberOfBlocks);
     parameter.domain.index = 1;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  4,
                  &parameter,
@@ -260,7 +260,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigLib_writeVariableLengthBlob(
+    result = OS_ConfigService_writeVariableLengthBlob(
                  &configLib->blobBackend,
                  parameter.parameterValue.valueBlob.index,
                  parameter.parameterValue.valueBlob.numberOfBlocks,
@@ -272,18 +272,18 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* Server Address --------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    SERVER_ADDRESS_NAME);
 
-    char str[SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH];
+    char str[OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH];
     memset(str, 0, sizeof(str));
 
     parameter.parameterValue.valueString.index = 0;
     parameter.parameterValue.valueString.size =
-        SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
+        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
     parameter.domain.index = 1;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  5,
                  &parameter,
@@ -292,7 +292,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->stringBackend,
                  parameter.parameterValue.valueString.index,
                  str,
@@ -303,17 +303,17 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* Device Name -----------------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_DEVICE_NAME);
 
     memset(str, 0, sizeof(str));
 
     parameter.parameterValue.valueString.index = 1;
     parameter.parameterValue.valueString.size =
-        SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
+        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
     parameter.domain.index = 1;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  6,
                  &parameter,
@@ -322,7 +322,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->stringBackend,
                  parameter.parameterValue.valueString.index,
                  str,
@@ -333,16 +333,16 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     /* TLS Cert --------------------------------------------------------------*/
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    SERVER_CA_CERT_NAME);
     parameter.parameterValue.valueBlob.index = 8;
     parameter.parameterValue.valueBlob.numberOfBlocks = 48;
     parameter.parameterValue.valueBlob.size =
-        (SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
+        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
          parameter.parameterValue.valueBlob.numberOfBlocks);
     parameter.domain.index = 1;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  7,
                  &parameter,
@@ -351,7 +351,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigLib_writeVariableLengthBlob(
+    result = OS_ConfigService_writeVariableLengthBlob(
                  &configLib->blobBackend,
                  parameter.parameterValue.valueBlob.index,
                  parameter.parameterValue.valueBlob.numberOfBlocks,
@@ -365,7 +365,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     // initialize NwStack Domain
     Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_NWSTACK);
     initializeDomain(&domain, DOMAIN_NWSTACK);
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
                  2,
                  &domain,
@@ -376,15 +376,15 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     }
 
     // Initialize the parameters
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    ETH_ADDR);
 
     parameter.parameterValue.valueString.index = 2;
     parameter.parameterValue.valueString.size =
-        SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
+        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
     parameter.domain.index = 2;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  8,
                  &parameter,
@@ -393,7 +393,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->stringBackend,
                  parameter.parameterValue.valueString.index,
                  str,
@@ -403,15 +403,15 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
         return result;
     }
 
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    ETH_GATEWAY_ADDR);
 
     parameter.parameterValue.valueString.index = 3;
     parameter.parameterValue.valueString.size =
-        SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
+        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
     parameter.domain.index = 2;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  9,
                  &parameter,
@@ -420,7 +420,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->stringBackend,
                  parameter.parameterValue.valueString.index,
                  str,
@@ -430,15 +430,15 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
         return result;
     }
 
-    parameter.parameterType = SEOS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, SEOS_CONFIG_LIB_PARAMETER_NAME_LEN,
+    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
+    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    ETH_SUBNET_MASK);
 
     parameter.parameterValue.valueString.index = 4;
     parameter.parameterValue.valueString.size =
-        SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
+        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
     parameter.domain.index = 2;
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->parameterBackend,
                  10,
                  &parameter,
@@ -447,7 +447,7 @@ initializeDomainsAndParameters(SeosConfigLib* configLib)
     {
         return result;
     }
-    result = SeosConfigBackend_writeRecord(
+    result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->stringBackend,
                  parameter.parameterValue.valueString.index,
                  str,
@@ -517,10 +517,10 @@ create_system_config_backend(void)
         return SEOS_ERROR_GENERIC;
     }
 
-    SeosConfigInstanceStore* serverInstanceStore =
-        seos_configuration_getInstances();
-    SeosConfigLib* configLib =
-        seos_configuration_instance_store_getInstance(serverInstanceStore, 0);
+    OS_ConfigServiceInstanceStore_t* serverInstanceStore =
+        OS_ConfigService_getInstances();
+    OS_ConfigServiceLib_t* configLib =
+        OS_ConfigServiceInstanceStore_getInstance(serverInstanceStore, 0);
 
     // Create the file backends
     seos_err_t result = createFileBackends(phandle);
@@ -554,44 +554,44 @@ seos_err_t
 createFileBackends(hPartition_t phandle)
 {
     seos_err_t result = 0;
-    SeosConfigBackend_FileName name;
+    OS_ConfigServiceBackend_FileName_t name;
 
     // Create the file backends.
-    Debug_LOG_DEBUG("Size of ConfigLib_Domain: %d", sizeof(SeosConfigLib_Domain));
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
+    Debug_LOG_DEBUG("Size of ConfigLib_Domain: %d", sizeof(OS_ConfigServiceLibTypes_Domain_t));
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
     Debug_LOG_DEBUG("Name.buffer: %s", name.buffer);
-    result = SeosConfigBackend_createFileBackend(name, phandle, 3,
-                                                 sizeof(SeosConfigLib_Domain));
+    result = OS_ConfigServiceBackend_createFileBackend(name, phandle, 3,
+                                                 sizeof(OS_ConfigServiceLibTypes_Domain_t));
     if (result != SEOS_SUCCESS)
     {
         return result;
     }
 
     Debug_LOG_DEBUG("Size of ConfigLib_Parameter: %d",
-                    sizeof(SeosConfigLib_Parameter));
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN,
+                    sizeof(OS_ConfigServiceLibTypes_Parameter_t));
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN,
                    PARAMETER_FILE);
     Debug_LOG_DEBUG("Name.buffer: %s", name.buffer);
-    result = SeosConfigBackend_createFileBackend(name, phandle, 11,
-                                                 sizeof(SeosConfigLib_Parameter));
+    result = OS_ConfigServiceBackend_createFileBackend(name, phandle, 11,
+                                                 sizeof(OS_ConfigServiceLibTypes_Parameter_t));
     if (result != SEOS_SUCCESS)
     {
         return result;
     }
 
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, STRING_FILE);
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, STRING_FILE);
     Debug_LOG_DEBUG("Name.buffer: %s", name.buffer);
-    result = SeosConfigBackend_createFileBackend(name, phandle, 5,
-                                                 SEOS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH);
+    result = OS_ConfigServiceBackend_createFileBackend(name, phandle, 5,
+                                                 OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH);
     if (result != SEOS_SUCCESS)
     {
         return result;
     }
 
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, BLOB_FILE);
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, BLOB_FILE);
     Debug_LOG_DEBUG("Name.buffer: %s", name.buffer);
-    result = SeosConfigBackend_createFileBackend(name, phandle, 56,
-                                                 SEOS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH);
+    result = OS_ConfigServiceBackend_createFileBackend(name, phandle, 56,
+                                                 OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH);
     if (result != SEOS_SUCCESS)
     {
         return result;
@@ -602,29 +602,29 @@ createFileBackends(hPartition_t phandle)
     return SEOS_SUCCESS;
 }
 
-seos_err_t initializeFileBackends(SeosConfigLib* configLib,
+seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
                                   hPartition_t phandle)
 {
     seos_err_t result = SEOS_SUCCESS;
 
-    SeosConfigBackend parameterBackend;
-    SeosConfigBackend domainBackend;
-    SeosConfigBackend stringBackend;
-    SeosConfigBackend blobBackend;
-    SeosConfigBackend_FileName name;
+    OS_ConfigServiceBackend_t parameterBackend;
+    OS_ConfigServiceBackend_t domainBackend;
+    OS_ConfigServiceBackend_t stringBackend;
+    OS_ConfigServiceBackend_t blobBackend;
+    OS_ConfigServiceBackend_FileName_t name;
 
     // Initialize the backends in the config library object.
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
-    result = SeosConfigBackend_initializeFileBackend(&domainBackend, name, phandle);
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
+    result = OS_ConfigServiceBackend_initializeFileBackend(&domainBackend, name, phandle);
     Debug_LOG_DEBUG("Domain name: %s", name.buffer);
     if (result != SEOS_SUCCESS)
     {
         return result;
     }
 
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN,
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN,
                    PARAMETER_FILE);
-    result = SeosConfigBackend_initializeFileBackend(&parameterBackend, name,
+    result = OS_ConfigServiceBackend_initializeFileBackend(&parameterBackend, name,
                                                      phandle);
     if (result != SEOS_SUCCESS)
     {
@@ -632,23 +632,23 @@ seos_err_t initializeFileBackends(SeosConfigLib* configLib,
     }
     Debug_LOG_DEBUG("Parameter backend initialized.");
 
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, STRING_FILE);
-    result = SeosConfigBackend_initializeFileBackend(&stringBackend, name, phandle);
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, STRING_FILE);
+    result = OS_ConfigServiceBackend_initializeFileBackend(&stringBackend, name, phandle);
     if (result != SEOS_SUCCESS)
     {
         return result;
     }
     Debug_LOG_DEBUG("String backend initialized.");
 
-    initializeName(name.buffer, SEOS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, BLOB_FILE);
-    result = SeosConfigBackend_initializeFileBackend(&blobBackend, name, phandle);
+    initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, BLOB_FILE);
+    result = OS_ConfigServiceBackend_initializeFileBackend(&blobBackend, name, phandle);
     if (result != SEOS_SUCCESS)
     {
         return result;
     }
     Debug_LOG_DEBUG("Blob backend initialized.");
 
-    result = SeosConfigLib_Init(
+    result = OS_ConfigServiceLib_Init(
                  configLib,
                  &parameterBackend,
                  &domainBackend,
@@ -656,7 +656,7 @@ seos_err_t initializeFileBackends(SeosConfigLib* configLib,
                  &blobBackend);
     if (result != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("SeosConfigLib_Init failed with: %d", result);
+        Debug_LOG_ERROR("OS_ConfigServiceLib_Init failed with: %d", result);
         return result;
     }
     return result;

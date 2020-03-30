@@ -8,7 +8,7 @@
 
 #include "LibDebug/Debug.h"
 #include "helper_func.h"
-#include "seos_config.h"
+#include "OS_ConfigService.h"
 
 
 typedef struct
@@ -120,7 +120,7 @@ typedef struct
     cloud_server_config_t  cloud_server_config;
     mqtt_msg_t             mqtt_msg;
 }
-seos_system_config_t;
+system_config_t;
 
 seos_err_t
-init_system_config(seos_system_config_t* systemConfig);
+init_system_config(system_config_t* systemConfig);

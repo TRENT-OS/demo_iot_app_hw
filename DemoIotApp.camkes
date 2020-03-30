@@ -30,7 +30,7 @@ assembly {
         connection seL4RPCCall       admin_logServer             (from admin.log_server_interface, to logServer.log_server_interface);
         connection seL4SharedData    admin_logServer_data        (from admin.logServer_dataport_buf, to logServer.dataport_buf_admin);
 
-        connection seL4RPCCall       admin_configuration_server  (from admin.server,            to configServer.server);
+        connection seL4RPCCall       admin_configuration_server  (from admin.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData    admin_config_data           (from admin.cfg_dataport_buf,  to configServer.cfg_dataport_admin);
 
         connection  seL4Notification nwStack_admin_ready         (from admin.system_config_set, to nwStack.admin_system_config_set);
@@ -74,7 +74,7 @@ assembly {
 
         connection seL4RPCCall      sensorTemp_timeServer               (from sensorTemp.api_time_server, to timeServer.api_time_server);
 
-        connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.server, to configServer.server);
+        connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.cfg_dataport_buf, to configServer.cfg_dataport_sensorTemp);
 
         connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.log_server_interface, to logServer.log_server_interface);
@@ -92,7 +92,7 @@ assembly {
         connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.network_stack_rpc,    to nwStack.network_stack_rpc);
         connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.NwAppDataPort,        to nwStack.port_app_io);
 
-        connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.server,               to configServer.server);
+        connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.cfg_dataport_buf,     to configServer.cfg_dataport_cloudConnector);
 
         connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface, to logServer.log_server_interface);
@@ -133,7 +133,7 @@ assembly {
         connection seL4SharedData         NwDriver_NwStack_ReadConnection  (from nwDriver.port_nwStack_to,       to nwStack.port_nic_from);
         connection seL4SharedData         NwDriver_NwStack_WriteConnection (from nwDriver.port_nwStack_from,     to nwStack.port_nic_to);
 
-        connection seL4RPCCall            NwStack_configuration_server     (from nwStack.server,                 to configServer.server);
+        connection seL4RPCCall            NwStack_configuration_server     (from nwStack.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData         NwStack_config_data              (from nwStack.cfg_dataport_buf,       to configServer.cfg_dataport_nwStack);
 
         connection seL4RPCCall            NwStack_logServer                (from nwStack.log_server_interface,   to logServer.log_server_interface);
@@ -206,8 +206,8 @@ assembly {
 
         // assign endpoint badges for n:1 RPC interface of ChanMUX. The generic
         // naming scheme is <component>.<interface>_attributes = <badge ID>
-        nwDriver.ChanMux_attributes = 1;
-        partitionManager.ChanMux_attributes = 2;
+        nwDriver.ChanMuxRpc_attributes = 1;
+        partitionManager.ChanMuxRpc_attributes = 2;
 
         /* timer */
         uartDev.uartRegBase_paddr  = 0xE0000000;

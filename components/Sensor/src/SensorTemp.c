@@ -6,7 +6,7 @@
 
 #include "LibDebug/Debug.h"
 
-#include "seos_config.h"
+#include "OS_ConfigService.h"
 
 #include "helper_func.h"
 
@@ -26,7 +26,7 @@
 static Log_filter_t filter;
 static Log_emitter_callback_t reg;
 
-SeosConfigHandle serverLibWithFSBackend;
+OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
 static unsigned char payload[128]; // arbitrary max expected length
 static char topic[128];
@@ -67,8 +67,8 @@ initializeSensor(void)
         printf("Failed to init logServer connection!\n\n\n");
     }
 
-    err = seos_configuration_createHandle(
-              SEOS_CONFIG_HANDLE_KIND_RPC,
+    err = OS_ConfigService_createHandle(
+              OS_CONFIG_HANDLE_KIND_RPC,
               0,
               &serverLibWithFSBackend);
     if (err != SEOS_SUCCESS)

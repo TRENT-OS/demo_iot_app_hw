@@ -15,19 +15,19 @@
 
 /* ---------------------------------------------------------------------------*/
 seos_err_t
-init_system_config(seos_system_config_t* systemConfig)
+init_system_config(system_config_t* systemConfig)
 {
 
-    SeosConfigHandle serverLibWithFSBackend;
+    OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
     // Create a handle to the remote library instance.
 
-    seos_err_t ret = seos_configuration_createHandle(SEOS_CONFIG_HANDLE_KIND_RPC,
-                                                     0,
-                                                     &serverLibWithFSBackend);
+    seos_err_t ret = OS_ConfigService_createHandle(OS_CONFIG_HANDLE_KIND_RPC,
+                                                   0,
+                                                   &serverLibWithFSBackend);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -39,7 +39,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->mqtt_msg.payload_len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -51,7 +51,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->mqtt_msg.topic_len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -64,7 +64,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.iot_hub.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -77,7 +77,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.server_ip.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -90,7 +90,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.iot_hub.accessKey.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -103,7 +103,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          sizeof(systemConfig->cloud_server_config.server_port.port));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -116,7 +116,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.iot_device.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -129,7 +129,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.server_cert.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -142,7 +142,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->network_stack_config.dev_addr.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -155,7 +155,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->network_stack_config.gateway.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 
@@ -168,7 +168,7 @@ init_system_config(seos_system_config_t* systemConfig)
                                          systemConfig->network_stack_config.subnet_mask.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("seos_configuration_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
         return ret;
     }
 

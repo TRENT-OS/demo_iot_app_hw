@@ -31,7 +31,7 @@ static char serverIP[32];
 static char serverCert[SeosTlsLib_SIZE_CA_CERT_MAX];
 
 /* Instance variables --------------------------------------------------------*/
-SeosConfigHandle serverLibWithFSBackend;
+OS_ConfigServiceHandle_t serverLibWithFSBackend;
 typedef struct
 {
     Network             net;
@@ -78,7 +78,7 @@ uint64_t get_mqtt_timestamp_ms()
     return api_time_server_get_timestamp();
 }
 
-seos_err_t init_config_handle(SeosConfigHandle* configHandle);
+seos_err_t init_config_handle(OS_ConfigServiceHandle_t* configHandle);
 
 bool logServer_init(void);
 

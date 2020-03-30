@@ -5,16 +5,16 @@
 */
 
 
-import <seos_if_configuration.camkes>;
+import <if_OS_ConfigService.camkes>;
 import <seos_if_partitionManager.camkes>;
 import <if_OS_Logger.camkes>;
 
 component ConfigServer {
     control;
 
-    provides configuration_server_interface server;
-    emits    DataAvailableEvent             config_server_ready;
-    emits    DataAvailableEvent             config_backend_ready;
+    provides if_OS_ConfigService OS_ConfigServiceServer;
+    emits    DataAvailableEvent  config_server_ready;
+    emits    DataAvailableEvent  config_backend_ready;
 
     //-------------------------------------------------
     // dataports for clients

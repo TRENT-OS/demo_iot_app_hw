@@ -20,7 +20,7 @@
 static Log_filter_t filter;
 static Log_emitter_callback_t reg;
 
-static seos_system_config_t systemConfig =
+static system_config_t systemConfig =
 {
     .network_stack_config = {
         .config_domain = DOMAIN_NWSTACK,

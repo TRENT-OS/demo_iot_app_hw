@@ -9,7 +9,7 @@
 #include "SeosError.h"
 #include "assert.h"
 
-#include "seos_system_config.h"
+#include "system_config.h"
 
 #include <camkes.h>
 

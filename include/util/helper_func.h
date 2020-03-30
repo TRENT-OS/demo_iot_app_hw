@@ -6,19 +6,19 @@
 
 #include "LibDebug/Debug.h"
 
-#include "seos_config.h"
+#include "OS_ConfigService.h"
 
 
 //------------------------------------------------------------------------------
 seos_err_t
-helper_func_getConfigParameter(SeosConfigHandle* handle,
+helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
                                const char* DomainName,
                                const char* ParameterName,
                                void*       parameterBuffer,
                                size_t      parameterLength);
 
 seos_err_t
-helper_func_setConfigParameter(SeosConfigHandle* handle,
+helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
                                const char* DomainName,
                                const char* ParameterName,
                                const void* parameterValue,
