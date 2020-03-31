@@ -122,6 +122,7 @@ assembly {
         connection seL4NotificationNative NwStackdataAvail2                (from nwStack.event_internal, to nwStack.event_tick_or_data);
         connection seL4Notification       NwStackEventsRxd1                (from nwStack.e_write,        to nwStack.c_write);
         connection seL4Notification       NwStackEventsRxd2                (from nwStack.e_read,         to nwStack.c_read);
+        connection seL4Notification       NwStackEventsRxd3                (from nwStack.e_conn,         to nwStack.c_conn);
 
         connection seL4RPCCall            nwStack_timerClient              (from nwStack.Timer,          to timerClient.TimerClient);
 

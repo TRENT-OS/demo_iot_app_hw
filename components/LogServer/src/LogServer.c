@@ -157,7 +157,7 @@ void log_server_interface__init()
     // set up log filter layer
     Log_filter_ctor(&filter_admin,          Debug_LOG_LEVEL_INFO);
     Log_filter_ctor(&filter_configSrv,      Debug_LOG_LEVEL_INFO);
-    Log_filter_ctor(&filter_cloudCon,       Debug_LOG_LEVEL_DEBUG);
+    Log_filter_ctor(&filter_cloudCon,       Debug_LOG_LEVEL_INFO);
     Log_filter_ctor(&filter_sensorTemp,     Debug_LOG_LEVEL_INFO);
     Log_filter_ctor(&filter_nwDriver,       Debug_LOG_LEVEL_INFO);
     Log_filter_ctor(&filter_nwStack,        Debug_LOG_LEVEL_INFO);
