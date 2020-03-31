@@ -141,13 +141,13 @@ set_mqtt_options(MQTTPacket_connectData* options)
 
     ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                          DOMAIN_CLOUDCONNECTOR,
-                                         CLOUD_DEVICE_NAME,
+                                         CLOUD_DEVICE_ID_NAME,
                                          cloudDeviceName,
                                          sizeof(cloudDeviceName));
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
-                        CLOUD_DEVICE_NAME, ret);
+                        CLOUD_DEVICE_ID_NAME, ret);
         return ret;
     }
     Debug_LOG_DEBUG("Retrieved DeviceName: %s", cloudDeviceName);
@@ -155,7 +155,6 @@ set_mqtt_options(MQTTPacket_connectData* options)
     options->willFlag           = 0;
     options->MQTTVersion        = 4;
     options->clientID.cstring   = cloudDeviceName;
-    // see https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-mqtt-support
     options->username.cstring = cloudUsername;
     options->password.cstring = cloudSAS;
     options->keepAliveInterval  = 0; // disable keep alive

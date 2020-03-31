@@ -210,7 +210,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
         return result;
     }
 
-    /* Azure Cloud SAS -------------------------------------------------------*/
+    /* Cloud SharedAccessSignature -------------------------------------------*/
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_SAS_NAME);
@@ -305,7 +305,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     /* Device Name -----------------------------------------------------------*/
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   CLOUD_DEVICE_NAME);
+                   CLOUD_DEVICE_ID_NAME);
 
     memset(str, 0, sizeof(str));
 
@@ -464,8 +464,6 @@ seos_err_t
 create_system_config_backend(void)
 {
 
-    Debug_LOG_DEBUG("Setting up filesystem backend...");
-
     seos_err_t pm_result = partition_manager_get_info_disk(&pm_disk_data);
     if (pm_result != SEOS_SUCCESS)
     {
@@ -523,6 +521,8 @@ create_system_config_backend(void)
         OS_ConfigServiceInstanceStore_getInstance(serverInstanceStore, 0);
 
     // Create the file backends
+    Debug_LOG_INFO("Setting up filesystem backend...");
+
     seos_err_t result = createFileBackends(phandle);
     if (result != SEOS_SUCCESS)
     {

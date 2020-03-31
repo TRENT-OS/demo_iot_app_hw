@@ -67,9 +67,9 @@ static system_config_t systemConfig =
             }
         },
         .iot_device = {
-            .config_param_name = CLOUD_DEVICE_NAME,
-            .device_name = CLOUD_DEVICE_VALUE,
-            .len  = sizeof(CLOUD_DEVICE_VALUE)
+            .config_param_name = CLOUD_DEVICE_ID_NAME,
+            .device_name = CLOUD_DEVICE_ID_VALUE,
+            .len  = sizeof(CLOUD_DEVICE_ID_VALUE)
         }
     },
     .mqtt_msg = {

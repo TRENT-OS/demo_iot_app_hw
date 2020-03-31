@@ -130,33 +130,37 @@ static const Partition_cat_t partition_conf =
 //-----------------------------------------------------------------------------
 
 //Sensor Component
-#define DOMAIN_SENSOR      "Domain-Sensor"
+#define DOMAIN_SENSOR           "Domain-Sensor"
 
-#define MQTT_PAYLOAD_NAME  "MQTT_Payload"
-#define MQTT_PAYLOAD_VALUE "TRENTOS SENSOR: Current Temp 15C"
+#define MQTT_PAYLOAD_NAME       "MQTT_Payload" // _NAME defines are stored together with the values in the config file
+#define MQTT_PAYLOAD_VALUE      "{your_mqtt_msg_payload}"
 
-#define MQTT_TOPIC_NAME    "MQTT_Topic"
-#define MQTT_TOPIC_VALUE   "devices/test_dev/messages/events/"
+#define MQTT_TOPIC_NAME         "MQTT_Topic"
+#define MQTT_TOPIC_VALUE        "devices/"CLOUD_DEVICE_ID_VALUE"/messages/events/"
 
 
 //CloudConnector Component
 #define DOMAIN_CLOUDCONNECTOR   "Domain-CloudConnector"
 
-#define CLOUD_DOMAIN_NAME       "IoT-Hub"
-#define CLOUD_DOMAIN_VALUE      "HAR-test-HUB.azure-devices.net/test_dev/api-version=2016-11-14"
+#define CLOUD_DEVICE_ID_NAME    "IoT-Device"
+#define CLOUD_DEVICE_ID_VALUE   "{your_iot_device_id}"
 
-#define SERVER_ADDRESS_NAME     "AzureIP"
-#define SERVER_ADDRESS_VALUE    "40.113.153.50"
+#define CLOUD_DOMAIN_NAME       "IoT-Hub"
+#define CLOUD_DOMAIN_VALUE      "{your iot hub name}.azure-devices.net/"CLOUD_DEVICE_ID_VALUE"/?api-version=2018-06-30"
+
+#define SERVER_ADDRESS_NAME     "CloudIP"
+#define SERVER_ADDRESS_VALUE    "{your_iot_hub_ip_address}" // As string in the format "XXX.XXX.XXX.XXX"
 
 #define CLOUD_SAS_NAME          "SharedAccessSignature"
-#define CLOUD_SAS_VALUE \
-"SharedAccessSignature sr=HAR-test-HUB.azure-devices.net%2Fdevices%2Ftest_dev&sig=f2SENwRIiLOSr6e6Thme%2FlGZVhbs1exXFMsgIAeynhU%3D&se=1594149915"
+#define CLOUD_SAS_VALUE         "{your_iot_hub_shared_access_signature}"  // SharedAccessSignature sr=...
+
 #define SERVER_PORT_NAME        "ServerPort"
 #define SERVER_PORT_VALUE       8883
 
-#define CLOUD_DEVICE_NAME       "IoT-Device"
-#define CLOUD_DEVICE_VALUE      "test_dev"
-
+/* The server cert can depend on the cloud server location your Hub ressource is
+running on. The Azure Region "West Europe" works with the TLS_CA_4 already provided
+here.
+*/
 #define SERVER_CA_CERT_NAME     "ServerCaCert"
 #define Microsoft_IT_TLS_CA_4_PEM                                         \
     "-----BEGIN CERTIFICATE-----\r\n"                                     \
@@ -195,13 +199,13 @@ static const Partition_cat_t partition_conf =
 
 
 //NwStack
-#define DOMAIN_NWSTACK                 "Domain-NwStack"
+#define DOMAIN_NWSTACK          "Domain-NwStack"
 
-#define ETH_ADDR                       "ETH_ADDR"
-#define ETH_ADDR_VALUE                 "192.168.82.95"
+#define ETH_ADDR                "ETH_ADDR"
+#define ETH_ADDR_VALUE          "XXX.XXX.XXX.XXX"
 
-#define ETH_GATEWAY_ADDR               "ETH_GATEWAY_ADDR"
-#define ETH_GATEWAY_ADDR_VALUE         "192.168.82.1"
+#define ETH_GATEWAY_ADDR        "ETH_GATEWAY_ADDR"
+#define ETH_GATEWAY_ADDR_VALUE  "XXX.XXX.XXX.XXX"
 
-#define ETH_SUBNET_MASK                "ETH_SUBNET_MASK"
-#define ETH_SUBNET_MASK_VALUE          "255.255.255.0"
+#define ETH_SUBNET_MASK         "ETH_SUBNET_MASK"
+#define ETH_SUBNET_MASK_VALUE   "XXX.XXX.XXX.XXX"
