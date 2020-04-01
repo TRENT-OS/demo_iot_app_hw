@@ -480,20 +480,20 @@ create_system_config_backend(void)
         return SEOS_ERROR_GENERIC;
     }
 
-    seos_err_t fs_result = partition_init(pm_partition_data.partition_id, 0);
+    seos_err_t fs_result = OS_FilesystemApi_init(pm_partition_data.partition_id, 0);
     if (fs_result != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("Fail to init partition: %d!", fs_result);
         return fs_result;
     }
 
-    if ( (phandle = partition_open(pm_partition_data.partition_id)) < 0)
+    if ( (phandle = OS_FilesystemApi_open(pm_partition_data.partition_id)) < 0)
     {
         Debug_LOG_ERROR("Fail to open partition: %d!", pm_partition_data.partition_id);
         return SEOS_ERROR_GENERIC;
     }
 
-    if (partition_fs_create(
+    if (OS_FilesystemApi_create(
             phandle,
             FS_TYPE_FAT16,
             pm_partition_data.partition_size,
@@ -510,7 +510,7 @@ create_system_config_backend(void)
         return SEOS_ERROR_GENERIC;
     }
 
-    if (partition_fs_mount(phandle) != SEOS_SUCCESS)
+    if (OS_FilesystemApi_mount(phandle) != SEOS_SUCCESS)
     {
         return SEOS_ERROR_GENERIC;
     }
