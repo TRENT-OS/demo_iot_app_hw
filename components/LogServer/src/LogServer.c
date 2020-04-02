@@ -7,7 +7,14 @@
 
 #include "LibDebug/Debug.h"
 
-#include "OS_LoggerServerBackendFilesystem.h"
+#include "Logger/Server/OS_LoggerFile.h"
+
+#include "Logger/Server/OS_LoggerConsumerChain.h"
+#include "Logger/Server/OS_LoggerConsumer.h"
+
+#include "Logger/Server/OS_LoggerOutputConsole.h"
+#include "Logger/Server/OS_LoggerOutputFileSystem.h"
+
 #include "OS_FilesystemApi.h"
 #include "seos_pm_api.h"
 

@@ -119,6 +119,11 @@ static const Partition_cat_t partition_conf =
 //-----------------------------------------------------------------------------
 // LOGGER
 //-----------------------------------------------------------------------------
+
+// If the belows header is included in the config file and Logger library is
+// linked, the LibDebug will forward entries to the LogServer.
+#include "Logger/Client/OS_Logger.h"
+
 // api interface name
 #define API_LOG_SERVER_EMIT                     log_server_interface_emit
 #define API_LOG_SERVER_GET_SENDER_ID            log_server_interface_get_sender_id
