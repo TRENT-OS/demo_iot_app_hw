@@ -15,7 +15,7 @@
 #include "Logger/Server/OS_LoggerOutputConsole.h"
 #include "Logger/Server/OS_LoggerOutputFileSystem.h"
 
-#include "OS_FilesystemApi.h"
+#include "OS_Filesystem.h"
 #include "seos_pm_api.h"
 
 #include <stdio.h>
@@ -90,19 +90,19 @@ filesystem_init(void)
         return false;
     }
 
-    if (OS_FilesystemApi_init(pm_partition_data.partition_id, 0) != SEOS_SUCCESS)
+    if (OS_Filesystem_init(pm_partition_data.partition_id, 0) != SEOS_SUCCESS)
     {
         printf("Fail to init partition: %d!\n", pm_partition_data.partition_id);
         return false;
     }
 
-    if ( (phandle = OS_FilesystemApi_open(pm_partition_data.partition_id)) < 0)
+    if ( (phandle = OS_Filesystem_open(pm_partition_data.partition_id)) < 0)
     {
         printf("Fail to open partition: %d!\n", pm_partition_data.partition_id);
         return false;
     }
 
-    if (OS_FilesystemApi_create(
+    if (OS_Filesystem_create(
             phandle,
             FS_TYPE_FAT16,
             pm_partition_data.partition_size,
@@ -119,7 +119,7 @@ filesystem_init(void)
         return false;
     }
 
-    if (OS_FilesystemApi_close(phandle) != SEOS_SUCCESS)
+    if (OS_Filesystem_close(phandle) != SEOS_SUCCESS)
     {
         printf("Fail to close partition: %d!\n", pm_partition_data.partition_id);
         return false;
