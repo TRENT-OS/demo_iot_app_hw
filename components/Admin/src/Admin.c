@@ -53,8 +53,8 @@ static system_config_t systemConfig =
         },
         .server_cert = {
             .config_param_name = SERVER_CA_CERT_NAME,
-            .content = Microsoft_IT_TLS_CA_4_PEM,
-            .len     = sizeof(Microsoft_IT_TLS_CA_4_PEM)
+            .content = SERVER_CA_CERT_PEM_VALUE,
+            .len     = sizeof(SERVER_CA_CERT_PEM_VALUE)
         },
         .iot_hub = {
             .config_param_name = CLOUD_DOMAIN_NAME,

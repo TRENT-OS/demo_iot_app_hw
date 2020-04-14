@@ -162,13 +162,58 @@ static const Partition_cat_t partition_conf =
 #define SERVER_PORT_NAME        "ServerPort"
 #define SERVER_PORT_VALUE       8883
 
-/* The server cert can depend on the cloud server location your Hub ressource is
-running on. The Azure Region "West Europe" works with the TLS_CA_4 already provided
-here.
-*/
 #define SERVER_CA_CERT_NAME     "ServerCaCert"
-#define Microsoft_IT_TLS_CA_4_PEM                                         \
-    "-----BEGIN CERTIFICATE-----\r\n"                                     \
+
+/* Select which server certificate to validate against. Find out which one to
+ * use with https://www.ssllabs.com/ssltest/ and enter your Hub address. The issuer
+ * will probably be either Microsoft IT TLS CA 2 or Microsoft IT TLS CA 4, which
+ * are both already added here in PEM format. Set the define either to 2 or 4 or
+ * add an additional certificate if necessary.
+*/
+#define MICROSOFT_IT_TLS_CA_2
+
+#ifdef MICROSOFT_IT_TLS_CA_2
+//Microsoft IT TLS CA 2
+#define SERVER_CA_CERT_PEM_VALUE                                           \
+    "-----BEGIN CERTIFICATE-----\r\n"                                      \
+    "MIIFtDCCBJygAwIBAgIQDywQyVsGwJN/uNRJ+D6FaTANBgkqhkiG9w0BAQsFADBa\r\n" \
+    "MQswCQYDVQQGEwJJRTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJl\r\n" \
+    "clRydXN0MSIwIAYDVQQDExlCYWx0aW1vcmUgQ3liZXJUcnVzdCBSb290MB4XDTE2\r\n" \
+    "MDUyMDEyNTE1N1oXDTI0MDUyMDEyNTE1N1owgYsxCzAJBgNVBAYTAlVTMRMwEQYD\r\n" \
+    "VQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNy\r\n" \
+    "b3NvZnQgQ29ycG9yYXRpb24xFTATBgNVBAsTDE1pY3Jvc29mdCBJVDEeMBwGA1UE\r\n" \
+    "AxMVTWljcm9zb2Z0IElUIFRMUyBDQSAyMIICIjANBgkqhkiG9w0BAQEFAAOCAg8A\r\n" \
+    "MIICCgKCAgEAnqoVwRuhY1/mURjFFrsR3AtNm5EKukBJK9zWBgvFd1ksNEJFC06o\r\n" \
+    "yRbwKPMflpW/HtOfzIeBliGk57MwZq18bgASr70sPUWuoD917HUgBfxBYoF8zA7Z\r\n" \
+    "Ie5zAHODFboJL7Fg/apgbQs/GiZZNCi0QkQUWzw0nTUmVSNQ0mz6pCu95Dv1WMsL\r\n" \
+    "GyPGfdN9zD3Q/QEDyJ695QgjRIxYA1DUE+54ti2k6r0ycKFQYkyWwZ25HD1h2kYt\r\n" \
+    "3ovW85vF6y7tjTqUEcLbgKUCB81/955hdLLsbFd6f9o2PkU8xuOc3U+bUedvv6Sb\r\n" \
+    "tvGjBEZeFyH8/CaQhzlsKMH0+OPOFv/bMqcLarPw1V1sOV1bl4W9vi2278niblzI\r\n" \
+    "bEHt7nN888p4KNIwqCcXaGhbtS4tjn3NKI6v1d2XRyxIvCJDjgoZ09zF39Pyoe92\r\n" \
+    "sSRikZh7xns4tQEQ8BCs4o5NBSx8UxEsgyzNSskWGEWqsIjt+7+A1skDDZv6k2o8\r\n" \
+    "VCHNbTLFKS7d72wMI4ErpzVsBIicxaG2ezuMBBuqThxIiJ+G9zfoP9lxim/9rvJA\r\n" \
+    "xbh3nujA1VJfkOYTJIojEAYCxR3QjEoGdapJmBle97AfqEBnwoJsu2wav8h9v+po\r\n" \
+    "DL4h6dRzRUxY1DHypcFlXGoHu/REQgFLq2IN30/AhQLN90Pj9TT2RQECAwEAAaOC\r\n" \
+    "AUIwggE+MB0GA1UdDgQWBBSRnjtEbD1XnEJ3KjTXT9HMSpcs2jAfBgNVHSMEGDAW\r\n" \
+    "gBTlnVkwgkdYzKz6CFQ2hns6tQRN8DASBgNVHRMBAf8ECDAGAQH/AgEAMA4GA1Ud\r\n" \
+    "DwEB/wQEAwIBhjAnBgNVHSUEIDAeBggrBgEFBQcDAQYIKwYBBQUHAwIGCCsGAQUF\r\n" \
+    "BwMJMDQGCCsGAQUFBwEBBCgwJjAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGln\r\n" \
+    "aWNlcnQuY29tMDoGA1UdHwQzMDEwL6AtoCuGKWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0\r\n" \
+    "LmNvbS9PbW5pcm9vdDIwMjUuY3JsMD0GA1UdIAQ2MDQwMgYEVR0gADAqMCgGCCsG\r\n" \
+    "AQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BTMA0GCSqGSIb3DQEB\r\n" \
+    "CwUAA4IBAQBsf+pqb89rW8E0rP/cDuB9ixMX4C9OWQ7EA7n0BSllR64ZmuhU9mTV\r\n" \
+    "2L0G4HEiGXvOmt15i99wJ0ho2/dvMxm1ZeufkAfMuEc5fQ9RE5ENgNR2UCuFB2Bt\r\n" \
+    "bVmaKUAWxscN4GpXS4AJv+/HS0VXs5Su19J0DA8Bg+lo8ekCl4dq2G1m1WsCvFBI\r\n" \
+    "oLIjd4neCLlGoxT2jA43lj2JpQ/SMkLkLy9DXj/JHdsqJDR5ogcij4VIX8V+bVD0\r\n" \
+    "NCw7kQa6Ulq9Zo0jDEq1at4zSeH4mV2PMM3LwIXBA2xo5sda1cnUWJo3Pq4uMgcL\r\n" \
+    "e0t+fCut38NMkTl8F0arflspaqUVVUov\r\n"                                 \
+    "-----END CERTIFICATE-----\r\n"
+#endif
+
+#ifdef MICROSOFT_IT_TLS_CA_4
+//Microsoft IT TLS CA 4
+#define SERVER_CA_CERT_PEM_VALUE                                           \
+    "-----BEGIN CERTIFICATE-----\r\n"                                      \
     "MIIFtDCCBJygAwIBAgIQC2qzsD6xqfbEYJJqqM3+szANBgkqhkiG9w0BAQsFADBa\r\n" \
     "MQswCQYDVQQGEwJJRTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJl\r\n" \
     "clRydXN0MSIwIAYDVQQDExlCYWx0aW1vcmUgQ3liZXJUcnVzdCBSb290MB4XDTE2\r\n" \
@@ -201,7 +246,7 @@ here.
     "3pXxWe6fbSoXdZNQwwUS1d5ktLa829d2Wf6l1uVW4f5GXDuK+OwO++8SkJHOIBKB\r\n" \
     "ujxS43/jQPQMQSBmhxjaMmng9tyPKPK9\r\n"                                 \
     "-----END CERTIFICATE-----\r\n"
-
+#endif
 
 //NwStack
 #define DOMAIN_NWSTACK          "Domain-NwStack"
