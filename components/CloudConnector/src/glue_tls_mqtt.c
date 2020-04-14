@@ -41,12 +41,12 @@ static OS_Tls_Config_t tlsCfg =
             .recv   = recvFunc,
             .send   = sendFunc,
         },
-        .flags = OS_TlsLib_FLAG_DEBUG,
+        .flags = OS_Tls_FLAG_DEBUG,
         .crypto = {
             .policy = NULL,
             .cipherSuites = {
-                OS_TlsLib_CIPHERSUITE_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                OS_TlsLib_CIPHERSUITE_DHE_RSA_WITH_AES_128_GCM_SHA256
+                OS_Tls_CIPHERSUITE_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                OS_Tls_CIPHERSUITE_DHE_RSA_WITH_AES_128_GCM_SHA256
             },
             .cipherSuitesLen = 2
         }
@@ -55,12 +55,12 @@ static OS_Tls_Config_t tlsCfg =
 
 static OS_Crypto_Config_t cryptoCfg =
 {
-    .mode = OS_Crypto_MODE_LIBRARY,
+    .mode = OS_Crypto_MODE_LIBRARY_ONLY,
     .mem = {
         .malloc = malloc,
         .free = free,
     },
-    .impl.lib.rng.entropy = entropy
+    .library.rng.entropy = entropy
 };
 
 // Private static functions ----------------------------------------------------
@@ -146,7 +146,7 @@ glue_tls_init(const char* serverIpAddress,
 
     OS_Network_Socket_t socketCfg;
 
-    if (caCertSize > OS_TlsLib_SIZE_CA_CERT_MAX)
+    if (caCertSize > OS_Tls_SIZE_CA_CERT_MAX)
     {
         Debug_LOG_ERROR("Server caCert size not supported!");
         return SEOS_ERROR_INSUFFICIENT_SPACE;
