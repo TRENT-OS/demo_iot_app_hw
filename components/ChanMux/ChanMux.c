@@ -144,7 +144,6 @@ ChanMux_getInstanceOrCreate(
         if (!ChanMux_ctor(&theOne,
                           channels,
                           &cfgChanMux,
-                          NULL,
                           ChanMux_dataAvailable_emit,
                           Output_write))
         {
