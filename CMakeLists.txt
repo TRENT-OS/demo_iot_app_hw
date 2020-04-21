@@ -229,7 +229,6 @@ DeclareCAmkESComponent(NwDriver
         seos_libs
         seos_nw_driver_tap_proxy_lib
         seos_logger
-        chanmux_client
 )
 
 #-------------------------------------------------------------------------------
