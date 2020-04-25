@@ -14,22 +14,20 @@ component ChanMux {
     provides       ChanMuxDriverInf         ChanMux_driver;
 
     //-------------------------------------------------
-    // interface Ethernet NIC driver
+    // lower interface to UART
+    dataport      Buf                       outputDataPort;
+    uses          UartInf                   Output;
+    provides      ChanMuxOutInf             ChanMuxOut;
+
+    //-------------------------------------------------
+    // upper interface to Ethernet NIC driver
     dataport       Buf                      port_nic_ctrl;
     dataport       Buf                      port_nic_data_read;
     dataport       Buf                      port_nic_data_write;
     emits          NwDriver_DataAvailable   event_nic_hasData;
 
-
     //-------------------------------------------------
-    // interface UART
-    dataport      Buf                       outputDataPort;
-    uses          UartInf                   Output;
-    provides      ChanMuxOutInf             ChanMuxOut;
-
-
-    //-------------------------------------------------
-    // interface to PartitionManager
+    // upper interface to PartitionManager
     emits          DataAvailableEvent       dataAvailable_pm;
     dataport       Buf                      pm_data_buf;
 }

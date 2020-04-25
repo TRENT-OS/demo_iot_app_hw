@@ -62,6 +62,7 @@ assembly {
 
         connection  seL4RPCCall       partitionManger_chanMux      (from partitionManager.ChanMuxRpc,      to chanMux.ChanMux_driver);
         connection  seL4SharedData    partitionManger_chanMux_data (from partitionManager.chanMuxDataPort, to chanMux.pm_data_buf);
+        connection  seL4Notification  dataAvailable_chanMux        (from chanMux.dataAvailable_pm,         to partitionManager.ChanMuxSignal_dataAvailable);
 
 
         //----------------------------------------------------------------------
@@ -148,7 +149,6 @@ assembly {
         /* output */
         connection  seL4RPCCall       chanmux_uart                (from chanMux.Output,           to uartDrv.UartDrv);
         connection  seL4SharedData    uart_dataConnection         (from chanMux.outputDataPort,   to uartDrv.inputDataPort);
-        connection  seL4Notification  dataAvailable_chanMux       (from chanMux.dataAvailable_pm, to partitionManager.ChanMuxSignal_dataAvailable);
 
 
         //----------------------------------------------------------------------
