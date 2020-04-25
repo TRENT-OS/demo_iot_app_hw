@@ -21,13 +21,13 @@ component ChanMux {
 
     //-------------------------------------------------
     // upper interface to Ethernet NIC driver
-    dataport       Buf                      port_nic_ctrl;
-    dataport       Buf                      port_nic_data_read;
-    dataport       Buf                      port_nic_data_write;
-    emits          EventDataAvailable       event_nic_hasData;
+    dataport       Buf                      nic_port_ctrl;
+    dataport       Buf                      nic_port_data_read;
+    dataport       Buf                      nic_port_data_write;
+    emits          EventDataAvailable       nic_event_hasData;
 
     //-------------------------------------------------
     // upper interface to PartitionManager
-    emits          DataAvailableEvent       dataAvailable_pm;
-    dataport       Buf                      pm_data_buf;
+    emits          DataAvailableEvent       pm_event_hasData;
+    dataport       Buf                      pm_port;
 }

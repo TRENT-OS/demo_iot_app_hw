@@ -56,8 +56,8 @@ assembly {
         component   PartitionManager  partitionManager;
 
         connection  seL4RPCCall       partitionManger_chanMux      (from partitionManager.ChanMuxRpc,      to chanMux.ChanMux_driver);
-        connection  seL4SharedData    partitionManger_chanMux_data (from partitionManager.chanMuxDataPort, to chanMux.pm_data_buf);
-        connection  seL4Notification  dataAvailable_chanMux        (from chanMux.dataAvailable_pm,         to partitionManager.ChanMuxSignal_dataAvailable);
+        connection  seL4SharedData    partitionManger_chanMux_data (from partitionManager.chanMuxDataPort, to chanMux.pm_port);
+        connection  seL4Notification  dataAvailable_chanMux        (from chanMux.pm_event_hasData,         to partitionManager.ChanMuxSignal_dataAvailable);
 
 
         //----------------------------------------------------------------------
@@ -100,11 +100,11 @@ assembly {
         //----------------------------------------------------------------------
         component  NwDriver         nwDriver;
 
-        connection seL4Notification NwDriver_Chanmux_dataAvail       (from chanMux.event_nic_hasData,        to nwDriver.chanMux_event_hasData);
+        connection seL4Notification NwDriver_Chanmux_dataAvail       (from chanMux.nic_event_hasData,        to nwDriver.chanMux_event_hasData);
         connection seL4RPCCall      nwDriver_chanmux                 (from nwDriver.ChanMuxRpc,              to chanMux.ChanMux_driver);
-        connection seL4SharedData   NwDriver_Chanmux_port_ctrl       (from nwDriver.chanMux_port_ctrl,       to chanMux.port_nic_ctrl);
-        connection seL4SharedData   NwDriver_Chanmux_port_data_read  (from nwDriver.chanMux_port_data_read,  to chanMux.port_nic_data_read);
-        connection seL4SharedData   NwDriver_Chanmux_port_data_write (from nwDriver.chanMux_port_data_write, to chanMux.port_nic_data_write);
+        connection seL4SharedData   NwDriver_Chanmux_port_ctrl       (from nwDriver.chanMux_port_ctrl,       to chanMux.nic_port_ctrl);
+        connection seL4SharedData   NwDriver_Chanmux_port_data_read  (from nwDriver.chanMux_port_data_read,  to chanMux.nic_port_data_read);
+        connection seL4SharedData   NwDriver_Chanmux_port_data_write (from nwDriver.chanMux_port_data_write, to chanMux.nic_port_data_write);
 
         connection seL4RPCCall      NwDriver_logServer               (from nwDriver.logServer_rpc,  to logServer.log_server_interface);
         connection seL4SharedData   NwDriver_logServer_data          (from nwDriver.logServer_port, to logServer.dataport_buf_nwDriver);

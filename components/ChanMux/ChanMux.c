@@ -68,12 +68,12 @@ static const dataport_rw_t dataports[CHANMUX_NUM_CHANNELS] =
     NO_CHANMUX_DATA_PORT_RW,
     NO_CHANMUX_DATA_PORT_RW,
     NO_CHANMUX_DATA_PORT_RW,
-    CHANMUX_DATA_PORT_RW_SHARED( (void**)&port_nic_ctrl, PAGE_SIZE ),
+    CHANMUX_DATA_PORT_RW_SHARED( (void**)&nic_port_ctrl, PAGE_SIZE ),
     {
-        .read  = CHANMUX_DATA_PORT( (void**)&port_nic_data_read,  PAGE_SIZE ),
-        .write = CHANMUX_DATA_PORT( (void**)&port_nic_data_write, PAGE_SIZE )
+        .read  = CHANMUX_DATA_PORT( (void**)&nic_port_data_read,  PAGE_SIZE ),
+        .write = CHANMUX_DATA_PORT( (void**)&nic_port_data_write, PAGE_SIZE )
     },
-    CHANMUX_DATA_PORT_RW_SHARED( (void**)&pm_data_buf, PAGE_SIZE ),
+    CHANMUX_DATA_PORT_RW_SHARED( (void**)&pm_port, PAGE_SIZE ),
     NO_CHANMUX_DATA_PORT_RW
 };
 
@@ -104,12 +104,12 @@ ChanMux_dataAvailable_emit(
     //---------------------------------
     case CHANMUX_CHANNEL_NIC_CTRL:
     case CHANMUX_CHANNEL_NIC_DATA:
-        event_nic_hasData_emit();
+        nic_event_hasData_emit();
         break;
 
     //---------------------------------
     case CHANMUX_CHANNEL_MAIN_DATA:
-        dataAvailable_pm_emit();
+        pm_event_hasData_emit();
         break;
 
 
