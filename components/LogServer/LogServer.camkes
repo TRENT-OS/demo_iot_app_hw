@@ -11,6 +11,9 @@ import "../TimeServer/TimeServerInf.camkes";
 
 
 component LogServer {
+
+    provides if_OS_Logger            log_server_interface;
+    emits    DataAvailableEvent      logServer_ready;
     dataport Buf                     dataport_buf_admin;
     dataport Buf                     dataport_buf_configServer;
     dataport Buf                     dataport_buf_cloudConnector;
@@ -18,12 +21,9 @@ component LogServer {
     dataport Buf                     dataport_buf_nwDriver;
     dataport Buf                     dataport_buf_nwStack;
 
-    emits    DataAvailableEvent      logServer_ready;
-
-    provides if_OS_Logger            log_server_interface;
-
     uses     time_server_inf         api_time_server;
 
-    dataport Buf                     pm_dataport_buf;
     uses partition_manager_interface api_pm_component;
+    dataport Buf                     pm_dataport_buf;
+
 }
