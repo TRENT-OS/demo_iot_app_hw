@@ -24,7 +24,7 @@ component ChanMux {
     dataport       Buf                      port_nic_ctrl;
     dataport       Buf                      port_nic_data_read;
     dataport       Buf                      port_nic_data_write;
-    emits          NwDriver_DataAvailable   event_nic_hasData;
+    emits          EventDataAvailable       event_nic_hasData;
 
     //-------------------------------------------------
     // upper interface to PartitionManager
