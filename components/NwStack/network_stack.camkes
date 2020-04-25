@@ -52,17 +52,17 @@ component NwStack {
 
     //---------------------------------------------------
     // Configuration server
-    uses     if_OS_ConfigService OS_ConfigServiceServer;
-    consumes DataAvailableEvent  config_server_ready;
-    dataport Buf                 cfg_dataport_buf;
+    uses        if_OS_ConfigService     OS_ConfigServiceServer;
+    consumes    DataAvailableEvent      config_server_ready;
+    dataport    Buf                     cfg_dataport_buf;
 
     //-------------------------------------------------
     // interface to log server
-    dataport Buf                logServer_dataport_buf;
-    consumes DataAvailableEvent logServer_ready;
-    uses     if_OS_Logger       log_server_interface;
+    dataport    Buf                     logServer_dataport_buf;
+    consumes    DataAvailableEvent      logServer_ready;
+    uses        if_OS_Logger            log_server_interface;
 
     //-------------------------------------------------
     // Admin
-    consumes DataAvailableEvent admin_system_config_set;
+    consumes    DataAvailableEvent      admin_system_config_set;
 }

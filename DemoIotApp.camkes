@@ -27,11 +27,11 @@ assembly {
         //----------------------------------------------------------------------
         component  Admin admin;
 
-        connection seL4RPCCall       admin_logServer             (from admin.log_server_interface, to logServer.log_server_interface);
+        connection seL4RPCCall       admin_logServer             (from admin.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData    admin_logServer_data        (from admin.logServer_dataport_buf, to logServer.dataport_buf_admin);
 
         connection seL4RPCCall       admin_configuration_server  (from admin.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData    admin_config_data           (from admin.cfg_dataport_buf,  to configServer.cfg_dataport_admin);
+        connection seL4SharedData    admin_config_data           (from admin.cfg_dataport_buf,       to configServer.cfg_dataport_admin);
 
         connection  seL4Notification nwStack_admin_ready         (from admin.system_config_set, to nwStack.admin_system_config_set);
         connection  seL4Notification sensorTemp_admin_ready      (from admin.system_config_set, to sensorTemp.admin_system_config_set);
@@ -60,7 +60,7 @@ assembly {
         //----------------------------------------------------------------------
         component   PartitionManager  partitionManager;
 
-        connection  seL4RPCCall       partitionManger_chanMux      (from partitionManager.ChanMuxRpc, to chanMux.ChanMux_driver);
+        connection  seL4RPCCall       partitionManger_chanMux      (from partitionManager.ChanMuxRpc,      to chanMux.ChanMux_driver);
         connection  seL4SharedData    partitionManger_chanMux_data (from partitionManager.chanMuxDataPort, to chanMux.pm_data_buf);
 
 
@@ -69,15 +69,15 @@ assembly {
         //----------------------------------------------------------------------
         component  SensorTemp       sensorTemp;
 
-        connection seL4SharedData   cloudConnectorData_sensorTempData   (from sensorTemp.cloudConnectorDataPort, to cloudConnector.sensorDataPort);
+        connection seL4SharedData   cloudConnectorData_sensorTempData   (from sensorTemp.cloudConnectorDataPort,   to cloudConnector.sensorDataPort);
         connection seL4RPCCall      cloudConnector_sensorTemp           (from sensorTemp.cloudConnector_interface, to cloudConnector.cloudConnector_interface);
 
         connection seL4RPCCall      sensorTemp_timeServer               (from sensorTemp.api_time_server, to timeServer.api_time_server);
 
         connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.cfg_dataport_buf, to configServer.cfg_dataport_sensorTemp);
+        connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.cfg_dataport_buf,       to configServer.cfg_dataport_sensorTemp);
 
-        connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.log_server_interface, to logServer.log_server_interface);
+        connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData   sensorTemp_logServer_data           (from sensorTemp.logServer_dataport_buf, to logServer.dataport_buf_sensorTemp);
 
 
@@ -93,9 +93,9 @@ assembly {
         connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.NwAppDataPort,        to nwStack.port_app_io);
 
         connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.cfg_dataport_buf,     to configServer.cfg_dataport_cloudConnector);
+        connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.cfg_dataport_buf,       to configServer.cfg_dataport_cloudConnector);
 
-        connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface, to logServer.log_server_interface);
+        connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_dataport_buf, to logServer.dataport_buf_cloudConnector);
 
 
@@ -146,8 +146,8 @@ assembly {
         component   ChanMux           chanMux;
 
         /* output */
-        connection  seL4RPCCall       chanmux_uart                (from chanMux.Output, to uartDrv.UartDrv);
-        connection  seL4SharedData    uart_dataConnection         (from chanMux.outputDataPort, to uartDrv.inputDataPort);
+        connection  seL4RPCCall       chanmux_uart                (from chanMux.Output,           to uartDrv.UartDrv);
+        connection  seL4SharedData    uart_dataConnection         (from chanMux.outputDataPort,   to uartDrv.inputDataPort);
         connection  seL4Notification  dataAvailable_chanMux       (from chanMux.dataAvailable_pm, to partitionManager.ChanMuxSignal_dataAvailable);
 
 
@@ -164,7 +164,7 @@ assembly {
         component  Timebase      timebase;
         component  TimeServer    timeServer;
 
-        connection seL4HardwareMMIO      timeServer_mem       (from timeServer.reg, to timebase.reg);
+        connection seL4HardwareMMIO      timeServer_mem       (from timeServer.reg,     to timebase.reg);
         connection seL4HardwareInterrupt timeServer_irq_ticks (from timebase.irq_ticks, to timeServer.irq_ticks);
         connection seL4HardwareInterrupt timeServer_irq_sleep (from timebase.irq_sleep, to timeServer.irq_sleep);
 
@@ -175,14 +175,14 @@ assembly {
         component   ConfigServer     configServer;
 
         connection  seL4RPCCall      configServer_pm                   (from configServer.api_pm_component, to partitionManager.api_pm_component);
-        connection  seL4SharedData   configServer_pm_data              (from configServer.pm_dataport_buf, to partitionManager.pm_dataport_buf_configServer);
+        connection  seL4SharedData   configServer_pm_data              (from configServer.pm_dataport_buf,  to partitionManager.pm_dataport_buf_configServer);
 
-        connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface, to logServer.log_server_interface);
+        connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface,   to logServer.log_server_interface);
         connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_dataport_buf, to logServer.dataport_buf_configServer);
 
-        connection  seL4Notification nwStack_configServer_ready        (from configServer.config_server_ready, to nwStack.config_server_ready);
-        connection  seL4Notification sensorTemp_configServer_ready     (from configServer.config_server_ready, to sensorTemp.config_server_ready);
-        connection  seL4Notification cloudCon_configServer_ready       (from configServer.config_server_ready, to cloudConnector.config_server_ready);
+        connection  seL4Notification nwStack_configServer_ready        (from configServer.config_server_ready,  to nwStack.config_server_ready);
+        connection  seL4Notification sensorTemp_configServer_ready     (from configServer.config_server_ready,  to sensorTemp.config_server_ready);
+        connection  seL4Notification cloudCon_configServer_ready       (from configServer.config_server_ready,  to cloudConnector.config_server_ready);
         connection  seL4Notification admin_configServer_ready          (from configServer.config_backend_ready, to admin.config_backend_ready);
 
 
@@ -193,7 +193,7 @@ assembly {
         component  UartDrv          uartDrv;
 
         connection seL4HardwareMMIO uart_memio                      (from uartDrv.uartRegBase, to uartDev.uartRegBase);
-        connection seL4RPCCall      uart_chanmux                    (from uartDrv.Output, to chanMux.ChanMuxOut);
+        connection seL4RPCCall      uart_chanmux                    (from uartDrv.Output,      to chanMux.ChanMuxOut);
     }
     configuration {
         /* client id's */
