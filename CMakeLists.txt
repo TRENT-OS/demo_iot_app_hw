@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7.2)
 
 seos_set_config_file(system_config.h)
 
-project(seos_system_config C)
+project(system_config C)
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
@@ -42,7 +42,7 @@ DeclareCAmkESComponent(Admin
         -Wall -Werror
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT     # indicates a camkes configuration client is being built
     LIBS
-        seos_system_config
+        system_config
         seos_core_api
         seos_libs
         seos_configuration
@@ -60,7 +60,7 @@ DeclareCAmkESComponent(PartitionManager
         -Werror
         -DSEOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
-        seos_system_config
+        system_config
         seos_libs
         seos_partition_manager
         seos_logger
@@ -82,7 +82,7 @@ DeclareCAmkESComponent(SensorTemp
         -Wall -Werror
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT    # indicates a camkes configuration server will be used
     LIBS
-        seos_system_config
+        system_config
         seos_libs
         seos_core_api
         seos_configuration
@@ -110,7 +110,7 @@ DeclareCAmkESComponent(ConfigServer
         # config server
         -DOS_CONFIG_SERVICE_CAMKES_SERVER     # indicates a camkes configuration server is being built
     LIBS
-        seos_system_config
+        system_config
         seos_libs
         seos_core_api
         seos_configuration
@@ -135,7 +135,7 @@ DeclareCAmkESComponent(LogServer
         # partition manager
         -DSEOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
-        seos_system_config
+        system_config
         seos_core_api
         seos_libs
         seos_log_server_backend_filesystem
@@ -184,7 +184,7 @@ DeclareCAmkESComponent(ChanMux
     C_FLAGS
         -Wall -Werror
     LIBS
-        seos_system_config
+        system_config
         seos_core_api
         seos_libs
         chanmux_server
@@ -208,7 +208,7 @@ DeclareCAmkESComponent(NwStack
         -DCFG_ETH_GATEWAY_ADDR=ETH_GATEWAY_ADDR
         -DCFG_ETH_SUBNET_MASK=ETH_SUBNET_MASK
     LIBS
-        seos_system_config
+        system_config
         seos_core_api
         seos_libs
         seos_nw_lib
@@ -246,7 +246,7 @@ DeclareCAmkESComponent(TimerClient
         -Wall
         -Werror
     LIBS
-        seos_system_config
+        system_config
         seos_core_api
         seos_libs
 )
