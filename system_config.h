@@ -33,20 +33,17 @@
 // ChanMUX
 //-----------------------------------------------------------------------------
 
-enum
-{
-    CHANMUX_CHANNEL_UNUSED_0,   // 0
-    CHANMUX_CHANNEL_UNUSED_1,   // 1
-    CHANMUX_CHANNEL_UNUSED_2,   // 2
-    CHANMUX_CHANNEL_UNUSED_3,   // 3
-    CHANMUX_CHANNEL_NIC_CTRL,   // 4
-    CHANMUX_CHANNEL_NIC_DATA,   // 5
-    CHANMUX_CHANNEL_MAIN_DATA,  // 6
-    CHANMUX_CHANNEL_UNUSED_7,   // 7
-    CHANMUX_CHANNEL_UNUSED_8,   // 8
+#define CHANMUX_CHANNEL_NIC_CTRL      4
+#define CHANMUX_CHANNEL_NIC_DATA      5
+#define CHANMUX_CHANNEL_NVM           6
 
-    CHANMUX_NUM_CHANNELS        // 9
-};
+
+//-----------------------------------------------------------------------------
+// ChanMUX clients
+//-----------------------------------------------------------------------------
+
+#define CHANMUX_ID_NIC        101
+#define CHANMUX_ID_PM         102
 
 
 //-----------------------------------------------------------------------------
@@ -75,6 +72,9 @@ enum
 //-----------------------------------------------------------------------------
 // PARTITION MANAGER
 //-----------------------------------------------------------------------------
+
+#if !defined(CAMKES_TOOL_PROCESSING)
+
 typedef struct
 {
     const char* partition_name;
@@ -97,6 +97,7 @@ static const Partition_cat_t partition_conf =
     .partition[1].block_size = 512
 };
 
+#endif // !defined(CAMKES_TOOL_PROCESSING)
 
 // internal defines
 #define PM_CONF_ARRAY_SIZE(x)                   (sizeof(x)/sizeof(x[0]))
@@ -120,6 +121,8 @@ static const Partition_cat_t partition_conf =
 // LOGGER
 //-----------------------------------------------------------------------------
 
+#if !defined(CAMKES_TOOL_PROCESSING)
+
 // If the belows header is included in the config file and Logger library is
 // linked, the LibDebug will forward entries to the LogServer.
 #include "Logger/Client/OS_Logger.h"
@@ -129,6 +132,7 @@ static const Partition_cat_t partition_conf =
 #define API_LOG_SERVER_GET_SENDER_ID            log_server_interface_get_sender_id
 #define API_LOG_SERVER_READ_LOG_FILE            log_server_interface_read_log_file
 
+#endif // !defined(CAMKES_TOOL_PROCESSING)
 
 //-----------------------------------------------------------------------------
 // Demo component configuration parameters

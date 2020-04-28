@@ -177,16 +177,10 @@ DeclareCAmkESComponent(CloudConnector
 #-------------------------------------------------------------------------------
 # Component ChanMux
 #-------------------------------------------------------------------------------
-DeclareCAmkESComponent(ChanMux
-    SOURCES
-        components/ChanMux/ChanMux.c
-    C_FLAGS
-        -Wall -Werror
-    LIBS
-        system_config
-        seos_core_api
-        seos_libs
-        chanmux_server
+DeclareCAmkESComponent_ChanMux(
+    ChanMux
+    components/ChanMux/ChanMux.c
+    system_config
 )
 
 #-------------------------------------------------------------------------------

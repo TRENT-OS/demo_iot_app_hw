@@ -12,9 +12,9 @@ import <seos_if_partitionManager.camkes>;
 component PartitionManager {
     provides  partition_manager_interface api_pm_component;
 
-    dataport  Buf                   chanMuxDataPort;
-    uses      ChanMuxDriverInf      ChanMuxRpc;
-    consumes  DataAvailableEvent    ChanMuxSignal_dataAvailable;
+    uses      ChanMuxDriverInf      chanMux_rpc;
+    dataport  Buf                   chanMux_port;
+    consumes  DataAvailableEvent    chanMux_event_hasData;
 
     dataport  Buf                   pm_dataport_buf_logServer;
     dataport  Buf                   pm_dataport_buf_configServer;
