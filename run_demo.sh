@@ -73,28 +73,17 @@ QEMU_PARAMS=(
     -m size=512M
     -nographic
     -s
-    -S
-    -serial pty
+    -serial tcp:localhost:4444,server
     -serial mon:stdio
     -kernel ${IMAGE_PATH}
 )
 
 # run QEMU
 qemu-system-arm  ${QEMU_PARAMS[@]} $@ 2> qemu_stderr.txt &
-
-# try to retrieve the PTS to be given to the proxy app from qemu
-while [ -z "${PTS}" ]; do
-    if [ -f qemu_stderr.txt ]; then
-        PTS=$(cat qemu_stderr.txt | grep -o "/dev/pts/[0-9]" || continue)
-    fi
-done
+sleep 1
 
 # start proxy app
-${PROXY_PATH}/proxy_app -c PTY:${PTS} -t 1  > seos_proxy_app.out &
-
+${PROXY_PATH}/proxy_app -c TCP:4444 -t 1  > seos_proxy_app.out &
 sleep 1
-echo "Please hit 'Ctrl-a+c' an then 'c+Enter' to let the holding instance of qemu to continue."
-echo "You can stop qemu with 'Ctrl-a+x', then you can stop the proxy app with 'Ctrl-c".
-echo
-fg
+
 fg
