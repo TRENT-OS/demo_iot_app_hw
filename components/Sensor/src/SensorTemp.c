@@ -5,6 +5,7 @@
  */
 
 #include "LibDebug/Debug.h"
+#include "common.h"
 
 #include "OS_ConfigService.h"
 
@@ -20,42 +21,10 @@
 #define SECS_TO_SLEEP   5
 #define S_IN_MSEC       1000
 
-#define DATABUFFER_CLIENT       (void *)logServer_dataport_buf
-
-/* Instance variables --------------------------------------------------------*/
-static OS_LoggerFilter_Handle_t filter;
-static OS_LoggerEmitterCallback_Handle_t reg;
-
 OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
 static unsigned char payload[128]; // arbitrary max expected length
 static char topic[128];
-
-static bool
-logServer_init(void)
-{
-    // Wait until LogServer is ready to process logs.
-    logServer_ready_wait();
-
-    // set up registered functions layer
-    if (OS_LoggerEmitterCallback_ctor(&reg, logServer_ready_wait,
-                                  API_LOG_SERVER_EMIT) == false)
-    {
-        Debug_LOG_ERROR("Failed to set up registered functions layer");
-        return false;
-    }
-
-    // set up log filter layer
-    if (OS_LoggerFilter_ctor(&filter, Debug_LOG_LEVEL_DEBUG) == false)
-    {
-        Debug_LOG_ERROR("Failed to set up log filter layer");
-        return false;
-    }
-
-    OS_LoggerEmitter_getInstance(DATABUFFER_CLIENT, &filter, &reg);
-
-    return true;
-}
 
 static seos_err_t
 initializeSensor(void)

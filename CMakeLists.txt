@@ -33,9 +33,11 @@ project(demo_iot_app C)
 DeclareCAmkESComponent(Admin
     INCLUDES
         include/util
+        components/common
     SOURCES
         components/Admin/src/Admin.c
         components/Admin/src/set_config_backend.c
+        components/common/common.c
         include/util/helper_func.c
     C_FLAGS
         -Wall -Werror
@@ -73,8 +75,10 @@ DeclareCAmkESComponent(PartitionManager
 DeclareCAmkESComponent(SensorTemp
     INCLUDES
         include/util
+        components/common
     SOURCES
         components/Sensor/src/SensorTemp.c
+        components/common/common.c
         include/util/helper_func.c
     C_FLAGS
         -Wall -Werror
@@ -92,9 +96,12 @@ DeclareCAmkESComponent(SensorTemp
 # Component ConfigServer
 #-------------------------------------------------------------------------------
 DeclareCAmkESComponent(ConfigServer
+    INCLUDES
+        components/common
     SOURCES
         components/ConfigServer/src/ConfigServer.c
         components/ConfigServer/src/create_config_backend.c
+        components/common/common.c
     C_FLAGS
         -Wall
         -Werror
@@ -149,6 +156,7 @@ DeclareCAmkESComponent(CloudConnector
     INCLUDES
         include
         include/util
+        components/common
     SOURCES
         components/CloudConnector/src/CloudConnector.c
         components/CloudConnector/src/init_CloudConnector.c
@@ -156,6 +164,7 @@ DeclareCAmkESComponent(CloudConnector
         components/CloudConnector/src/MQTTServer.c
         components/CloudConnector/src/MQTT_client.c
         components/CloudConnector/src/glue_tls_mqtt.c
+        components/common/common.c
         include/util/helper_func.c
         ${SEOS_LIBS_DIR}/seos_nwstack/network-client-lib/seos_nw_api_interface.c
     C_FLAGS
@@ -192,8 +201,10 @@ DeclareCAmkESComponent(ChanMux
 DeclareCAmkESComponent(NwStack
     INCLUDES
         include/util
+        components/common
     SOURCES
         components/NwStack/network_stack.c
+        components/common/common.c
         include/util/helper_func.c
     C_FLAGS
         -Wall -Werror
