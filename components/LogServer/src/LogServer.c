@@ -175,8 +175,10 @@ void pre_init(void)
     OS_LoggerFilter_ctor(&filter_log_server,     Debug_LOG_LEVEL_DEBUG);
 
     // set up registered functions layer
-    OS_LoggerConsumerCallback_ctor(&log_consumer_callback, logServer_ready_emit,
-                               API_LOG_SERVER_GET_SENDER_ID, api_time_server_get_timestamp);
+    OS_LoggerConsumerCallback_ctor(
+        &log_consumer_callback,
+        API_LOG_SERVER_GET_SENDER_ID,
+        api_time_server_get_timestamp);
 
     // set up log consumer layer
     OS_LoggerConsumer_ctor(&log_consumer_admin,          DATABUFFER_SERVER_01, &filter_admin,          &log_consumer_callback, &subject, NULL, CLIENT_ADMIN_ID, "ADMIN");
@@ -213,8 +215,4 @@ void pre_init(void)
 
     // create log file
     OS_LoggerFile_create(&log_file);
-
-    // start polling
-    OS_LoggerConsumerChain_poll();
 }
-
