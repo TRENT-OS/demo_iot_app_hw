@@ -18,13 +18,7 @@ logServer_init(void)
         return false;
     }
 
-    // set up log filter layer
-    if (OS_LoggerFilter_ctor(&filter, Debug_LOG_LEVEL_DEBUG) == false)
-    {
-        Debug_LOG_ERROR("Failed to set up log filter layer");
-        return false;
-    }
-
+    OS_LoggerFilter_ctor(&filter, Debug_LOG_LEVEL_DEBUG);
     OS_LoggerEmitter_getInstance(DATABUFFER_CLIENT, &filter, &reg);
 
     return true;
