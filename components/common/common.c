@@ -10,9 +10,6 @@ static OS_LoggerEmitterCallback_Handle_t reg;
 bool
 logServer_init(void)
 {
-    // Wait until LogServer is ready to process logs.
-    logServer_ready_wait();
-
     // set up registered functions layer
     if (OS_LoggerEmitterCallback_ctor(&reg, logServer_ready_wait,
                                   API_LOG_SERVER_EMIT) == false)
