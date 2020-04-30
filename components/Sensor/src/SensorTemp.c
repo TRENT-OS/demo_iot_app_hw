@@ -5,7 +5,6 @@
  */
 
 #include "LibDebug/Debug.h"
-#include "common.h"
 
 #include "OS_ConfigService.h"
 
@@ -30,11 +29,6 @@ static seos_err_t
 initializeSensor(void)
 {
     seos_err_t err = SEOS_SUCCESS;
-
-    if (logServer_init() == false)
-    {
-        printf("Failed to init logServer connection!\n\n\n");
-    }
 
     err = OS_ConfigService_createHandle(
               OS_CONFIG_HANDLE_KIND_RPC,

@@ -80,8 +80,6 @@ uint64_t get_mqtt_timestamp_ms()
 
 seos_err_t init_config_handle(OS_ConfigServiceHandle_t* configHandle);
 
-bool logServer_init(void);
-
 extern seos_err_t OS_NetworkAPP_RT(
     OS_Network_Context_t ctx);
 
@@ -595,12 +593,6 @@ cloudConnector_interface_write()
 //------------------------------------------------------------------------------
 int run()
 {
-    // Initialize LogServer connection
-    if (logServer_init() == false)
-    {
-        printf("Failed to init logServer connection!\n\n\n");
-    }
-
     // wait for the init of the admin component to set the config
     admin_system_config_set_wait();
 

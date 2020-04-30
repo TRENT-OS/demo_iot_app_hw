@@ -51,7 +51,7 @@ uint32_t API_LOG_SERVER_GET_SENDER_ID(void);
 
 
 
-static OS_LoggerFilter_Handle_t filter_admin, filter_configSrv, 
+static OS_LoggerFilter_Handle_t filter_admin, filter_configSrv,
         filter_cloudCon, filter_sensorTemp, filter_nwDriver, filter_nwStack;
 static OS_LoggerConsumer_Handle_t log_consumer_admin, log_consumer_configSrv,
        log_consumer_cloudCon, log_consumer_sensorTemp,
@@ -61,7 +61,6 @@ static OS_LoggerFormat_Handle_t format;
 static OS_LoggerSubject_Handle_t subject;
 static OS_LoggerOutput_Handle_t filesystem, console;
 static OS_LoggerFile_Handle_t log_file;
-static OS_LoggerEmitterCallback_Handle_t emitter_callback;
 // Emitter configuration
 static OS_LoggerFilter_Handle_t filter_log_server;
 static OS_LoggerConsumer_Handle_t log_consumer_log_server;
@@ -129,7 +128,7 @@ filesystem_init(void)
 }
 
 
-void log_server_interface__init()
+void pre_init(void)
 {
     // set up consumer chain
     OS_LoggerConsumerChain_getInstance();
@@ -165,9 +164,6 @@ void log_server_interface__init()
         (OS_LoggerAbstractSubject_Handle_t*)&subject_log_server,
         (OS_LoggerAbstractObserver_Handle_t*)&console_log_server);
 
-    // Emitter configuration: set up registered functions layer
-    OS_LoggerEmitterCallback_ctor(&emitter_callback, NULL, API_LOG_SERVER_EMIT);
-
     // set up log filter layer
     OS_LoggerFilter_ctor(&filter_admin,          Debug_LOG_LEVEL_INFO);
     OS_LoggerFilter_ctor(&filter_configSrv,      Debug_LOG_LEVEL_INFO);
@@ -194,7 +190,10 @@ void log_server_interface__init()
     OS_LoggerConsumer_ctor(&log_consumer_log_server, buf_log_server, &filter_log_server, &log_consumer_callback, &subject_log_server, &log_file, LOG_SERVER_ID, "LOG-SERVER");
 
     // Emitter configuration: set up log emitter layer
-    OS_LoggerEmitter_getInstance(buf_log_server, &filter_log_server, &emitter_callback);
+    OS_LoggerEmitter_getInstance(
+        buf_log_server,
+        &filter_log_server,
+        API_LOG_SERVER_EMIT);
 
     // set up consumer chain layer
     OS_LoggerConsumerChain_append(&log_consumer_admin);

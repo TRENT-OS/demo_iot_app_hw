@@ -9,8 +9,6 @@
 #include <camkes.h>
 
 #include "LibDebug/Debug.h"
-#include "common.h"
-
 #include "set_config_backend.h"
 
 static system_config_t systemConfig =
@@ -78,12 +76,6 @@ static system_config_t systemConfig =
 
 int run(void)
 {
-    if (logServer_init() == false)
-    {
-        printf("Failed to init logServer connection!\n");
-        return -1;
-    }
-
     // wait for the ConfigServer to prepare the configuration backend
     config_backend_ready_wait();
 

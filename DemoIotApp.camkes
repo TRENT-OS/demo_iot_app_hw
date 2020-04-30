@@ -44,12 +44,6 @@ assembly {
         //----------------------------------------------------------------------
         component  LogServer        logServer;
 
-        connection seL4Notification admin_logServer_dataReady           (from logServer.logServer_ready, to admin.logServer_ready);
-        connection seL4Notification configSrv_logServer_dataReady       (from logServer.logServer_ready, to configServer.logServer_ready);
-        connection seL4Notification cloudCon_logServer_dataReady        (from logServer.logServer_ready, to cloudConnector.logServer_ready);
-        connection seL4Notification sensorTemp_logServer_dataReady      (from logServer.logServer_ready, to sensorTemp.logServer_ready);
-        connection seL4Notification nwStack_logServer_dataReady         (from logServer.logServer_ready, to nwStack.logServer_ready);
-
         connection seL4RPCCall      logServer_timeServer                (from logServer.api_time_server, to timeServer.api_time_server);
 
         connection seL4RPCCall      logServer_partitionManager_inf      (from logServer.api_pm_component, to partitionManager.api_pm_component);

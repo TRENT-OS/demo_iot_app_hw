@@ -8,8 +8,6 @@
 #include <camkes.h>
 
 #include "LibDebug/Debug.h"
-#include "common.h"
-
 #include "OS_ConfigService.h"
 
 /* Instance variables --------------------------------------------------------*/

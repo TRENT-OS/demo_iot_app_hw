@@ -8,18 +8,10 @@
 #include <camkes.h>
 
 #include "LibDebug/Debug.h"
-#include "common.h"
-
 #include "create_config_backend.h"
 
 int run(void)
 {
-    if (logServer_init() == false)
-    {
-        printf("Failed to init logServer connection!\n");
-        return -1;
-    }
-
     Debug_LOG_INFO("Starting ConfigServer...");
 
     seos_err_t err = create_system_config_backend();

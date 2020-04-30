@@ -33,7 +33,6 @@ project(demo_iot_app C)
 DeclareCAmkESComponent(Admin
     INCLUDES
         include/util
-        components/common
     SOURCES
         components/Admin/src/Admin.c
         components/Admin/src/set_config_backend.c
@@ -75,7 +74,6 @@ DeclareCAmkESComponent(PartitionManager
 DeclareCAmkESComponent(SensorTemp
     INCLUDES
         include/util
-        components/common
     SOURCES
         components/Sensor/src/SensorTemp.c
         components/common/common.c
@@ -96,8 +94,6 @@ DeclareCAmkESComponent(SensorTemp
 # Component ConfigServer
 #-------------------------------------------------------------------------------
 DeclareCAmkESComponent(ConfigServer
-    INCLUDES
-        components/common
     SOURCES
         components/ConfigServer/src/ConfigServer.c
         components/ConfigServer/src/create_config_backend.c
@@ -156,7 +152,6 @@ DeclareCAmkESComponent(CloudConnector
     INCLUDES
         include
         include/util
-        components/common
     SOURCES
         components/CloudConnector/src/CloudConnector.c
         components/CloudConnector/src/init_CloudConnector.c
@@ -201,7 +196,6 @@ DeclareCAmkESComponent(ChanMux
 DeclareCAmkESComponent(NwStack
     INCLUDES
         include/util
-        components/common
     SOURCES
         components/NwStack/network_stack.c
         components/common/common.c

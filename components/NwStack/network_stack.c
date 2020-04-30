@@ -8,7 +8,6 @@
 #include "system_config.h"
 
 #include "LibDebug/Debug.h"
-#include "common.h"
 
 #include "SeosError.h"
 #include "seos_api_network_stack.h"
@@ -31,12 +30,6 @@ static seos_network_stack_config_t param_config =
 //------------------------------------------------------------------------------
 int run()
 {
-    // Initialize LogServer connection
-    if (logServer_init() == false)
-    {
-        printf("Failed to init logServer connection!\n\n\n");
-    }
-
     // wait for the init of the admin component to set the config
     admin_system_config_set_wait();
 
