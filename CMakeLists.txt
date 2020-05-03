@@ -64,7 +64,6 @@ DeclareCAmkESComponent(PartitionManager
         seos_libs
         seos_partition_manager
         seos_logger
-        chanmux_client
         proxy_nvm
 )
 
