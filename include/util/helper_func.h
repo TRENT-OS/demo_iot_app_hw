@@ -11,15 +11,17 @@
 
 //------------------------------------------------------------------------------
 seos_err_t
-helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
-                               const char* DomainName,
-                               const char* ParameterName,
-                               void*       parameterBuffer,
-                               size_t      parameterLength);
+helper_func_getConfigParameter(
+    OS_ConfigServiceHandle_t* handle,
+    const char* DomainName,
+    const char* ParameterName,
+    void*       parameterBuffer,
+    size_t      parameterLength);
 
 seos_err_t
-helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
-                               const char* DomainName,
-                               const char* ParameterName,
-                               const void* parameterValue,
-                               size_t      parameterLength);
+helper_func_setConfigParameter(
+    OS_ConfigServiceHandle_t* handle,
+    const char* DomainName,
+    const char* ParameterName,
+    const void* parameterValue,
+    size_t      parameterLength);
