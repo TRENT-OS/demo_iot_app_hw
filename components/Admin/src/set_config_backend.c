@@ -21,10 +21,12 @@ init_system_config(system_config_t* systemConfig)
     OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
     // Create a handle to the remote library instance.
-
     seos_err_t ret = OS_ConfigService_createHandle(OS_CONFIG_HANDLE_KIND_RPC,
                                                    0,
                                                    &serverLibWithFSBackend);
+
+    Debug_LOG_INFO("Setting system configuration...");
+
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
