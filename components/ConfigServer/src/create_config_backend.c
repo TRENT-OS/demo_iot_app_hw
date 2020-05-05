@@ -35,62 +35,6 @@ initializeDomain(OS_ConfigServiceLibTypes_Domain_t* domain, char const* name)
     domain->enumerator.index = 0;
 }
 
-static
-seos_err_t
-OS_ConfigService_writeVariableLengthBlob(
-    OS_ConfigServiceBackend_t* backend,
-    uint32_t index,
-    uint32_t numberOfBlocks,
-    void const* buffer,
-    size_t bufferLength)
-{
-    size_t blobBlockSize = OS_ConfigServiceBackend_getSizeOfRecords(backend);
-    size_t blobCapacity = blobBlockSize * numberOfBlocks;
-
-    if (bufferLength > blobCapacity)
-    {
-        Debug_LOG_DEBUG("Error: function: %s - line: %d\n", __FUNCTION__, __LINE__);
-        return SEOS_ERROR_GENERIC;
-    }
-
-    // We anticipate a maximum size here which should be ok to place on the stack.
-    char tmpBuf[OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH];
-    size_t bytesCopied = 0;
-
-    while (bytesCopied < bufferLength)
-    {
-        size_t bytesToCopy;
-
-        if ((bufferLength - bytesCopied) >= blobBlockSize)
-        {
-            bytesToCopy = blobBlockSize;
-        }
-        else
-        {
-            bytesToCopy = bufferLength - bytesCopied;
-        }
-
-        memcpy(tmpBuf, (char*)buffer + bytesCopied, bytesToCopy);
-
-        seos_err_t fetchResult = OS_ConfigServiceBackend_writeRecord(
-                                     backend,
-                                     index,
-                                     tmpBuf,
-                                     sizeof(tmpBuf));
-
-        if (SEOS_SUCCESS != fetchResult)
-        {
-            Debug_LOG_DEBUG("Error: function: %s - line: %d\n", __FUNCTION__, __LINE__);
-            return SEOS_ERROR_GENERIC;
-        }
-
-        bytesCopied += bytesToCopy;
-        index++;
-    }
-
-    return SEOS_SUCCESS;
-}
-
 seos_err_t
 initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 {
@@ -117,10 +61,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     OS_ConfigServiceAccessRights_SetAll(&parameter.readAccess);
     OS_ConfigServiceAccessRights_SetAll(&parameter.writeAccess);
 
-    // Initialize an array large enough to store the biggest blob of the config
-    char largeBlob[3072];
-    memset(largeBlob, 0, sizeof(largeBlob));
-
     /* MQTT Message Payload  -------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", MQTT_PAYLOAD_NAME, DOMAIN_SENSOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
@@ -139,17 +79,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
                  sizeof(parameter));
     if (result != 0)
     {
-        Debug_LOG_ERROR("SeosConfigBackend_writeRecord1 failed with: %d\n", result);
-        return result;
-    }
-    result = OS_ConfigService_writeVariableLengthBlob(
-                 &configLib->blobBackend,
-                 parameter.parameterValue.valueBlob.index,
-                 parameter.parameterValue.valueBlob.numberOfBlocks,
-                 largeBlob,
-                 parameter.parameterValue.valueBlob.size);
-    if (result != 0)
-    {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d\n", result);
         return result;
     }
 
@@ -171,17 +101,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
                  sizeof(parameter));
     if (result != 0)
     {
-        Debug_LOG_ERROR("SeosConfigBackend_writeRecord1 failed with: %d\n", result);
-        return result;
-    }
-    result = OS_ConfigService_writeVariableLengthBlob(
-                 &configLib->blobBackend,
-                 parameter.parameterValue.valueBlob.index,
-                 parameter.parameterValue.valueBlob.numberOfBlocks,
-                 largeBlob,
-                 parameter.parameterValue.valueBlob.size);
-    if (result != 0)
-    {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d\n", result);
         return result;
     }
 
@@ -235,16 +155,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     {
         return result;
     }
-    result = OS_ConfigService_writeVariableLengthBlob(
-                 &configLib->blobBackend,
-                 parameter.parameterValue.valueBlob.index,
-                 parameter.parameterValue.valueBlob.numberOfBlocks,
-                 largeBlob,
-                 parameter.parameterValue.valueBlob.size);
-    if (result != 0)
-    {
-        return result;
-    }
 
     /* Azure Cloud Domain ----------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", CLOUD_DOMAIN_NAME, DOMAIN_CLOUDCONNECTOR);
@@ -263,16 +173,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
                  4,
                  &parameter,
                  sizeof(parameter));
-    if (result != 0)
-    {
-        return result;
-    }
-    result = OS_ConfigService_writeVariableLengthBlob(
-                 &configLib->blobBackend,
-                 parameter.parameterValue.valueBlob.index,
-                 parameter.parameterValue.valueBlob.numberOfBlocks,
-                 largeBlob,
-                 parameter.parameterValue.valueBlob.size);
     if (result != 0)
     {
         return result;
@@ -300,15 +200,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     {
         return result;
     }
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->stringBackend,
-                 parameter.parameterValue.valueString.index,
-                 str,
-                 sizeof(str));
-    if (result != 0)
-    {
-        return result;
-    }
 
     /* Device Name -----------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", CLOUD_DEVICE_ID_NAME, DOMAIN_CLOUDCONNECTOR);
@@ -331,15 +222,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     {
         return result;
     }
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->stringBackend,
-                 parameter.parameterValue.valueString.index,
-                 str,
-                 sizeof(str));
-    if (result != 0)
-    {
-        return result;
-    }
 
     /* TLS Cert --------------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", SERVER_CA_CERT_NAME, DOMAIN_CLOUDCONNECTOR);
@@ -357,16 +239,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
                  7,
                  &parameter,
                  sizeof(parameter));
-    if (result != 0)
-    {
-        return result;
-    }
-    result = OS_ConfigService_writeVariableLengthBlob(
-                 &configLib->blobBackend,
-                 parameter.parameterValue.valueBlob.index,
-                 parameter.parameterValue.valueBlob.numberOfBlocks,
-                 largeBlob,
-                 parameter.parameterValue.valueBlob.size);
     if (result != 0)
     {
         return result;
@@ -404,15 +276,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     {
         return result;
     }
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->stringBackend,
-                 parameter.parameterValue.valueString.index,
-                 str,
-                 sizeof(str));
-    if (result != 0)
-    {
-        return result;
-    }
 
     Debug_LOG_INFO("Initializing %s in %s...", ETH_GATEWAY_ADDR, DOMAIN_NWSTACK);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
@@ -432,15 +295,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     {
         return result;
     }
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->stringBackend,
-                 parameter.parameterValue.valueString.index,
-                 str,
-                 sizeof(str));
-    if (result != 0)
-    {
-        return result;
-    }
 
     Debug_LOG_INFO("Initializing %s in %s...", ETH_SUBNET_MASK, DOMAIN_NWSTACK);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
@@ -456,15 +310,6 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
                  10,
                  &parameter,
                  sizeof(parameter));
-    if (result != 0)
-    {
-        return result;
-    }
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->stringBackend,
-                 parameter.parameterValue.valueString.index,
-                 str,
-                 sizeof(str));
     if (result != 0)
     {
         return result;
