@@ -12,7 +12,6 @@
 
 void post_init(void)
 {
-
     Debug_LOG_INFO("Starting ConfigServer...");
 
     seos_err_t err = create_system_config_backend();

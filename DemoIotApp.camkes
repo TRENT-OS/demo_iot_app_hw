@@ -29,6 +29,7 @@ DECLARE_COMPONENT_NIC_ChanMux(NwDriver)
 
 assembly {
     composition {
+
         //----------------------------------------------------------------------
         // Admin
         //----------------------------------------------------------------------
@@ -43,6 +44,7 @@ assembly {
         connection  seL4Notification nwStack_admin_ready         (from admin.system_config_set, to nwStack.admin_system_config_set);
         connection  seL4Notification sensorTemp_admin_ready      (from admin.system_config_set, to sensorTemp.admin_system_config_set);
         connection  seL4Notification cloudCon_admin_ready        (from admin.system_config_set, to cloudConnector.admin_system_config_set);
+
 
         //----------------------------------------------------------------------
         // LogServer
@@ -155,6 +157,7 @@ assembly {
         component  TimerClient timerClient;
 
         connection seL4RPCCall timerClient_timeServer        (from timerClient.api_time_server, to timeServer.api_time_server);
+
 
         //----------------------------------------------------------------------
         // TimeServer
