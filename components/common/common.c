@@ -5,7 +5,7 @@
 
 static OS_LoggerFilter_Handle_t filter;
 
-void post_init(void)
+void pre_init(void)
 {
     OS_LoggerFilter_ctor(&filter, Debug_LOG_LEVEL_DEBUG);
 
