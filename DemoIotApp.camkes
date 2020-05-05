@@ -178,11 +178,6 @@ assembly {
         connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface,   to logServer.log_server_interface);
         connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_dataport_buf, to logServer.dataport_buf_configServer);
 
-        connection  seL4Notification nwStack_configServer_ready        (from configServer.config_server_ready,  to nwStack.config_server_ready);
-        connection  seL4Notification sensorTemp_configServer_ready     (from configServer.config_server_ready,  to sensorTemp.config_server_ready);
-        connection  seL4Notification cloudCon_configServer_ready       (from configServer.config_server_ready,  to cloudConnector.config_server_ready);
-        connection  seL4Notification admin_configServer_ready          (from configServer.config_backend_ready, to admin.config_backend_ready);
-
 
         //----------------------------------------------------------------------
         // UART

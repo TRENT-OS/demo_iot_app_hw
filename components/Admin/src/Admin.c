@@ -76,10 +76,6 @@ static system_config_t systemConfig =
 
 int run(void)
 {
-    // wait for the ConfigServer to prepare the configuration backend
-    config_backend_ready_wait();
-
-    Debug_LOG_INFO("Setting system configuration...");
     seos_err_t err = init_system_config(&systemConfig);
     if (err != SEOS_SUCCESS)
     {

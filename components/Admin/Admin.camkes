@@ -20,6 +20,5 @@ component Admin {
     //---------------------------------------------------
     // Configuration server
     uses     if_OS_ConfigService OS_ConfigServiceServer;
-    consumes DataAvailableEvent  config_backend_ready;
     dataport Buf                 cfg_dataport_buf;
 }

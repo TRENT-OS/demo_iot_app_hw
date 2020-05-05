@@ -30,7 +30,6 @@ component CloudConnector {
     //---------------------------------------------------
     // Configuration server
     uses        if_OS_ConfigService         OS_ConfigServiceServer;
-    consumes    DataAvailableEvent          config_server_ready;
     dataport    Buf                         cfg_dataport_buf;
 
     //-------------------------------------------------

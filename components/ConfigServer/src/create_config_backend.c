@@ -545,8 +545,6 @@ create_system_config_backend(void)
         return result;
     }
 
-    config_backend_ready_emit();
-
     return SEOS_SUCCESS;
 }
 
