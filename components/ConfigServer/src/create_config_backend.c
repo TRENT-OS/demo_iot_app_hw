@@ -540,7 +540,7 @@ createFileBackends(hPartition_t phandle)
     err = OS_ConfigServiceBackend_createFileBackend(
               name,
               phandle,
-              56,
+              60,
               OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH);
     if (err != SEOS_SUCCESS)
     {
