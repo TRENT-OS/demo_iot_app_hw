@@ -221,12 +221,8 @@ DeclareCAmkESComponent_NIC_ChanMux(
 #-------------------------------------------------------------------------------
 # Component UART
 #-------------------------------------------------------------------------------
-DeclareCAmkESComponent(UartDrv
-    SOURCES
-        components/UART/src/UartDrv.c
-        components/UART/src/qemu_uart.c
-    C_FLAGS
-        -Wall -Werror
+DeclareCAmkESComponent_UART(
+    UART
 )
 
 #-------------------------------------------------------------------------------

@@ -9,7 +9,6 @@ import <std_connector.camkes>;
 import "components/PartitionManager/PartitionManager.camkes";
 import "components/Sensor/Sensor.camkes";
 import "components/CloudConnector/CloudConnector.camkes";
-import "components/UART/Uart.camkes";
 import "components/TimerClient/TimerClient.camkes";
 import "components/TimeServer/TimeServer.camkes";
 import "components/LogServer/LogServer.camkes";
@@ -18,6 +17,9 @@ import "components/ConfigServer/ConfigServer.camkes";
 import "components/Admin/Admin.camkes";
 
 #include "system_config.h"
+
+#include "UART/uart.camkes"
+DECLARE_COMPONENT_UART(UART)
 
 #include "NIC_ChanMux/NIC_ChanMux.camkes"
 DECLARE_COMPONENT_NIC_ChanMux(NwDriver)
@@ -185,10 +187,8 @@ assembly {
         //----------------------------------------------------------------------
         // UART
         //----------------------------------------------------------------------
-        component  UartDev          uartDev;
-        component  UartDrv          uartDrv;
-
-        connection seL4HardwareMMIO uart_memio                      (from uartDrv.uartRegBase, to uartDev.uartRegBase);
+        DECLARE_AND_CONNECT_INSTANCE_UART(
+            UART, uartDrv)
     }
     configuration {
         /* client id's */
@@ -204,10 +204,7 @@ assembly {
         nwDriver.chanMux_rpc_attributes         = CHANMUX_ID_NIC;
         partitionManager.chanMux_rpc_attributes = CHANMUX_ID_PM;
 
-        /* timer */
-        uartDev.uartRegBase_paddr  = 0xE0000000;
-        uartDev.uartRegBase_size   = 0x1000;
-        uartDrv.inputDataPort       = "R";
+        CONFIGURE_INSTANCE_UART(uartDrv, 0xE0000000, 59)
 
         /* timer */
         timebase.reg_paddr = 0xF8001000;    // paddr of mmio registers
