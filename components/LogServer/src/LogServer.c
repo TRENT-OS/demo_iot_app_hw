@@ -52,7 +52,7 @@ uint32_t API_LOG_SERVER_GET_SENDER_ID(void);
 
 
 static OS_LoggerFilter_Handle_t filter_admin, filter_configSrv,
-        filter_cloudCon, filter_sensorTemp, filter_nwDriver, filter_nwStack;
+       filter_cloudCon, filter_sensorTemp, filter_nwDriver, filter_nwStack;
 static OS_LoggerConsumer_Handle_t log_consumer_admin, log_consumer_configSrv,
        log_consumer_cloudCon, log_consumer_sensorTemp,
        log_consumer_nwDriver, log_consumer_nwStack;
@@ -189,7 +189,9 @@ void pre_init(void)
     OS_LoggerConsumer_ctor(&log_consumer_nwStack,        DATABUFFER_SERVER_06, &filter_nwStack,        &log_consumer_callback, &subject, NULL, CLIENT_NWSTACK_ID, "NWSTACK");
 
     // Emitter configuration
-    OS_LoggerConsumer_ctor(&log_consumer_log_server, buf_log_server, &filter_log_server, &log_consumer_callback, &subject_log_server, &log_file, LOG_SERVER_ID, "LOG-SERVER");
+    OS_LoggerConsumer_ctor(&log_consumer_log_server, buf_log_server,
+                           &filter_log_server, &log_consumer_callback, &subject_log_server, &log_file,
+                           LOG_SERVER_ID, "LOG-SERVER");
 
     // Emitter configuration: set up log emitter layer
     OS_LoggerEmitter_getInstance(
@@ -208,7 +210,8 @@ void pre_init(void)
     OS_LoggerConsumerChain_append(&log_consumer_log_server);
 
     // create filesystem
-    if(filesystem_init() == false){
+    if (filesystem_init() == false)
+    {
         printf("Fail to init filesystem!\n");
         return;
     }

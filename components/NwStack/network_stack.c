@@ -95,8 +95,8 @@ int run()
     OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
     ret = OS_ConfigService_createHandle(OS_CONFIG_HANDLE_KIND_RPC,
-                                          0,
-                                          &serverLibWithFSBackend);
+                                        0,
+                                        &serverLibWithFSBackend);
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);

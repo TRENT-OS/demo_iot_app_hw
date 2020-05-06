@@ -11,7 +11,8 @@
 #include <camkes.h>
 
 
-static const ChanMuxClientConfig_t chanMuxClientConfig = {
+static const ChanMuxClientConfig_t chanMuxClientConfig =
+{
     .port  = CHANMUX_DATAPORT_DUPLEX_SHARED_ASSIGN(chanMux_port),
     .wait  = chanMux_event_hasData_wait,
     .write = chanMux_rpc_write,
@@ -33,7 +34,7 @@ void api_pm_component__init(void)
     }
 
     pm_stat = api_pm_partition_manager_init(
-                ChanMuxNvmDriver_get_nvm(&chanMuxNvmDriver));
+                  ChanMuxNvmDriver_get_nvm(&chanMuxNvmDriver));
     if (pm_stat != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("Fail to init partition manager, ret: %d", pm_stat);

@@ -60,14 +60,16 @@ resolveChannel(
 
 
 //------------------------------------------------------------------------------
-static struct {
+static struct
+{
     uint8_t ctrl[128];
     // FIFO is big enough to store 1 minute of network "background" traffic.
     // Value found by manual testing, may differ in less noisy networks
     uint8_t data[1024 * PAGE_SIZE];
 } nic_fifo[1];
 
-static struct {
+static struct
+{
     ChanMux_channel_t ctrl;
     ChanMux_channel_t data;
 } nic_channel[1];
@@ -103,7 +105,8 @@ static ChanMux_channel_t nvm_channel[1];
 
 
 //------------------------------------------------------------------------------
-static const ChanMux_channel_ctx_t channelCtx[] = {
+static const ChanMux_channel_ctx_t channelCtx[] =
+{
 
     CHANNELS_CTX_NIC_CTRL_DATA(
         CHANMUX_CHANNEL_NIC_CTRL,
