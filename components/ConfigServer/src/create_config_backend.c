@@ -15,6 +15,10 @@
 
 
 /* Private types -------------------------------------------------------------*/
+static uint8_t parameterIndex = 0;
+static uint8_t blobIndex = 0;
+static uint8_t stringIndex = 0;
+
 hPartition_t phandle;
 pm_disk_data_t pm_disk_data;
 pm_partition_data_t pm_partition_data;
@@ -35,25 +39,149 @@ initializeDomain(OS_ConfigServiceLibTypes_Domain_t* domain, char const* name)
     domain->enumerator.index = 0;
 }
 
+static
+seos_err_t
+addInt32Parameter(
+    OS_ConfigServiceLib_t* configLib,
+    OS_ConfigServiceLibTypes_Parameter_t* parameter,
+    unsigned int domainIndex,
+    const char* parameterName,
+    uint32_t parameterValue)
+{
+    parameter->domain.index = domainIndex;
+    parameter->parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_INTEGER32;
+    initializeName(parameter->parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
+                   parameterName);
+
+    parameter->parameterValue.valueInteger32 = parameterValue;
+
+    seos_err_t err = OS_ConfigServiceBackend_writeRecord(
+                            &configLib->parameterBackend,
+                            parameterIndex,
+                            parameter,
+                            sizeof(OS_ConfigServiceLibTypes_Parameter_t));
+    if (err != SEOS_SUCCESS)
+    {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord failed with: %d\n", err);
+        return err;
+    }
+
+    parameterIndex++;
+
+    return SEOS_SUCCESS;
+}
+
+static
+seos_err_t
+addStringParameter(
+    OS_ConfigServiceLib_t* configLib,
+    OS_ConfigServiceLibTypes_Parameter_t* parameter,
+    unsigned int domainIndex,
+    const char* parameterName)
+{
+    parameter->domain.index = domainIndex;
+    parameter->parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
+    initializeName(parameter->parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
+                   parameterName);
+
+    parameter->parameterValue.valueString.index = stringIndex;
+    parameter->parameterValue.valueString.size = OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
+
+    seos_err_t err = OS_ConfigServiceBackend_writeRecord(
+                            &configLib->parameterBackend,
+                            parameterIndex,
+                            parameter,
+                            sizeof(OS_ConfigServiceLibTypes_Parameter_t));;
+    if (err != SEOS_SUCCESS)
+    {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord failed with: %d\n", err);
+        return err;
+    }
+
+    parameterIndex++;
+    stringIndex++;
+
+    return SEOS_SUCCESS;
+}
+
+static
+seos_err_t
+addBlobParameter(
+    OS_ConfigServiceLib_t* configLib,
+    OS_ConfigServiceLibTypes_Parameter_t* parameter,
+    unsigned int domainIndex,
+    const char* parameterName,
+    size_t parameterSize)
+{
+    parameter->domain.index = domainIndex;
+    parameter->parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
+    initializeName(parameter->parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
+                   parameterName);
+
+    uint32_t calcNumberOfBlocks;
+
+    if (parameterSize <= OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH)
+    {
+        calcNumberOfBlocks = 1;
+    }
+
+    if (parameterSize > OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH)
+    {
+        calcNumberOfBlocks =
+                (parameterSize / OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH);
+
+        if ((parameterSize % OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH) != 0)
+        {
+            calcNumberOfBlocks++;
+        }
+    }
+
+    parameter->parameterValue.valueBlob.index = blobIndex;
+    parameter->parameterValue.valueBlob.numberOfBlocks = calcNumberOfBlocks;
+    parameter->parameterValue.valueBlob.size =
+        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
+         parameter->parameterValue.valueBlob.numberOfBlocks);
+
+    seos_err_t err = OS_ConfigServiceBackend_writeRecord(
+                            &configLib->parameterBackend,
+                            parameterIndex,
+                            parameter,
+                            sizeof(OS_ConfigServiceLibTypes_Parameter_t));
+    if (err != SEOS_SUCCESS)
+    {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord failed with: %d\n", err);
+        return err;
+    }
+
+    blobIndex += calcNumberOfBlocks;
+    parameterIndex++;
+
+    return SEOS_SUCCESS;
+}
+
 seos_err_t
 initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 {
-    int result;
+    seos_err_t err;
 
     Debug_LOG_INFO("Initializing Domains and Parameters...");
 
-    // initialize CloudConnector Domain
-    Debug_LOG_INFO("Initializing %s...", DOMAIN_SENSOR);
     OS_ConfigServiceLibTypes_Domain_t domain;
+
+    // initialize Sensor Domain
+    Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_SENSOR);
     initializeDomain(&domain, DOMAIN_SENSOR);
-    result = OS_ConfigServiceBackend_writeRecord(
+
+    const uint8_t sensorDomainIndex = 0;
+
+    err = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
-                 0,
+                 sensorDomainIndex,
                  &domain,
                  sizeof(domain));
-    if (result != 0)
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     // Initialize the parameters
@@ -63,261 +191,180 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 
     /* MQTT Message Payload  -------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", MQTT_PAYLOAD_NAME, DOMAIN_SENSOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   MQTT_PAYLOAD_NAME);
-    parameter.parameterValue.valueBlob.index = 0;
-    parameter.parameterValue.valueBlob.numberOfBlocks = 2;
-    parameter.parameterValue.valueBlob.size =
-        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
-         parameter.parameterValue.valueBlob.numberOfBlocks);
-    parameter.domain.index = 0;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 0,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addBlobParameter(
+                configLib,
+                &parameter,
+                sensorDomainIndex,
+                MQTT_PAYLOAD_NAME,
+                sizeof(MQTT_PAYLOAD_VALUE));
+    if (err != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d\n", result);
-        return result;
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d\n", err);
+        return err;
     }
 
     /* MQTT Message Topic  ---------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", MQTT_TOPIC_NAME, DOMAIN_SENSOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   MQTT_TOPIC_NAME);
-    parameter.parameterValue.valueBlob.index = 2;
-    parameter.parameterValue.valueBlob.numberOfBlocks = 2;
-    parameter.parameterValue.valueBlob.size =
-        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
-         parameter.parameterValue.valueBlob.numberOfBlocks);
-    parameter.domain.index = 0;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 1,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addBlobParameter(
+                configLib,
+                &parameter,
+                sensorDomainIndex,
+                MQTT_TOPIC_NAME,
+                sizeof(MQTT_TOPIC_VALUE));
+    if (err != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d\n", result);
-        return result;
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d\n", err);
+        return err;
     }
 
     // initialize CloudConnector Domain
     Debug_LOG_INFO("Initializing %s", DOMAIN_CLOUDCONNECTOR);
     initializeDomain(&domain, DOMAIN_CLOUDCONNECTOR);
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->domainBackend,
-                 1,
-                 &domain,
-                 sizeof(domain));
-    if (result != 0)
+
+    const uint8_t cloudConnectorDomainIndex = 1;
+
+    err = OS_ConfigServiceBackend_writeRecord(
+                &configLib->domainBackend,
+                cloudConnectorDomainIndex,
+                &domain,
+                sizeof(domain));
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     /* Server Port  ----------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", SERVER_PORT_NAME, DOMAIN_CLOUDCONNECTOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_INTEGER32;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   SERVER_PORT_NAME);
-    parameter.parameterValue.valueInteger32 = 0;
-    parameter.domain.index = 1;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 2,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addInt32Parameter(
+                configLib,
+                &parameter,
+                cloudConnectorDomainIndex,
+                SERVER_PORT_NAME,
+                0);
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     /* Cloud SharedAccessSignature -------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", CLOUD_SAS_NAME, DOMAIN_CLOUDCONNECTOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   CLOUD_SAS_NAME);
-    parameter.parameterValue.valueBlob.index = 4;
-    parameter.parameterValue.valueBlob.numberOfBlocks = 3;
-    parameter.parameterValue.valueBlob.size =
-        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
-         parameter.parameterValue.valueBlob.numberOfBlocks);
-    parameter.domain.index = 1;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 3,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addBlobParameter(
+                configLib,
+                &parameter,
+                cloudConnectorDomainIndex,
+                CLOUD_SAS_NAME,
+                sizeof(CLOUD_SAS_VALUE));
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     /* Azure Cloud Domain ----------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", CLOUD_DOMAIN_NAME, DOMAIN_CLOUDCONNECTOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   CLOUD_DOMAIN_NAME);
-
-    parameter.parameterValue.valueBlob.index = 7;
-    parameter.parameterValue.valueBlob.numberOfBlocks = 1;
-    parameter.parameterValue.valueBlob.size =
-        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
-         parameter.parameterValue.valueBlob.numberOfBlocks);
-    parameter.domain.index = 1;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 4,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addBlobParameter(
+                configLib,
+                &parameter,
+                cloudConnectorDomainIndex,
+                CLOUD_DOMAIN_NAME,
+                sizeof(CLOUD_DOMAIN_VALUE));
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     /* Server Address --------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", SERVER_ADDRESS_NAME, DOMAIN_CLOUDCONNECTOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   SERVER_ADDRESS_NAME);
-
-    char str[OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH];
-    memset(str, 0, sizeof(str));
-
-    parameter.parameterValue.valueString.index = 0;
-    parameter.parameterValue.valueString.size =
-        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
-    parameter.domain.index = 1;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 5,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addStringParameter(
+                configLib,
+                &parameter,
+                cloudConnectorDomainIndex,
+                SERVER_ADDRESS_NAME);
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     /* Device Name -----------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", CLOUD_DEVICE_ID_NAME, DOMAIN_CLOUDCONNECTOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   CLOUD_DEVICE_ID_NAME);
-
-    memset(str, 0, sizeof(str));
-
-    parameter.parameterValue.valueString.index = 1;
-    parameter.parameterValue.valueString.size =
-        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
-    parameter.domain.index = 1;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 6,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addStringParameter(
+                configLib,
+                &parameter,
+                cloudConnectorDomainIndex,
+                CLOUD_DEVICE_ID_NAME);
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     /* TLS Cert --------------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", SERVER_CA_CERT_NAME, DOMAIN_CLOUDCONNECTOR);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   SERVER_CA_CERT_NAME);
-    parameter.parameterValue.valueBlob.index = 8;
-    parameter.parameterValue.valueBlob.numberOfBlocks = 48;
-    parameter.parameterValue.valueBlob.size =
-        (OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH *
-         parameter.parameterValue.valueBlob.numberOfBlocks);
-    parameter.domain.index = 1;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 7,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addBlobParameter(
+                configLib,
+                &parameter,
+                cloudConnectorDomainIndex,
+                SERVER_CA_CERT_NAME,
+                sizeof(SERVER_CA_CERT_PEM_VALUE));
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     // initialize NwStack Domain
     Debug_LOG_INFO("Initializing %s", DOMAIN_NWSTACK);
     initializeDomain(&domain, DOMAIN_NWSTACK);
-    result = OS_ConfigServiceBackend_writeRecord(
+
+    const uint8_t nwStackDomainIndex = 2;
+
+    err = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
-                 2,
+                 nwStackDomainIndex,
                  &domain,
                  sizeof(domain));
-    if (result != 0)
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
-    // Initialize the parameters
+    /* IP Address  -----------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", ETH_ADDR, DOMAIN_NWSTACK);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   ETH_ADDR);
-
-    parameter.parameterValue.valueString.index = 2;
-    parameter.parameterValue.valueString.size =
-        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
-    parameter.domain.index = 2;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 8,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addStringParameter(
+                configLib,
+                &parameter,
+                nwStackDomainIndex,
+                ETH_ADDR);
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
+    /* Gateway Address  ------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", ETH_GATEWAY_ADDR, DOMAIN_NWSTACK);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   ETH_GATEWAY_ADDR);
-
-    parameter.parameterValue.valueString.index = 3;
-    parameter.parameterValue.valueString.size =
-        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
-    parameter.domain.index = 2;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 9,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addStringParameter(
+                configLib,
+                &parameter,
+                nwStackDomainIndex,
+                ETH_GATEWAY_ADDR);
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
+    /* Subnet Address  -------------------------------------------------------*/
     Debug_LOG_INFO("Initializing %s in %s...", ETH_SUBNET_MASK, DOMAIN_NWSTACK);
-    parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
-    initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
-                   ETH_SUBNET_MASK);
-
-    parameter.parameterValue.valueString.index = 4;
-    parameter.parameterValue.valueString.size =
-        OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH;
-    parameter.domain.index = 2;
-    result = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->parameterBackend,
-                 10,
-                 &parameter,
-                 sizeof(parameter));
-    if (result != 0)
+    err = addStringParameter(
+                configLib,
+                &parameter,
+                nwStackDomainIndex,
+                ETH_SUBNET_MASK);
+    if (err != SEOS_SUCCESS)
     {
-        return result;
+        return err;
     }
 
     Debug_LOG_INFO("Domains and parameters initialized.");
 
-    return 0;
+    return SEOS_SUCCESS;
+
 }
 
 seos_err_t
