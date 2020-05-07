@@ -186,7 +186,7 @@ glue_tls_init(const char* serverIpAddress,
 seos_err_t
 glue_tls_handshake(void)
 {
-    seos_err_t ret;
+    int ret;
 
     if ((ret = OS_Tls_handshake(tlsContext)) != SEOS_SUCCESS)
     {
@@ -205,7 +205,7 @@ int glue_tls_mqtt_write(Network* n,
 {
     Debug_ASSERT(buf    != NULL);
 
-    int ret = 0;
+    int ret;
 
     if ((ret = OS_Tls_write(tlsContext, buf, len)) != SEOS_SUCCESS)
     {
@@ -224,7 +224,7 @@ int glue_tls_mqtt_read(Network* n,
 {
     Debug_ASSERT(buf    != NULL);
 
-    int ret = 0;
+    seos_err_t ret;
     Timer t;
     size_t lengthRead = len;
     Debug_LOG_TRACE("%s: %d bytes, %d ms", __func__, len, timeout_ms);

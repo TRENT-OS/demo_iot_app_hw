@@ -93,7 +93,7 @@ seos_err_t
 do_tls_handshake(void)
 {
 
-    seos_err_t ret = SEOS_SUCCESS;
+    seos_err_t ret;
 
     if ((ret = glue_tls_handshake() != SEOS_SUCCESS))
     {

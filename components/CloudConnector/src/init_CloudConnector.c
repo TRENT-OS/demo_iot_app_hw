@@ -16,12 +16,10 @@ OS_ConfigServiceHandle_t serverLibWithMemBackend;
 seos_err_t
 init_config_handle(OS_ConfigServiceHandle_t* configHandle)
 {
-    seos_err_t err = SEOS_SUCCESS;
-
-    err = OS_ConfigService_createHandle(
-              OS_CONFIG_HANDLE_KIND_RPC,
-              0,
-              configHandle);
+    seos_err_t err = OS_ConfigService_createHandle(
+                         OS_CONFIG_HANDLE_KIND_RPC,
+                         0,
+                         configHandle);
     if (err != SEOS_SUCCESS)
     {
         return err;

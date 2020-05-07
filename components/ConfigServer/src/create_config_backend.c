@@ -162,8 +162,6 @@ addBlobParameter(
 seos_err_t
 initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 {
-    seos_err_t err;
-
     Debug_LOG_INFO("Initializing Domains and Parameters...");
 
     OS_ConfigServiceLibTypes_Domain_t domain;
@@ -174,11 +172,11 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 
     const uint8_t sensorDomainIndex = 0;
 
-    err = OS_ConfigServiceBackend_writeRecord(
-                 &configLib->domainBackend,
-                 sensorDomainIndex,
-                 &domain,
-                 sizeof(domain));
+    seos_err_t err = OS_ConfigServiceBackend_writeRecord(
+                            &configLib->domainBackend,
+                            sensorDomainIndex,
+                            &domain,
+                            sizeof(domain));
     if (err != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
@@ -492,15 +490,17 @@ create_system_config_backend(void)
 seos_err_t
 createFileBackends(hPartition_t phandle)
 {
-    seos_err_t err = 0;
     OS_ConfigServiceBackend_FileName_t name;
 
     // Create the file backends.
     Debug_LOG_DEBUG("Size of ConfigLib_Domain: %d", sizeof(OS_ConfigServiceLibTypes_Domain_t));
     initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
     Debug_LOG_DEBUG("Name.buffer: %s", name.buffer);
-    err = OS_ConfigServiceBackend_createFileBackend(name, phandle, 3,
-                                                 sizeof(OS_ConfigServiceLibTypes_Domain_t));
+    seos_err_t err = OS_ConfigServiceBackend_createFileBackend(
+                                name,
+                                phandle,
+                                3,
+                                sizeof(OS_ConfigServiceLibTypes_Domain_t));
     if (err != SEOS_SUCCESS)
     {
         return err;
@@ -544,8 +544,6 @@ createFileBackends(hPartition_t phandle)
 seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
                                   hPartition_t phandle)
 {
-    seos_err_t err = SEOS_SUCCESS;
-
     OS_ConfigServiceBackend_t parameterBackend;
     OS_ConfigServiceBackend_t domainBackend;
     OS_ConfigServiceBackend_t stringBackend;
@@ -556,7 +554,7 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
 
     // Initialize the backends in the config library object.
     initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
-    err = OS_ConfigServiceBackend_initializeFileBackend(&domainBackend, name, phandle);
+    seos_err_t err = OS_ConfigServiceBackend_initializeFileBackend(&domainBackend, name, phandle);
     Debug_LOG_DEBUG("Domain name: %s", name.buffer);
     if (err != SEOS_SUCCESS)
     {

@@ -28,12 +28,10 @@ static char topic[128];
 static seos_err_t
 initializeSensor(void)
 {
-    seos_err_t err = SEOS_SUCCESS;
-
-    err = OS_ConfigService_createHandle(
-              OS_CONFIG_HANDLE_KIND_RPC,
-              0,
-              &serverLibWithFSBackend);
+    seos_err_t err = OS_ConfigService_createHandle(
+                         OS_CONFIG_HANDLE_KIND_RPC,
+                         0,
+                         &serverLibWithFSBackend);
     if (err != SEOS_SUCCESS)
     {
         return err;
@@ -53,9 +51,7 @@ CloudConnector_write(unsigned char* msg, void* dataPort, size_t len)
 
 int run()
 {
-    seos_err_t ret = SEOS_SUCCESS;
-
-    ret = initializeSensor();
+    seos_err_t ret = initializeSensor();
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("initializeSensor() failed with:%d", ret);
