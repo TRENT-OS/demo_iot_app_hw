@@ -189,7 +189,7 @@ glue_tls_handshake(void)
     seos_err_t ret = OS_Tls_handshake(tlsContext);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("OS_Tls_handshake() failed with err=%i", ret);
+        Debug_LOG_ERROR("OS_Tls_handshake() failed with: %d", ret);
         return ret;
     }
 
@@ -207,7 +207,7 @@ int glue_tls_mqtt_write(Network* n,
     seos_err_t ret = OS_Tls_write(tlsContext, buf, len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("OS_Tls_write() failed with err=%i", ret);
+        Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
         return MQTT_FAILURE;
     }
 
@@ -234,7 +234,7 @@ int glue_tls_mqtt_read(Network* n,
     seos_err_t ret = OS_Tls_read(tlsContext, buf, &lengthRead);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("OS_Tls_read() failed with err=%i", ret);
+        Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
         return MQTT_FAILURE;
     }
 
