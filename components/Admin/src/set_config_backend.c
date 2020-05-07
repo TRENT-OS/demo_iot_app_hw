@@ -21,17 +21,17 @@ init_system_config(system_config_t* systemConfig)
     OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
     // Create a handle to the remote library instance.
-    seos_err_t ret = OS_ConfigService_createHandle(OS_CONFIG_HANDLE_KIND_RPC,
-                                                   0,
-                                                   &serverLibWithFSBackend);
-
-    Debug_LOG_INFO("Setting system configuration...");
-
+    seos_err_t ret = OS_ConfigService_createHandle(
+                         OS_CONFIG_HANDLE_KIND_RPC,
+                         0,
+                         &serverLibWithFSBackend);
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", ret);
         return ret;
     }
+
+    Debug_LOG_INFO("Setting system configuration...");
 
     Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->mqtt_msg.config_param_name_payload);

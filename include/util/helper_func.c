@@ -69,9 +69,9 @@ find_domain(
     for (;;)
     {
         ret = OS_ConfigService_domainEnumeratorGetElement(
-                    handle,
-                    enumerator,
-                    domain);
+                  handle,
+                  enumerator,
+                  domain);
         if (SEOS_SUCCESS != ret)
         {
             Debug_LOG_ERROR("OS_ConfigService_domainEnumeratorGetElement() failed, ret %d",
@@ -124,17 +124,26 @@ get_parameter_enumerator(
         return SEOS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
     }
 
-    ret = OS_ConfigService_domainEnumeratorGetElement(handle, &domainEnumerator, &domain);
+    ret = OS_ConfigService_domainEnumeratorGetElement(
+              handle,
+              &domainEnumerator,
+              &domain);
     if (SEOS_SUCCESS != ret)
     {
-        Debug_LOG_ERROR("OS_ConfigServiceLibTypes_DomainEnumerator_tGetElement() failed, ret %d", ret);
+        Debug_LOG_ERROR("OS_ConfigServiceLibTypes_DomainEnumerator_tGetElement() failed, ret %d",
+                        ret);
         return SEOS_ERROR_GENERIC;
     }
 
-    ret = OS_ConfigService_domainCreateParameterEnumerator(handle, &domain, &parameterName, parameterEnumerator);
+    ret = OS_ConfigService_domainCreateParameterEnumerator(
+              handle,
+              &domain,
+              &parameterName,
+              parameterEnumerator);
     if (SEOS_SUCCESS != ret)
     {
-        Debug_LOG_ERROR("OS_ConfigServiceLibTypes_Domain_tCreateParameterEnumerator() failed, ret %d", ret);
+        Debug_LOG_ERROR("OS_ConfigServiceLibTypes_Domain_tCreateParameterEnumerator() failed, ret %d",
+                        ret);
         return SEOS_ERROR_GENERIC;
     }
 
@@ -166,7 +175,11 @@ get_parameter_element(
         return SEOS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
     }
 
-    ret = OS_ConfigService_domainGetElement(handle, &domain, parameterName, parameter);
+    ret = OS_ConfigService_domainGetElement(
+              handle,
+              &domain,
+              parameterName,
+              parameter);
     if (SEOS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("domainGetElement() failed, ret %d", ret);
@@ -191,8 +204,13 @@ helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
     OS_ConfigServiceLibTypes_Parameter_t parameter;
     OS_ConfigServiceHandle_t configHandle = *handle;
 
-    ret = get_parameter_element(configHandle, DomainName, ParameterName,
-                                &domainName, &parameterName, &parameter);
+    ret = get_parameter_element(
+              configHandle,
+              DomainName,
+              ParameterName,
+              &domainName,
+              &parameterName,
+              &parameter);
     if (SEOS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_element() failed, ret %d", ret);
@@ -202,11 +220,12 @@ helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
     OS_ConfigServiceLibTypes_ParameterType_t parameterType;
     OS_ConfigService_parameterGetType(&parameter, &parameterType);
 
-    ret = OS_ConfigService_parameterGetValue(configHandle,
-                                               &parameter,
-                                               parameterBuffer,
-                                               parameterLength,
-                                               &bytesCopied);
+    ret = OS_ConfigService_parameterGetValue(
+              configHandle,
+              &parameter,
+              parameterBuffer,
+              parameterLength,
+              &bytesCopied);
     if (SEOS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("parameterGetValue() failed, ret %d", ret);
@@ -230,18 +249,24 @@ seos_err_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
     OS_ConfigServiceLibTypes_ParameterName_t parameterName;
     OS_ConfigServiceLibTypes_Parameter_t parameter;
 
-    ret = get_parameter_element(configHandle, DomainName, ParameterName,
-                                &domainName, &parameterName, &parameter);
+    ret = get_parameter_element(
+              configHandle,
+              DomainName,
+              ParameterName,
+              &domainName,
+              &parameterName,
+              &parameter);
     if (SEOS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_element() failed, ret %d", ret);
         return ret;
     }
 
-    ret = get_parameter_enumerator(configHandle,
-                                   DomainName,
-                                   ParameterName,
-                                   &parameterEnumerator);
+    ret = get_parameter_enumerator(
+              configHandle,
+              DomainName,
+              ParameterName,
+              &parameterEnumerator);
     if (SEOS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_enumerator() failed, ret %d", ret);
@@ -251,11 +276,12 @@ seos_err_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
     OS_ConfigServiceLibTypes_ParameterType_t parameterType;
     OS_ConfigService_parameterGetType(&parameter, &parameterType);
 
-    ret = OS_ConfigService_parameterSetValue(configHandle,
-                                               &parameterEnumerator,
-                                               parameterType,
-                                               parameterValue,
-                                               parameterLength);
+    ret = OS_ConfigService_parameterSetValue(
+              configHandle,
+              &parameterEnumerator,
+              parameterType,
+              parameterValue,
+              parameterLength);
     if (ret < SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_parameterSetValue() failed, ret %d", ret);

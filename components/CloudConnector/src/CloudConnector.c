@@ -115,7 +115,6 @@ set_mqtt_options(MQTTPacket_connectData* options)
                                                     CLOUD_DOMAIN_NAME,
                                                     cloudUsername,
                                                     sizeof(cloudUsername));
-
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
