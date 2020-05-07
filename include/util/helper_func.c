@@ -72,7 +72,7 @@ find_domain(
                     handle,
                     enumerator,
                     domain);
-        if (0 != ret)
+        if (SEOS_SUCCESS != ret)
         {
             Debug_LOG_ERROR("OS_ConfigService_domainEnumeratorGetElement() failed, ret %d",
                             ret);
@@ -88,7 +88,7 @@ find_domain(
         }
 
         ret = OS_ConfigService_domainEnumeratorIncrement(handle, enumerator);
-        if (0 != ret)
+        if (SEOS_SUCCESS != ret)
         {
             Debug_LOG_ERROR("OS_ConfigService_domainEnumeratorIncrement() failed, ret %d",
                             ret);
@@ -256,7 +256,7 @@ seos_err_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
                                                parameterType,
                                                parameterValue,
                                                parameterLength);
-    if (ret < 0)
+    if (ret < SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_parameterSetValue() failed, ret %d", ret);
         return ret;
