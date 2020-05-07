@@ -186,9 +186,8 @@ glue_tls_init(const char* serverIpAddress,
 seos_err_t
 glue_tls_handshake(void)
 {
-    int ret;
-
-    if ((ret = OS_Tls_handshake(tlsContext)) != SEOS_SUCCESS)
+    seos_err_t ret = OS_Tls_handshake(tlsContext);
+    if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_WARNING("OS_Tls_handshake() failed with err=%i", ret);
         return ret;
@@ -205,15 +204,14 @@ int glue_tls_mqtt_write(Network* n,
 {
     Debug_ASSERT(buf    != NULL);
 
-    int ret;
-
-    if ((ret = OS_Tls_write(tlsContext, buf, len)) != SEOS_SUCCESS)
+    seos_err_t ret = OS_Tls_write(tlsContext, buf, len);
+    if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_WARNING("OS_Tls_write() failed with err=%i", ret);
-        return ret;
+        return MQTT_FAILURE;
     }
 
-    return ret;
+    return MQTT_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -224,7 +222,6 @@ int glue_tls_mqtt_read(Network* n,
 {
     Debug_ASSERT(buf    != NULL);
 
-    seos_err_t ret;
     Timer t;
     size_t lengthRead = len;
     Debug_LOG_TRACE("%s: %d bytes, %d ms", __func__, len, timeout_ms);
@@ -234,10 +231,11 @@ int glue_tls_mqtt_read(Network* n,
 
     memset ( buf, 0, len );
 
-    if ((ret = OS_Tls_read(tlsContext, buf, &lengthRead)) != SEOS_SUCCESS)
+    seos_err_t ret = OS_Tls_read(tlsContext, buf, &lengthRead);
+    if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_WARNING("OS_Tls_read() failed with err=%i", ret);
-        return ret;
+        return MQTT_FAILURE;
     }
 
     return lengthRead;

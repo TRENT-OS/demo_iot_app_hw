@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "MQTT_net.h"
+
 #include "compiler.h"
 
 #include "LibDebug/Debug.h"
