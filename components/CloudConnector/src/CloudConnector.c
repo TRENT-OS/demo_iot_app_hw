@@ -231,13 +231,13 @@ static int do_process_publish(CC_FSM_t* self,
 
     if (msg->qos != 1)
     {
-        Debug_LOG_WARNING("incomming PUBLISH has QoS=%d, will set to 1", msg->qos);
+        Debug_LOG_WARNING("incoming PUBLISH has QoS=%d, will set to 1", msg->qos);
         msg->qos = 1;
     }
 
     if (msg->dup != 0)
     {
-        Debug_LOG_ERROR("incomming PUBLISH has DUP=%d, will ignore it.", msg->dup);
+        Debug_LOG_ERROR("incoming PUBLISH has DUP=%d, will ignore it.", msg->dup);
         return -1;
     }
 
