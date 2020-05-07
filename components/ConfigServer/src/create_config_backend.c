@@ -495,7 +495,11 @@ createFileBackends(hPartition_t phandle)
 {
     OS_ConfigServiceBackend_FileName_t name;
 
-    // Create the file backends.
+
+    /* Create the file backends. The following defined amounts are all specifically
+     * tailored to fit the requirements of the demo application parameters and need
+     * to be adapter for any other use case.
+    */
     Debug_LOG_DEBUG("Size of ConfigLib_Domain: %d",
                     sizeof(OS_ConfigServiceLibTypes_Domain_t));
     initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
@@ -503,7 +507,7 @@ createFileBackends(hPartition_t phandle)
     seos_err_t err = OS_ConfigServiceBackend_createFileBackend(
                          name,
                          phandle,
-                         3,
+                         3, // Total amount of domains used
                          sizeof(OS_ConfigServiceLibTypes_Domain_t));
     if (err != SEOS_SUCCESS)
     {
@@ -518,7 +522,7 @@ createFileBackends(hPartition_t phandle)
     err = OS_ConfigServiceBackend_createFileBackend(
               name,
               phandle,
-              11,
+              11, // Total amount of parameters in the backend
               sizeof(OS_ConfigServiceLibTypes_Parameter_t));
     if (err != SEOS_SUCCESS)
     {
@@ -530,7 +534,7 @@ createFileBackends(hPartition_t phandle)
     err = OS_ConfigServiceBackend_createFileBackend(
               name,
               phandle,
-              5,
+              5, // Total amount of string parameters in the backend
               OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH);
     if (err != SEOS_SUCCESS)
     {
@@ -542,7 +546,7 @@ createFileBackends(hPartition_t phandle)
     err = OS_ConfigServiceBackend_createFileBackend(
               name,
               phandle,
-              60,
+              60,  // Total amount of blob blocks needed to store all the blob type parameters
               OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH);
     if (err != SEOS_SUCCESS)
     {
