@@ -111,13 +111,6 @@ int run()
                              len);
         api_time_server_sleep(SECS_TO_SLEEP * S_IN_MSEC);
     }
-    sensor_init_emit();
-    if (ret != SEOS_SUCCESS)
-    {
-        Debug_LOG_ERROR("sensor_init_emit() failed with: %d",
-                        ret);
-        return 0;
-    }
 
     return 0;
 }

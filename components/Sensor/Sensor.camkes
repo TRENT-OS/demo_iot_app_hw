@@ -14,8 +14,6 @@ component SensorTemp {
 
     dataport    Buf                 cloudConnectorDataPort;
 
-    emits       SensorInit          sensor_init;
-
     uses        CloudConnector_inf  cloudConnector_interface;
     uses        time_server_inf     api_time_server;
 
