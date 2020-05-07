@@ -172,7 +172,7 @@ void pre_init(void)
     OS_LoggerFilter_ctor(&filter_nwDriver,       Debug_LOG_LEVEL_INFO);
     OS_LoggerFilter_ctor(&filter_nwStack,        Debug_LOG_LEVEL_INFO);
     // Emitter configuration
-    OS_LoggerFilter_ctor(&filter_log_server,     Debug_LOG_LEVEL_DEBUG);
+    OS_LoggerFilter_ctor(&filter_log_server,     Debug_LOG_LEVEL_INFO);
 
     // set up registered functions layer
     OS_LoggerConsumerCallback_ctor(
