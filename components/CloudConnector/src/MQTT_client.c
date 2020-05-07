@@ -531,6 +531,8 @@ int MQTT_client_connect(
                                   self->readbuf_size);
     if (ret != 1)
     {
+        Debug_LOG_ERROR("%s(): MQTTDeserialize_connack() failed with code %d", __func__,
+                        ret);
         return MQTT_FAILURE;
     }
 

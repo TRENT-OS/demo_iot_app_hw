@@ -22,6 +22,7 @@ init_config_handle(OS_ConfigServiceHandle_t* configHandle)
                          configHandle);
     if (err != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", err);
         return err;
     }
 

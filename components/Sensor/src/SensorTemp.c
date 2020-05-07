@@ -34,6 +34,7 @@ initializeSensor(void)
                          &serverLibWithFSBackend);
     if (err != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", err);
         return err;
     }
 

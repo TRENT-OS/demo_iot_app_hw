@@ -452,6 +452,8 @@ create_system_config_backend(void)
 
     if (OS_Filesystem_mount(phandle) != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("Fail to mount filesystem on partition: %d!",
+                        pm_partition_data.partition_id);
         return SEOS_ERROR_GENERIC;
     }
 
@@ -572,6 +574,8 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
     Debug_LOG_DEBUG("Domain name: %s", name.buffer);
     if (err != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
+                        name.buffer, err);
         return err;
     }
 
@@ -583,6 +587,8 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               phandle);
     if (err != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
+                        name.buffer, err);
         return err;
     }
     Debug_LOG_DEBUG("Parameter backend initialized.");
@@ -594,6 +600,8 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               phandle);
     if (err != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
+                        name.buffer, err);
         return err;
     }
     Debug_LOG_DEBUG("String backend initialized.");
@@ -605,6 +613,8 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               phandle);
     if (err != SEOS_SUCCESS)
     {
+        Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
+                        name.buffer, err);
         return err;
     }
     Debug_LOG_DEBUG("Blob backend initialized.");
