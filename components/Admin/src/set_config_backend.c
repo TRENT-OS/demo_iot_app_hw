@@ -42,7 +42,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->mqtt_msg.payload_len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->mqtt_msg.config_param_name_payload, ret);
         return ret;
     }
 
@@ -55,7 +56,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->mqtt_msg.topic_len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->mqtt_msg.config_param_name_topic, ret);
         return ret;
     }
 
@@ -68,7 +70,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.iot_hub.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->cloud_server_config.iot_hub.config_param_name, ret);
         return ret;
     }
 
@@ -81,7 +84,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.server_ip.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->cloud_server_config.server_ip.config_param_name, ret);
         return ret;
     }
 
@@ -94,7 +98,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.iot_hub.accessKey.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->cloud_server_config.iot_hub.accessKey.config_param_name, ret);
         return ret;
     }
 
@@ -107,7 +112,8 @@ init_system_config(system_config_t* systemConfig)
                                          sizeof(systemConfig->cloud_server_config.server_port.port));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->cloud_server_config.server_port.config_param_name, ret);
         return ret;
     }
 
@@ -120,7 +126,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.iot_device.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->cloud_server_config.iot_device.config_param_name, ret);
         return ret;
     }
 
@@ -133,7 +140,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->cloud_server_config.server_cert.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->cloud_server_config.server_cert.config_param_name, ret);
         return ret;
     }
 
@@ -146,7 +154,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->network_stack_config.dev_addr.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->network_stack_config.dev_addr.config_param_name, ret);
         return ret;
     }
 
@@ -159,7 +168,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->network_stack_config.gateway.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->network_stack_config.gateway.config_param_name, ret);
         return ret;
     }
 
@@ -172,7 +182,8 @@ init_system_config(system_config_t* systemConfig)
                                          systemConfig->network_stack_config.subnet_mask.len);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("helper_func_setConfigParameter() for %s failed with :%d",
+                        systemConfig->network_stack_config.subnet_mask.config_param_name, ret);
         return ret;
     }
 

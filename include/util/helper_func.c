@@ -25,7 +25,7 @@ compareDomainName(OS_ConfigServiceLibTypes_DomainName_t const* a,
     {
         if (a->name[k] != b->name[k])
         {
-            Debug_LOG_DEBUG("Error: function: %s - line: %d\n", __FUNCTION__, __LINE__);
+            Debug_LOG_DEBUG("compareDomainName() domains did not match.");
             return SEOS_ERROR_GENERIC;
         }
     }
