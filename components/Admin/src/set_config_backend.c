@@ -33,7 +33,8 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s", systemConfig->mqtt_msg.config_param_name_payload);
+    Debug_LOG_INFO("Setting configuration for %s...",
+                    systemConfig->mqtt_msg.config_param_name_payload);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->mqtt_msg.config_domain,
                                          systemConfig->mqtt_msg.config_param_name_payload,
@@ -45,7 +46,8 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s", systemConfig->mqtt_msg.config_param_name_topic);
+    Debug_LOG_INFO("Setting configuration for %s...",
+                    systemConfig->mqtt_msg.config_param_name_topic);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->mqtt_msg.config_domain,
                                          systemConfig->mqtt_msg.config_param_name_topic,
@@ -57,7 +59,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->cloud_server_config.iot_hub.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->cloud_server_config.config_domain,
@@ -70,7 +72,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->cloud_server_config.server_ip.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->cloud_server_config.config_domain,
@@ -83,7 +85,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->cloud_server_config.iot_hub.accessKey.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->cloud_server_config.config_domain,
@@ -96,7 +98,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->cloud_server_config.server_port.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->cloud_server_config.config_domain,
@@ -109,7 +111,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->cloud_server_config.iot_device.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->cloud_server_config.config_domain,
@@ -122,7 +124,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->cloud_server_config.server_cert.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->cloud_server_config.config_domain,
@@ -135,7 +137,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->network_stack_config.dev_addr.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->network_stack_config.config_domain,
@@ -148,7 +150,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->network_stack_config.gateway.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->network_stack_config.config_domain,
@@ -161,7 +163,7 @@ init_system_config(system_config_t* systemConfig)
         return ret;
     }
 
-    Debug_LOG_DEBUG("Setting %s",
+    Debug_LOG_INFO("Setting configuration for %s...",
                     systemConfig->network_stack_config.subnet_mask.config_param_name);
     ret = helper_func_setConfigParameter(&serverLibWithFSBackend,
                                          systemConfig->network_stack_config.config_domain,

@@ -96,8 +96,10 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 {
     int result;
 
+    Debug_LOG_INFO("Initializing Domains and Parameters...");
+
     // initialize CloudConnector Domain
-    Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_SENSOR);
+    Debug_LOG_INFO("Initializing %s...", DOMAIN_SENSOR);
     OS_ConfigServiceLibTypes_Domain_t domain;
     initializeDomain(&domain, DOMAIN_SENSOR);
     result = OS_ConfigServiceBackend_writeRecord(
@@ -120,6 +122,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     memset(largeBlob, 0, sizeof(largeBlob));
 
     /* MQTT Message Payload  -------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", MQTT_PAYLOAD_NAME, DOMAIN_SENSOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    MQTT_PAYLOAD_NAME);
@@ -151,6 +154,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* MQTT Message Topic  ---------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", MQTT_TOPIC_NAME, DOMAIN_SENSOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    MQTT_TOPIC_NAME);
@@ -182,7 +186,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     // initialize CloudConnector Domain
-    Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_CLOUDCONNECTOR);
+    Debug_LOG_INFO("Initializing %s", DOMAIN_CLOUDCONNECTOR);
     initializeDomain(&domain, DOMAIN_CLOUDCONNECTOR);
     result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
@@ -195,6 +199,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* Server Port  ----------------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", SERVER_PORT_NAME, DOMAIN_CLOUDCONNECTOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_INTEGER32;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    SERVER_PORT_NAME);
@@ -211,6 +216,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* Cloud SharedAccessSignature -------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", CLOUD_SAS_NAME, DOMAIN_CLOUDCONNECTOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_SAS_NAME);
@@ -241,6 +247,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* Azure Cloud Domain ----------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", CLOUD_DOMAIN_NAME, DOMAIN_CLOUDCONNECTOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_DOMAIN_NAME);
@@ -272,6 +279,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* Server Address --------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", SERVER_ADDRESS_NAME, DOMAIN_CLOUDCONNECTOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    SERVER_ADDRESS_NAME);
@@ -303,6 +311,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* Device Name -----------------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", CLOUD_DEVICE_ID_NAME, DOMAIN_CLOUDCONNECTOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    CLOUD_DEVICE_ID_NAME);
@@ -333,6 +342,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     /* TLS Cert --------------------------------------------------------------*/
+    Debug_LOG_INFO("Initializing %s in %s...", SERVER_CA_CERT_NAME, DOMAIN_CLOUDCONNECTOR);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_BLOB;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    SERVER_CA_CERT_NAME);
@@ -363,7 +373,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     // initialize NwStack Domain
-    Debug_LOG_DEBUG("initializing Domain: %s", DOMAIN_NWSTACK);
+    Debug_LOG_INFO("Initializing %s", DOMAIN_NWSTACK);
     initializeDomain(&domain, DOMAIN_NWSTACK);
     result = OS_ConfigServiceBackend_writeRecord(
                  &configLib->domainBackend,
@@ -376,6 +386,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     }
 
     // Initialize the parameters
+    Debug_LOG_INFO("Initializing %s in %s...", ETH_ADDR, DOMAIN_NWSTACK);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    ETH_ADDR);
@@ -403,6 +414,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
         return result;
     }
 
+    Debug_LOG_INFO("Initializing %s in %s...", ETH_GATEWAY_ADDR, DOMAIN_NWSTACK);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    ETH_GATEWAY_ADDR);
@@ -430,6 +442,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
         return result;
     }
 
+    Debug_LOG_INFO("Initializing %s in %s...", ETH_SUBNET_MASK, DOMAIN_NWSTACK);
     parameter.parameterType = OS_CONFIG_LIB_PARAMETER_TYPE_STRING;
     initializeName(parameter.parameterName.name, OS_CONFIG_LIB_PARAMETER_NAME_LEN,
                    ETH_SUBNET_MASK);
@@ -456,6 +469,8 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
     {
         return result;
     }
+
+    Debug_LOG_INFO("Domains and parameters initialized.");
 
     return 0;
 }
@@ -595,7 +610,7 @@ createFileBackends(hPartition_t phandle)
         return result;
     }
 
-    Debug_LOG_DEBUG("file backends created.");
+    Debug_LOG_INFO("File backends created.");
 
     return SEOS_SUCCESS;
 }
@@ -610,6 +625,8 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
     OS_ConfigServiceBackend_t stringBackend;
     OS_ConfigServiceBackend_t blobBackend;
     OS_ConfigServiceBackend_FileName_t name;
+
+    Debug_LOG_INFO("Initializing file backends...");
 
     // Initialize the backends in the config library object.
     initializeName(name.buffer, OS_CONFIG_BACKEND_MAX_FILE_NAME_LEN, DOMAIN_FILE);
@@ -657,5 +674,8 @@ seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
         Debug_LOG_ERROR("OS_ConfigServiceLib_Init failed with: %d", result);
         return result;
     }
+
+    Debug_LOG_INFO("File backends initialized.");
+
     return result;
 }
