@@ -157,7 +157,7 @@ static const Partition_cat_t partition_conf =
 #define CLOUD_DOMAIN_NAME       "IoT-Hub"
 #define CLOUD_DOMAIN_VALUE      "{your iot hub name}.azure-devices.net/"CLOUD_DEVICE_ID_VALUE"/?api-version=2018-06-30"
 
-#define SERVER_ADDRESS_NAME     "CloudIP"
+#define SERVER_ADDRESS_NAME     "CloudServiceIP"
 #define SERVER_ADDRESS_VALUE    "{your_iot_hub_ip_address}" // As string in the format "XXX.XXX.XXX.XXX"
 
 #define CLOUD_SAS_NAME          "SharedAccessSignature"
