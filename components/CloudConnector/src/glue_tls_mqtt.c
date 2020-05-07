@@ -151,14 +151,14 @@ glue_tls_init(const char* serverIpAddress,
     ret = init_socket_config(&socketCfg, serverIpAddress, serverPort);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("init_socket_config failed with: %d", ret);
+        Debug_LOG_ERROR("init_socket_config() failed with: %d", ret);
         return ret;
     }
 
     ret = OS_Crypto_init(&hCrypto, &cryptoCfg);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_Crypto_init failed with: %d", ret);
+        Debug_LOG_ERROR("OS_Crypto_init() failed with: %d", ret);
         return ret;
     }
 
@@ -173,7 +173,7 @@ glue_tls_init(const char* serverIpAddress,
     ret = OS_Tls_init(&tlsContext, &tlsCfg);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_Tls_init failed with: %d", ret);
+        Debug_LOG_ERROR("OS_Tls_init() failed with: %d", ret);
         return ret;
     }
 
@@ -190,7 +190,7 @@ glue_tls_handshake(void)
 
     if ((ret = OS_Tls_handshake(tlsContext)) != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("OS_Tls_handshake failed with err=%i", ret);
+        Debug_LOG_WARNING("OS_Tls_handshake() failed with err=%i", ret);
         return ret;
     }
 
@@ -209,7 +209,7 @@ int glue_tls_mqtt_write(Network* n,
 
     if ((ret = OS_Tls_write(tlsContext, buf, len)) != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("OS_Tls_write failed with err=%i", ret);
+        Debug_LOG_WARNING("OS_Tls_write() failed with err=%i", ret);
         return ret;
     }
 
@@ -236,7 +236,7 @@ int glue_tls_mqtt_read(Network* n,
 
     if ((ret = OS_Tls_read(tlsContext, buf, &lengthRead)) != SEOS_SUCCESS)
     {
-        Debug_LOG_WARNING("OS_Tls_read failed with err=%i", ret);
+        Debug_LOG_WARNING("OS_Tls_read() failed with err=%i", ret);
         return ret;
     }
 

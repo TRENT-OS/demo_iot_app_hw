@@ -29,7 +29,7 @@ init_system_config(system_config_t* systemConfig)
 
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", ret);
         return ret;
     }
 

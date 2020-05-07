@@ -99,7 +99,7 @@ int run()
                                         &serverLibWithFSBackend);
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("OS_ConfigService_createHandle failed with :%d", ret);
+        Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", ret);
         return ret;
     }
 
@@ -111,7 +111,7 @@ int run()
                                          sizeof(DEV_ADDR));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CFG_ETH_ADDR, ret);
         return ret;
     }
@@ -124,7 +124,7 @@ int run()
                                          sizeof(GATEWAY_ADDR));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CFG_ETH_GATEWAY_ADDR, ret);
         return ret;
     }
@@ -137,7 +137,7 @@ int run()
                                          sizeof(SUBNET_MASK));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CFG_ETH_SUBNET_MASK, ret);
         return ret;
     }

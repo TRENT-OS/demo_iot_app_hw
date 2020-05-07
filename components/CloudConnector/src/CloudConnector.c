@@ -118,7 +118,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
 
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CLOUD_DOMAIN_NAME, ret);
         return ret;
     }
@@ -131,7 +131,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
                                          sizeof(cloudSAS));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CLOUD_SAS_NAME, ret);
         return ret;
     }
@@ -144,7 +144,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
                                          sizeof(cloudDeviceName));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CLOUD_DEVICE_ID_NAME, ret);
         return ret;
     }
@@ -373,7 +373,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
                                                     sizeof(serverIP));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         SERVER_ADDRESS_NAME, ret);
         return ret;
     }
@@ -386,7 +386,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
                                          sizeof(serverPort));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         SERVER_PORT_NAME, ret);
         return ret;
     }
@@ -398,7 +398,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
                                          sizeof(serverCert));
     if (ret != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("helper_func_getConfigParameter for param %s failed with :%d",
+        Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         SERVER_CA_CERT_NAME, ret);
         return ret;
     }
@@ -524,7 +524,7 @@ int CC_FSM_ctor()
     seos_err_t err = init_config_handle(&serverLibWithFSBackend);
     if (err != SEOS_SUCCESS)
     {
-        Debug_LOG_ERROR("init_config_handle failed with: %d", err);
+        Debug_LOG_ERROR("init_config_handle() failed with: %d", err);
         return -1;
     }
 
@@ -611,7 +611,7 @@ int run()
     ret = handle_CC_FSM_INIT(self);
     if (ret != 0)
     {
-        Debug_LOG_ERROR("handle_CC_FSM_INIT failed with: %d", ret);
+        Debug_LOG_ERROR("handle_CC_FSM_INIT() failed with: %d", ret);
         return -1;
     }
 
