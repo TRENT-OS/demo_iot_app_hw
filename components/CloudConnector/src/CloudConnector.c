@@ -362,8 +362,6 @@ static int handle_MQTT_PUBLISH(CC_FSM_t* self)
 //------------------------------------------------------------------------------
 static int handle_CC_FSM_INIT(CC_FSM_t* self)
 {
-    Debug_LOG_DEBUG("Waiting on NwStack init ..." );
-    OS_NetworkAPP_RT(NULL);
 
     seos_err_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                                     DOMAIN_CLOUDCONNECTOR,
@@ -410,6 +408,9 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
         Debug_LOG_ERROR("set_mqtt_options() failed with code %d", ret);
         return ret;
     }
+
+    Debug_LOG_DEBUG("Waiting on NwStack init ..." );
+    OS_NetworkAPP_RT(NULL);
 
     Debug_LOG_INFO("Setting TLS to IP:%s Port:%u ...", serverIP, serverPort);
     ret = glue_tls_init(serverIP, serverCert, sizeof(serverCert), serverPort);
