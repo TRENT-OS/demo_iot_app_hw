@@ -20,7 +20,6 @@ static uint8_t blobIndex = 0;
 static uint8_t stringIndex = 0;
 
 hPartition_t phandle;
-pm_disk_data_t pm_disk_data;
 pm_partition_data_t pm_partition_data;
 
 
@@ -403,15 +402,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 seos_err_t
 create_system_config_backend(void)
 {
-
-    seos_err_t pm_result = partition_manager_get_info_disk(&pm_disk_data);
-    if (pm_result != SEOS_SUCCESS)
-    {
-        Debug_LOG_ERROR("Fail to get disk info: %d", pm_result);
-        return SEOS_ERROR_GENERIC;
-    }
-
-    pm_result = partition_manager_get_info_partition(PARTITION_ID,
+    seos_err_t pm_result = partition_manager_get_info_partition(PARTITION_ID,
                                                      &pm_partition_data);
     if (pm_result != SEOS_SUCCESS)
     {
@@ -494,7 +485,6 @@ seos_err_t
 createFileBackends(hPartition_t phandle)
 {
     OS_ConfigServiceBackend_FileName_t name;
-
 
     /* Create the file backends. The following defined amounts are all specifically
      * tailored to fit the requirements of the demo application parameters and need
