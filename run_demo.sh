@@ -10,7 +10,7 @@
 
 #-------------------------------------------------------------------------------
 USAGE_STRING="run_demo.sh <path-to-project-build> <path-to-proxy>\n
-This script runs the IoT Demo app\n"
+This script starts the Mosquitto Broker and runs the IoT Demo app\n"
 OPT_INTERACTIVE="-it"
 
 
@@ -50,6 +50,10 @@ QEMU_PARAMS=(
     -serial mon:stdio
     -kernel ${IMAGE_PATH}
 )
+
+#run the Mosquitto MQTT broker
+mosquitto -c /etc/mosquitto/mosquitto.conf > mosquitto_log.txt &
+sleep 1
 
 # run QEMU
 qemu-system-arm  ${QEMU_PARAMS[@]} $@ 2> qemu_stderr.txt &
