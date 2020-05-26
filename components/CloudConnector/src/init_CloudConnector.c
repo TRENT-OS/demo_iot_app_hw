@@ -13,10 +13,10 @@
 /* Instance variables --------------------------------------------------------*/
 OS_ConfigServiceHandle_t serverLibWithMemBackend;
 
-seos_err_t
+OS_Error_t
 init_config_handle(OS_ConfigServiceHandle_t* configHandle)
 {
-    seos_err_t err = OS_ConfigService_createHandle(
+    OS_Error_t err = OS_ConfigService_createHandle(
                          OS_CONFIG_HANDLE_KIND_RPC,
                          0,
                          configHandle);

@@ -14,7 +14,7 @@ void post_init(void)
 {
     Debug_LOG_INFO("Starting ConfigServer...");
 
-    seos_err_t err = create_system_config_backend();
+    OS_Error_t err = create_system_config_backend();
     if (err != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("create_system_config_backend() failed with:%d", err);

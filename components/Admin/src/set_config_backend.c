@@ -14,14 +14,14 @@
 #define BLOB_FILE "BLOB.BIN"
 
 /* ---------------------------------------------------------------------------*/
-seos_err_t
+OS_Error_t
 init_system_config(system_config_t* systemConfig)
 {
 
     OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
     // Create a handle to the remote library instance.
-    seos_err_t ret = OS_ConfigService_createHandle(
+    OS_Error_t ret = OS_ConfigService_createHandle(
                          OS_CONFIG_HANDLE_KIND_RPC,
                          0,
                          &serverLibWithFSBackend);

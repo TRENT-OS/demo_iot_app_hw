@@ -9,13 +9,13 @@
 #include "OS_ConfigService.h"
 
 
-seos_err_t
+OS_Error_t
 create_system_config_backend();
 
-seos_err_t createFileBackends(hPartition_t phandle);
+OS_Error_t createFileBackends(hPartition_t phandle);
 
-seos_err_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
+OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
                                   hPartition_t phandle);
 
-seos_err_t
+OS_Error_t
 initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib);

@@ -5,7 +5,7 @@
 */
 
 procedure CloudConnector_inf {
-    include "SeosError.h";
+    include "OS_Error.h";
 
-    seos_err_t      write    ();
+    OS_Error_t      write    ();
 };

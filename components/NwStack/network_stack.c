@@ -9,7 +9,7 @@
 
 #include "LibDebug/Debug.h"
 
-#include "SeosError.h"
+#include "OS_Error.h"
 #include "seos_api_network_stack.h"
 #include "OS_ConfigService.h"
 #include "helper_func.h"
@@ -89,7 +89,7 @@ int run()
         }
     };
 
-    seos_err_t ret;
+    OS_Error_t ret;
 
     // Create a handle to the remote library instance.
     OS_ConfigServiceHandle_t serverLibWithFSBackend;

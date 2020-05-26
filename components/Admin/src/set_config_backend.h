@@ -122,5 +122,5 @@ typedef struct
 }
 system_config_t;
 
-seos_err_t
+OS_Error_t
 init_system_config(system_config_t* systemConfig);

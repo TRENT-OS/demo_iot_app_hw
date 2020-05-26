@@ -17,7 +17,7 @@ void initializeName(char* buf, size_t bufSize, char const* name)
 
 //------------------------------------------------------------------------------
 static
-seos_err_t
+OS_Error_t
 compareDomainName(OS_ConfigServiceLibTypes_DomainName_t const* a,
                   OS_ConfigServiceLibTypes_DomainName_t const* b)
 {
@@ -34,7 +34,7 @@ compareDomainName(OS_ConfigServiceLibTypes_DomainName_t const* a,
 }
 
 //------------------------------------------------------------------------------
-seos_err_t
+OS_Error_t
 initializeDomainName(
     OS_ConfigServiceLibTypes_DomainName_t* domainName,
     char const* name)
@@ -44,7 +44,7 @@ initializeDomainName(
     return SEOS_SUCCESS;
 }
 
-seos_err_t
+OS_Error_t
 initializeParameterName(
     OS_ConfigServiceLibTypes_ParameterName_t* parameterName,
     char const* name)
@@ -56,14 +56,14 @@ initializeParameterName(
 
 //------------------------------------------------------------------------------
 static
-seos_err_t
+OS_Error_t
 find_domain(
     OS_ConfigServiceHandle_t handle,
     OS_ConfigServiceLibTypes_DomainEnumerator_t* enumerator,
     OS_ConfigServiceLibTypes_DomainName_t const* domainName,
     OS_ConfigServiceLibTypes_Domain_t* domain)
 {
-    seos_err_t ret;
+    OS_Error_t ret;
 
     OS_ConfigService_domainEnumeratorInit(handle, enumerator);
     for (;;)
@@ -99,14 +99,14 @@ find_domain(
 
 //------------------------------------------------------------------------------
 static
-seos_err_t
+OS_Error_t
 get_parameter_enumerator(
     OS_ConfigServiceHandle_t handle,
     const char* DomainName,
     const char* ParameterName,
     OS_ConfigServiceLibTypes_ParameterEnumerator_t* parameterEnumerator)
 {
-    seos_err_t ret;
+    OS_Error_t ret;
 
     OS_ConfigServiceLibTypes_DomainEnumerator_t domainEnumerator = {0};
     OS_ConfigServiceLibTypes_DomainName_t domainName;
@@ -152,7 +152,7 @@ get_parameter_enumerator(
 
 //------------------------------------------------------------------------------
 static
-seos_err_t
+OS_Error_t
 get_parameter_element(
     OS_ConfigServiceHandle_t handle,
     const char* DomainName,
@@ -161,7 +161,7 @@ get_parameter_element(
     OS_ConfigServiceLibTypes_ParameterName_t* parameterName,
     OS_ConfigServiceLibTypes_Parameter_t* parameter)
 {
-    seos_err_t ret;
+    OS_Error_t ret;
     OS_ConfigServiceLibTypes_Domain_t domain;
     OS_ConfigServiceLibTypes_DomainEnumerator_t domainEnumerator = {0};
 
@@ -190,14 +190,14 @@ get_parameter_element(
 }
 
 //------------------------------------------------------------------------------
-seos_err_t
+OS_Error_t
 helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
                                const char* DomainName,
                                const char* ParameterName,
                                void* parameterBuffer,
                                size_t parameterLength)
 {
-    seos_err_t ret;
+    OS_Error_t ret;
     size_t bytesCopied;
     OS_ConfigServiceLibTypes_DomainName_t domainName;
     OS_ConfigServiceLibTypes_ParameterName_t parameterName;
@@ -236,13 +236,13 @@ helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
 }
 
 //------------------------------------------------------------------------------
-seos_err_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
+OS_Error_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
                                           const char* DomainName,
                                           const char* ParameterName,
                                           const void* parameterValue,
                                           size_t parameterLength)
 {
-    seos_err_t ret;
+    OS_Error_t ret;
     OS_ConfigServiceHandle_t configHandle = *handle;
     OS_ConfigServiceLibTypes_ParameterEnumerator_t parameterEnumerator = {0};
     OS_ConfigServiceLibTypes_DomainName_t domainName;

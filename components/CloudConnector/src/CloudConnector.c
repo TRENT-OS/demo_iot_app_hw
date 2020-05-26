@@ -78,9 +78,9 @@ uint64_t get_mqtt_timestamp_ms()
     return api_time_server_get_timestamp();
 }
 
-seos_err_t init_config_handle(OS_ConfigServiceHandle_t* configHandle);
+OS_Error_t init_config_handle(OS_ConfigServiceHandle_t* configHandle);
 
-extern seos_err_t OS_NetworkAPP_RT(
+extern OS_Error_t OS_NetworkAPP_RT(
     OS_Network_Context_t ctx);
 
 //==============================================================================
@@ -89,11 +89,11 @@ extern seos_err_t OS_NetworkAPP_RT(
 
 //------------------------------------------------------------------------------
 static
-seos_err_t
+OS_Error_t
 do_tls_handshake(void)
 {
 
-    seos_err_t ret;
+    OS_Error_t ret;
 
     if ((ret = glue_tls_handshake() != SEOS_SUCCESS))
     {
@@ -106,11 +106,11 @@ do_tls_handshake(void)
 
 //------------------------------------------------------------------------------
 static
-seos_err_t
+OS_Error_t
 set_mqtt_options(MQTTPacket_connectData* options)
 {
 
-    seos_err_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    OS_Error_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                                     DOMAIN_CLOUDCONNECTOR,
                                                     CLOUD_DOMAIN_NAME,
                                                     cloudUsername,
@@ -363,7 +363,7 @@ static int handle_MQTT_PUBLISH(CC_FSM_t* self)
 static int handle_CC_FSM_INIT(CC_FSM_t* self)
 {
 
-    seos_err_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    OS_Error_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                                     DOMAIN_CLOUDCONNECTOR,
                                                     SERVER_ADDRESS_NAME,
                                                     &serverIP,
@@ -521,7 +521,7 @@ int CC_FSM_ctor()
     // Initialize the memory in self
     memset(self, 0, sizeof(*self));
 
-    seos_err_t err = init_config_handle(&serverLibWithFSBackend);
+    OS_Error_t err = init_config_handle(&serverLibWithFSBackend);
     if (err != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("init_config_handle() failed with: %d", err);
@@ -567,12 +567,12 @@ void CC_FSM_dtor()
 {
 }
 
-seos_err_t
+OS_Error_t
 cloudConnector_interface_write()
 {
     CC_FSM_t* self = &cc_fsm;
 
-    seos_err_t ret = sem_wait();
+    OS_Error_t ret = sem_wait();
     if (ret)
     {
         Debug_LOG_ERROR("Failed to wait on semaphore, error %d", ret);

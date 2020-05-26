@@ -23,7 +23,7 @@ static ChanMuxNvmDriver chanMuxNvmDriver;
 
 void api_pm_component__init(void)
 {
-    seos_err_t pm_stat;
+    OS_Error_t pm_stat;
 
     if (!ChanMuxNvmDriver_ctor(
             &chanMuxNvmDriver,

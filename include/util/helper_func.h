@@ -10,7 +10,7 @@
 
 
 //------------------------------------------------------------------------------
-seos_err_t
+OS_Error_t
 helper_func_getConfigParameter(
     OS_ConfigServiceHandle_t* handle,
     const char* DomainName,
@@ -18,7 +18,7 @@ helper_func_getConfigParameter(
     void*       parameterBuffer,
     size_t      parameterLength);
 
-seos_err_t
+OS_Error_t
 helper_func_setConfigParameter(
     OS_ConfigServiceHandle_t* handle,
     const char* DomainName,

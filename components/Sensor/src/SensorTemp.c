@@ -25,10 +25,10 @@ OS_ConfigServiceHandle_t serverLibWithFSBackend;
 static unsigned char payload[128]; // arbitrary max expected length
 static char topic[128];
 
-static seos_err_t
+static OS_Error_t
 initializeSensor(void)
 {
-    seos_err_t err = OS_ConfigService_createHandle(
+    OS_Error_t err = OS_ConfigService_createHandle(
                          OS_CONFIG_HANDLE_KIND_RPC,
                          0,
                          &serverLibWithFSBackend);
@@ -41,18 +41,18 @@ initializeSensor(void)
     return SEOS_SUCCESS;
 }
 
-static seos_err_t
+static OS_Error_t
 CloudConnector_write(unsigned char* msg, void* dataPort, size_t len)
 {
     memcpy(dataPort, msg, len);
-    seos_err_t err = cloudConnector_interface_write();
+    OS_Error_t err = cloudConnector_interface_write();
     return err;
 }
 
 
 int run()
 {
-    seos_err_t ret = initializeSensor();
+    OS_Error_t ret = initializeSensor();
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("initializeSensor() failed with:%d", ret);

@@ -60,7 +60,7 @@ static OS_Crypto_Config_t cryptoCfg =
 };
 
 // Private static functions ----------------------------------------------------
-static seos_err_t
+static OS_Error_t
 init_socket_config(OS_Network_Socket_t* socketConfig,
                    const char* serverIpAddress,
                    uint32_t serverPort)
@@ -85,7 +85,7 @@ sendFunc(
     const unsigned char* buf,
     size_t               len)
 {
-    seos_err_t err;
+    OS_Error_t err;
     OS_NetworkSocket_Handle_t* sockHandle = (OS_NetworkSocket_Handle_t*) ctx;
     size_t n;
 
@@ -105,7 +105,7 @@ recvFunc(
     unsigned char* buf,
     size_t         len)
 {
-    seos_err_t err;
+    OS_Error_t err;
     OS_NetworkSocket_Handle_t* sockHandle = (OS_NetworkSocket_Handle_t*) ctx;
     size_t n;
 
@@ -131,14 +131,14 @@ entropy(
 }
 
 //------------------------------------------------------------------------------
-seos_err_t
+OS_Error_t
 glue_tls_init(const char* serverIpAddress,
               const char* caCert,
               size_t caCertSize,
               uint32_t serverPort)
 {
 
-    seos_err_t ret;
+    OS_Error_t ret;
 
     OS_Network_Socket_t socketCfg;
 
@@ -183,10 +183,10 @@ glue_tls_init(const char* serverIpAddress,
 }
 
 //------------------------------------------------------------------------------
-seos_err_t
+OS_Error_t
 glue_tls_handshake(void)
 {
-    seos_err_t ret = OS_Tls_handshake(tlsContext);
+    OS_Error_t ret = OS_Tls_handshake(tlsContext);
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_handshake() failed with: %d", ret);
@@ -204,7 +204,7 @@ int glue_tls_mqtt_write(Network* n,
 {
     Debug_ASSERT(buf    != NULL);
 
-    seos_err_t ret = OS_Tls_write(tlsContext, buf, len);
+    OS_Error_t ret = OS_Tls_write(tlsContext, buf, len);
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
@@ -231,7 +231,7 @@ int glue_tls_mqtt_read(Network* n,
 
     memset ( buf, 0, len );
 
-    seos_err_t ret = OS_Tls_read(tlsContext, buf, &lengthRead);
+    OS_Error_t ret = OS_Tls_read(tlsContext, buf, &lengthRead);
     if (ret != SEOS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
