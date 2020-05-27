@@ -9,18 +9,18 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/include/seos_mqtt")
 
 seos_use_libs(
-    SEOS_LIBS
-    SEOS_CHANMUX
-    SEOS_NETWORK_DRIVER_TAP_PROXY
-    SEOS_CRYPTO
-    SEOS_NW_STACK
-    SEOS_PARTITION_MANAGER
-    SEOS_FILESYSTEM_CORE
-    SEOS_FILESYSTEM_FAT
-    SEOS_FILESYSTEM_SPIFFS
-    SEOS_CONFIGURATION
-    SEOS_TLS
-    SEOS_LOGGER
+    OS_LIBS
+    OS_CHANMUX
+    OS_NETWORK_DRIVER_TAP_PROXY
+    OS_CRYPTO
+    OS_NW_STACK
+    OS_PARTITION_MANAGER
+    OS_FILESYSTEM_CORE
+    OS_FILESYSTEM_FAT
+    OS_FILESYSTEM_SPIFFS
+    OS_CONFIGURATION
+    OS_TLS
+    OS_LOGGER
 )
 
 
@@ -58,7 +58,7 @@ DeclareCAmkESComponent(PartitionManager
     C_FLAGS
         -Wall
         -Werror
-        -DSEOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
+        -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
         system_config
         seos_libs
@@ -103,9 +103,9 @@ DeclareCAmkESComponent(ConfigServer
         # filesystem
         -DOS_CONFIG_SERVICE_BACKEND_FILESYSTEM
         #-DCONFIG_SERVER_BACKEND_MEMORY
-        -DSEOS_FS_BUILD_AS_LIB_BASIC_HANDLE
+        -DOS_FS_BUILD_AS_LIB_BASIC_HANDLE
         # partition manager
-        -DSEOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
+        -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
         # config server
         -DOS_CONFIG_SERVICE_CAMKES_SERVER     # indicates a camkes configuration server is being built
     LIBS
@@ -130,9 +130,9 @@ DeclareCAmkESComponent(LogServer
         -Wall
         -Werror
         # filesystem
-        -DSEOS_FS_BUILD_AS_LIB_BASIC_HANDLE
+        -DOS_FS_BUILD_AS_LIB_BASIC_HANDLE
         # partition manager
-        -DSEOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
+        -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
         system_config
         seos_core_api
@@ -160,7 +160,7 @@ DeclareCAmkESComponent(CloudConnector
         components/CloudConnector/src/glue_tls_mqtt.c
         components/common/common.c
         include/util/helper_func.c
-        ${SEOS_LIBS_DIR}/seos_nwstack/network-client-lib/seos_nw_api_interface.c
+        ${OS_LIBS_DIR}/seos_nwstack/network-client-lib/seos_nw_api_interface.c
     C_FLAGS
         -Wall -Werror
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT
@@ -195,7 +195,7 @@ DeclareCAmkESComponent(NwStack
         include/util/helper_func.c
     C_FLAGS
         -Wall -Werror
-        -DSEOS_NWSTACK_AS_CLIENT
+        -DOS_NWSTACK_AS_CLIENT
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT
         -DCFG_ETH_ADDR=ETH_ADDR
         -DCFG_ETH_GATEWAY_ADDR=ETH_GATEWAY_ADDR
