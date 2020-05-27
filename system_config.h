@@ -142,7 +142,7 @@ static const Partition_cat_t partition_conf =
 #define DOMAIN_SENSOR           "Domain-Sensor"
 
 #define MQTT_PAYLOAD_NAME       "MQTT_Payload" // _NAME defines are stored together with the values in the config file
-#define MQTT_PAYLOAD_VALUE      "{your_mqtt_msg_payload}"
+#define MQTT_PAYLOAD_VALUE      "{your_MQTT_Message_Payload}"
 
 #define MQTT_TOPIC_NAME         "MQTT_Topic"
 #define MQTT_TOPIC_VALUE        "devices/"CLOUD_DEVICE_ID_VALUE"/messages/events/"
@@ -155,26 +155,69 @@ static const Partition_cat_t partition_conf =
 #define CLOUD_DEVICE_ID_VALUE   "{your_iot_device_id}"
 
 #define CLOUD_DOMAIN_NAME       "IoT-Hub"
-#define CLOUD_DOMAIN_VALUE      "{your iot hub name}.azure-devices.net/"CLOUD_DEVICE_ID_VALUE"/?api-version=2018-06-30"
+/* The Azure Cloud uses a combination of the IoT hub name and the device id to
+ * assemble the MQTT username. This will follow the pattern of:
+ * {iothubhostname}/{device_id}/?api-version=2018-06-30,
+ * where {iothubhostname} is the full CName of the IoT hub.
+*/
+#define CLOUD_DOMAIN_VALUE      "{your_MQTT_Username}"
 
 #define SERVER_ADDRESS_NAME     "CloudServiceIP"
-#define SERVER_ADDRESS_VALUE    "{your_iot_hub_ip_address}" // As string in the format "XXX.XXX.XXX.XXX"
+#define SERVER_ADDRESS_VALUE    "172.17.0.2"
 
 #define CLOUD_SAS_NAME          "SharedAccessSignature"
-#define CLOUD_SAS_VALUE         "{your_iot_hub_shared_access_signature}"  // SharedAccessSignature sr=...
+/* The Azure Cloud uses a Shared access signature as the MQTT password. Please
+ * refer to
+ * https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-mqtt-support#using-the-mqtt-protocol-directly-as-a-device
+ * to find out how to generate this access signature.
+*/
+#define CLOUD_SAS_VALUE         "{your_MQTT_Password}"
 
 #define SERVER_PORT_NAME        "ServerPort"
 #define SERVER_PORT_VALUE       8883
 
 #define SERVER_CA_CERT_NAME     "ServerCaCert"
 
-/* Select which server certificate to validate against. Find out which one to
+/* Select which server certificate to validate against. The initial define is
+ * set to validate the Mosquitto MQTT broker running inside the test container.
+ * To connect to an Azure IoT Hub, you will need to adapt this setting to
+ * either Microsoft IT TLS CA 2 or Microsoft IT TLS CA 4, depending on which
+ * certificate is used by your IoT Hub instance. Find out which one to
  * use with https://www.ssllabs.com/ssltest/ and enter your Hub address. The issuer
- * will probably be either Microsoft IT TLS CA 2 or Microsoft IT TLS CA 4, which
- * are both already added here in PEM format. Set the define either to 2 or 4 or
- * add an additional certificate if necessary.
+ * will probably be the already mentioned Microsoft IT TLS CA 2 or Microsoft IT
+ * TLS CA 4, which are both already added here in PEM format and just need to be
+ * selected.
 */
-#define MICROSOFT_IT_TLS_CA_2
+#define MOSQUITTO_SERVER
+
+#ifdef MOSQUITTO_SERVER
+/* Self signed dummy certificate to validate the Mosquitto MQTT broker running
+ * inside the test container that the demo will connect to in its initial configuration.
+*/
+#define SERVER_CA_CERT_PEM_VALUE                                           \
+    "-----BEGIN CERTIFICATE-----\r\n"                                      \
+    "MIIDqzCCApOgAwIBAgIUZbRjXCcXNlI3UKp4K+sN/xXGkqgwDQYJKoZIhvcNAQEL\r\n" \
+    "BQAwZTELMAkGA1UEBhMCREUxEDAOBgNVBAgMB0JhdmFyaWExDzANBgNVBAcMBk11\r\n" \
+    "bmljaDEcMBoGA1UECgwTSGVuc29sZHQgQ3liZXIgR21iSDEVMBMGA1UEAwwMRGVt\r\n" \
+    "byBJb1QgQXBwMB4XDTIwMDUxOTEyNDQ1NloXDTIzMDUxOTEyNDQ1NlowZTELMAkG\r\n" \
+    "A1UEBhMCREUxEDAOBgNVBAgMB0JhdmFyaWExDzANBgNVBAcMBk11bmljaDEcMBoG\r\n" \
+    "A1UECgwTSGVuc29sZHQgQ3liZXIgR21iSDEVMBMGA1UEAwwMRGVtbyBJb1QgQXBw\r\n" \
+    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2uDh4xwTE3y3O0fAz/Dj\r\n" \
+    "Pl2gD1YSmn/9JMcOwrcfTfT43eTTyhbM5FD8JxN+13LdmgxgyT7Wf5RO8iLYzQ1B\r\n" \
+    "nOan2zD8dlfPpmsbZZBCWjLzudVM6NbN5Uc9XMZLthbsHP8NlOHK4z+Usu8p28g1\r\n" \
+    "1tVAwgpd6veK6fakHk//uXkY4zt4tWyZNtViRQX74FBYAafmWmvBcCMJRCcmSUgV\r\n" \
+    "Tu/GpH5z4cyDKs2LfwokS0ZLmbI/4cVlMf1cOAibJ8nBd1J5rdkg0KMtnXSWv65t\r\n" \
+    "QuFsNKWVS7J9bs/TiJ3QGFc76G5nuqWg0ly7quEseiOjThrgO2NkmIg79LRBGDFQ\r\n" \
+    "CwIDAQABo1MwUTAdBgNVHQ4EFgQUcj5P+PkGODUdHJBa1G6KBiMZAZAwHwYDVR0j\r\n" \
+    "BBgwFoAUcj5P+PkGODUdHJBa1G6KBiMZAZAwDwYDVR0TAQH/BAUwAwEB/zANBgkq\r\n" \
+    "hkiG9w0BAQsFAAOCAQEAFAz3XV9J2lltZ4cYAI9ShntkhCDicokc34CLXqObOGxW\r\n" \
+    "0djHX/sLVh1RILP0WZ40rLIQUuz3Kff8SV68SgaOnqfBMAVQByZnABUnfzsWXXRG\r\n" \
+    "uUbLM7WbKicDvket4U/alBXN3DGg6Q0ebSrg9jEZwZzIuXbaFaM0yrxA+NjmlElN\r\n" \
+    "ZCjF5aAojYHDKnWQMuKbg56qcIKi8Fdd/8lLN0+mF2uxuLGs0roEgW9HcqjoJdlj\r\n" \
+    "6qzJiSrD5iSNRCVbkUgrBlNvPt4lv0J/VMwinBOXlftVKUcvrHl6rBUrdTPgPUDU\r\n" \
+    "tc+ksXC4+VI2o65I11vNFuEVI8SqyOq6tTDhHZQpkw==\r\n" \
+    "-----END CERTIFICATE-----\r\n"
+#endif
 
 #ifdef MICROSOFT_IT_TLS_CA_2
 //Microsoft IT TLS CA 2
@@ -252,14 +295,15 @@ static const Partition_cat_t partition_conf =
     "-----END CERTIFICATE-----\r\n"
 #endif
 
+
 //NwStack
 #define DOMAIN_NWSTACK          "Domain-NwStack"
 
 #define ETH_ADDR                "ETH_ADDR"
-#define ETH_ADDR_VALUE          "XXX.XXX.XXX.XXX"
+#define ETH_ADDR_VALUE          "10.0.0.11"
 
 #define ETH_GATEWAY_ADDR        "ETH_GATEWAY_ADDR"
-#define ETH_GATEWAY_ADDR_VALUE  "XXX.XXX.XXX.XXX"
+#define ETH_GATEWAY_ADDR_VALUE  "10.0.0.1"
 
 #define ETH_SUBNET_MASK         "ETH_SUBNET_MASK"
-#define ETH_SUBNET_MASK_VALUE   "XXX.XXX.XXX.XXX"
+#define ETH_SUBNET_MASK_VALUE   "255.255.255.0"
