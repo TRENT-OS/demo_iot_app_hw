@@ -32,13 +32,13 @@ initializeSensor(void)
                          OS_CONFIG_HANDLE_KIND_RPC,
                          0,
                          &serverLibWithFSBackend);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", err);
         return err;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 static OS_Error_t
@@ -53,7 +53,7 @@ CloudConnector_write(unsigned char* msg, void* dataPort, size_t len)
 int run()
 {
     OS_Error_t ret = initializeSensor();
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("initializeSensor() failed with:%d", ret);
         return ret;
@@ -69,7 +69,7 @@ int run()
                                          MQTT_PAYLOAD_NAME,
                                          &payload,
                                          sizeof(payload));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         MQTT_PAYLOAD_NAME, ret);
@@ -83,7 +83,7 @@ int run()
                                          MQTT_TOPIC_NAME,
                                          &topic,
                                          sizeof(topic));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         MQTT_TOPIC_NAME, ret);

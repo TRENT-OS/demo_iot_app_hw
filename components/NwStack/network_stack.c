@@ -97,7 +97,7 @@ int run()
     ret = OS_ConfigService_createHandle(OS_CONFIG_HANDLE_KIND_RPC,
                                         0,
                                         &serverLibWithFSBackend);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", ret);
         return ret;
@@ -109,7 +109,7 @@ int run()
                                          CFG_ETH_ADDR,
                                          DEV_ADDR,
                                          sizeof(DEV_ADDR));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CFG_ETH_ADDR, ret);
@@ -122,7 +122,7 @@ int run()
                                          CFG_ETH_GATEWAY_ADDR,
                                          GATEWAY_ADDR,
                                          sizeof(GATEWAY_ADDR));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CFG_ETH_GATEWAY_ADDR, ret);
@@ -135,7 +135,7 @@ int run()
                                          CFG_ETH_SUBNET_MASK,
                                          SUBNET_MASK,
                                          sizeof(SUBNET_MASK));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CFG_ETH_SUBNET_MASK, ret);
@@ -145,7 +145,7 @@ int run()
 
 
     ret = seos_network_stack_run(&camkes_config, &param_config);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_FATAL("[NwStack '%s'] seos_network_stack_run() failed, error %d",
                         get_instance_name(), ret);
@@ -154,7 +154,7 @@ int run()
 
 
     // actually, seos_network_stack_run() is not supposed to return with
-    // SEOS_SUCCESS. We have to assume this is a graceful shutdown for some
+    // OS_SUCCESS. We have to assume this is a graceful shutdown for some
     // reason
     Debug_LOG_WARNING("[NwStack '%s'] graceful termination",
                       get_instance_name());

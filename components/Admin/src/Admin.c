@@ -77,7 +77,7 @@ static system_config_t systemConfig =
 int run(void)
 {
     OS_Error_t err = init_system_config(&systemConfig);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("create_system_config_backend() failed with:%d", err);
         return -1;

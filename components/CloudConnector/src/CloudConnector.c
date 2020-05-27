@@ -95,7 +95,7 @@ do_tls_handshake(void)
 
     OS_Error_t ret;
 
-    if ((ret = glue_tls_handshake() != SEOS_SUCCESS))
+    if ((ret = glue_tls_handshake() != OS_SUCCESS))
     {
         Debug_LOG_WARNING("TLS handshake failed with Errno=%i\n", ret);
         return ret;
@@ -115,7 +115,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
                                                     CLOUD_DOMAIN_NAME,
                                                     cloudUsername,
                                                     sizeof(cloudUsername));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CLOUD_DOMAIN_NAME, ret);
@@ -128,7 +128,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
                                          CLOUD_SAS_NAME,
                                          cloudSAS,
                                          sizeof(cloudSAS));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CLOUD_SAS_NAME, ret);
@@ -141,7 +141,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
                                          CLOUD_DEVICE_ID_NAME,
                                          cloudDeviceName,
                                          sizeof(cloudDeviceName));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         CLOUD_DEVICE_ID_NAME, ret);
@@ -368,7 +368,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
                                                     SERVER_ADDRESS_NAME,
                                                     &serverIP,
                                                     sizeof(serverIP));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         SERVER_ADDRESS_NAME, ret);
@@ -381,7 +381,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
                                          SERVER_PORT_NAME,
                                          &serverPort,
                                          sizeof(serverPort));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         SERVER_PORT_NAME, ret);
@@ -393,7 +393,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
                                          SERVER_CA_CERT_NAME,
                                          &serverCert,
                                          sizeof(serverCert));
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("helper_func_getConfigParameter() for param %s failed with :%d",
                         SERVER_CA_CERT_NAME, ret);
@@ -403,7 +403,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
     Debug_LOG_DEBUG("Setting MQTT options ..." );
     MQTTPacket_connectData options = MQTTPacket_connectData_initializer;
     ret = set_mqtt_options(&options);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("set_mqtt_options() failed with code %d", ret);
         return ret;
@@ -414,7 +414,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
 
     Debug_LOG_INFO("Setting TLS to IP:%s Port:%u ...", serverIP, serverPort);
     ret = glue_tls_init(serverIP, serverCert, sizeof(serverCert), serverPort);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("glue_tls_init() failed with code %d", ret);
         return ret;
@@ -422,7 +422,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
 
     Debug_LOG_INFO("Establishing TLS session... ");
     ret = do_tls_handshake();
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("do_tls_handshake() failed with code %d", ret);
         return ret;
@@ -522,7 +522,7 @@ int CC_FSM_ctor()
     memset(self, 0, sizeof(*self));
 
     OS_Error_t err = init_config_handle(&serverLibWithFSBackend);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("init_config_handle() failed with: %d", err);
         return -1;
@@ -579,15 +579,15 @@ cloudConnector_interface_write()
     }
 
     ret = handle_CC_FSM_NEW_MESSAGE(self);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("handle_CC_FSM_NEW_MESSAGE() failed with %d", ret);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
     Debug_LOG_INFO("Waiting for new message from client...");
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------

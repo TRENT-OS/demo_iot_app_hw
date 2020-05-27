@@ -76,20 +76,20 @@ filesystem_init(void)
     pm_disk_data_t pm_disk_data;
     pm_partition_data_t pm_partition_data;
 
-    if (partition_manager_get_info_disk(&pm_disk_data) != SEOS_SUCCESS)
+    if (partition_manager_get_info_disk(&pm_disk_data) != OS_SUCCESS)
     {
         printf("Fail to get disk info!\n");
         return false;
     }
 
     if (partition_manager_get_info_partition(PARTITION_ID,
-                                             &pm_partition_data) != SEOS_SUCCESS)
+                                             &pm_partition_data) != OS_SUCCESS)
     {
         printf("Fail to get partition info: %d!\n", pm_partition_data.partition_id);
         return false;
     }
 
-    if (OS_Filesystem_init(pm_partition_data.partition_id, 0) != SEOS_SUCCESS)
+    if (OS_Filesystem_init(pm_partition_data.partition_id, 0) != OS_SUCCESS)
     {
         printf("Fail to init partition: %d!\n", pm_partition_data.partition_id);
         return false;
@@ -111,14 +111,14 @@ filesystem_init(void)
             0,  // default value: count file/dir entries: FAT12/FAT16 = 16; FAT32 = 0
             0,  // default value: count header sectors: 512
             FS_PARTITION_OVERWRITE_CREATE)
-        != SEOS_SUCCESS)
+        != OS_SUCCESS)
     {
         printf("Fail to create filesystem on partition: %d!\n",
                pm_partition_data.partition_id);
         return false;
     }
 
-    if (OS_Filesystem_close(phandle) != SEOS_SUCCESS)
+    if (OS_Filesystem_close(phandle) != OS_SUCCESS)
     {
         printf("Fail to close partition: %d!\n", pm_partition_data.partition_id);
         return false;

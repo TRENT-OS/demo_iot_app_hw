@@ -20,11 +20,11 @@ init_config_handle(OS_ConfigServiceHandle_t* configHandle)
                          OS_CONFIG_HANDLE_KIND_RPC,
                          0,
                          configHandle);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandle() failed with :%d", err);
         return err;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }

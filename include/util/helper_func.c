@@ -26,11 +26,11 @@ compareDomainName(OS_ConfigServiceLibTypes_DomainName_t const* a,
         if (a->name[k] != b->name[k])
         {
             Debug_LOG_DEBUG("compareDomainName() domains did not match.");
-            return SEOS_ERROR_GENERIC;
+            return OS_ERROR_GENERIC;
         }
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ initializeDomainName(
 {
     initializeName(domainName->name, OS_CONFIG_LIB_DOMAIN_NAME_LEN, name);
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 OS_Error_t
@@ -51,7 +51,7 @@ initializeParameterName(
 {
     initializeName(parameterName->name, OS_CONFIG_LIB_PARAMETER_NAME_LEN, name);
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -72,27 +72,27 @@ find_domain(
                   handle,
                   enumerator,
                   domain);
-        if (SEOS_SUCCESS != ret)
+        if (OS_SUCCESS != ret)
         {
             Debug_LOG_ERROR("OS_ConfigService_domainEnumeratorGetElement() failed, ret %d",
                             ret);
-            return SEOS_ERROR_GENERIC;
+            return OS_ERROR_GENERIC;
         }
 
         OS_ConfigServiceLibTypes_DomainName_t domainNameTmp;
         OS_ConfigService_domainGetName(domain, &domainNameTmp);
-        if (SEOS_SUCCESS == compareDomainName(&domainNameTmp, domainName))
+        if (OS_SUCCESS == compareDomainName(&domainNameTmp, domainName))
         {
             // enumerator holds the right domain
-            return SEOS_SUCCESS;
+            return OS_SUCCESS;
         }
 
         ret = OS_ConfigService_domainEnumeratorIncrement(handle, enumerator);
-        if (SEOS_SUCCESS != ret)
+        if (OS_SUCCESS != ret)
         {
             Debug_LOG_ERROR("OS_ConfigService_domainEnumeratorIncrement() failed, ret %d",
                             ret);
-            return SEOS_ERROR_GENERIC;
+            return OS_ERROR_GENERIC;
         }
     } // end for(;;)
 }
@@ -118,21 +118,21 @@ get_parameter_enumerator(
     initializeParameterName(&parameterName, ParameterName);
 
     ret = find_domain(handle, &domainEnumerator, &domainName, &domain);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("find_domain() failed, ret %d", ret);
-        return SEOS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
+        return OS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
     }
 
     ret = OS_ConfigService_domainEnumeratorGetElement(
               handle,
               &domainEnumerator,
               &domain);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("OS_ConfigServiceLibTypes_DomainEnumerator_tGetElement() failed, ret %d",
                         ret);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
     ret = OS_ConfigService_domainCreateParameterEnumerator(
@@ -140,14 +140,14 @@ get_parameter_enumerator(
               &domain,
               &parameterName,
               parameterEnumerator);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("OS_ConfigServiceLibTypes_Domain_tCreateParameterEnumerator() failed, ret %d",
                         ret);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -169,10 +169,10 @@ get_parameter_element(
     initializeParameterName(parameterName, ParameterName);
 
     ret = find_domain(handle, &domainEnumerator, domainName, &domain);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("find_domain() failed, ret %d", ret);
-        return SEOS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
+        return OS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
     }
 
     ret = OS_ConfigService_domainGetElement(
@@ -180,13 +180,13 @@ get_parameter_element(
               &domain,
               parameterName,
               parameter);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("domainGetElement() failed, ret %d", ret);
-        return SEOS_ERROR_CONFIG_PARAMETER_NOT_FOUND;
+        return OS_ERROR_CONFIG_PARAMETER_NOT_FOUND;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
               &domainName,
               &parameterName,
               &parameter);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_element() failed, ret %d", ret);
         return ret;
@@ -226,13 +226,13 @@ helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
               parameterBuffer,
               parameterLength,
               &bytesCopied);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("parameterGetValue() failed, ret %d", ret);
         return ret;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ OS_Error_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
               &domainName,
               &parameterName,
               &parameter);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_element() failed, ret %d", ret);
         return ret;
@@ -267,10 +267,10 @@ OS_Error_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
               DomainName,
               ParameterName,
               &parameterEnumerator);
-    if (SEOS_SUCCESS != ret)
+    if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_enumerator() failed, ret %d", ret);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
     OS_ConfigServiceLibTypes_ParameterType_t parameterType;
@@ -282,11 +282,11 @@ OS_Error_t helper_func_setConfigParameter(OS_ConfigServiceHandle_t* handle,
               parameterType,
               parameterValue,
               parameterLength);
-    if (ret < SEOS_SUCCESS)
+    if (ret < OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_parameterSetValue() failed, ret %d", ret);
         return ret;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }

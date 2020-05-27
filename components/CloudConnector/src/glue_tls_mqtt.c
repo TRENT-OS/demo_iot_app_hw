@@ -67,7 +67,7 @@ init_socket_config(OS_Network_Socket_t* socketConfig,
 {
     if (NULL == socketConfig || NULL == serverIpAddress)
     {
-        return SEOS_ERROR_INVALID_PARAMETER;
+        return OS_ERROR_INVALID_PARAMETER;
     }
 
     socketConfig->domain = OS_AF_INET;
@@ -75,7 +75,7 @@ init_socket_config(OS_Network_Socket_t* socketConfig,
     socketConfig->port   = serverPort;
     socketConfig->name   = serverIpAddress;
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 
@@ -90,7 +90,7 @@ sendFunc(
     size_t n;
 
     n = len > MAX_NW_SIZE ? MAX_NW_SIZE : len;
-    if ((err = OS_NetworkSocket_write(*sockHandle, buf, &n)) != SEOS_SUCCESS)
+    if ((err = OS_NetworkSocket_write(*sockHandle, buf, &n)) != OS_SUCCESS)
     {
         Debug_LOG_ERROR("Error during socket write...error:%d", err);
         return -1;
@@ -110,7 +110,7 @@ recvFunc(
     size_t n;
 
     n = len > MAX_NW_SIZE ? MAX_NW_SIZE : len;
-    if ((err = OS_NetworkSocket_read(*sockHandle, buf, &n)) != SEOS_SUCCESS)
+    if ((err = OS_NetworkSocket_read(*sockHandle, buf, &n)) != OS_SUCCESS)
     {
         Debug_LOG_ERROR("Error during socket read...error:%d", err);
         return -1;
@@ -145,18 +145,18 @@ glue_tls_init(const char* serverIpAddress,
     if (caCertSize > OS_Tls_SIZE_CA_CERT_MAX)
     {
         Debug_LOG_ERROR("Server caCert size not supported!");
-        return SEOS_ERROR_INSUFFICIENT_SPACE;
+        return OS_ERROR_INSUFFICIENT_SPACE;
     }
 
     ret = init_socket_config(&socketCfg, serverIpAddress, serverPort);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("init_socket_config() failed with: %d", ret);
         return ret;
     }
 
     ret = OS_Crypto_init(&hCrypto, &cryptoCfg);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Crypto_init() failed with: %d", ret);
         return ret;
@@ -171,7 +171,7 @@ glue_tls_init(const char* serverIpAddress,
                     tlsCfg.config.server.library.crypto.caCert);
 
     ret = OS_Tls_init(&tlsContext, &tlsCfg);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_init() failed with: %d", ret);
         return ret;
@@ -187,7 +187,7 @@ OS_Error_t
 glue_tls_handshake(void)
 {
     OS_Error_t ret = OS_Tls_handshake(tlsContext);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_handshake() failed with: %d", ret);
         return ret;
@@ -205,7 +205,7 @@ int glue_tls_mqtt_write(Network* n,
     Debug_ASSERT(buf    != NULL);
 
     OS_Error_t ret = OS_Tls_write(tlsContext, buf, len);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
         return MQTT_FAILURE;
@@ -232,7 +232,7 @@ int glue_tls_mqtt_read(Network* n,
     memset ( buf, 0, len );
 
     OS_Error_t ret = OS_Tls_read(tlsContext, buf, &lengthRead);
-    if (ret != SEOS_SUCCESS)
+    if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
         return MQTT_FAILURE;

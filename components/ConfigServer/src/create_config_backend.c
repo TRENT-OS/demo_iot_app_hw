@@ -59,7 +59,7 @@ addInt32Parameter(
                          parameterIndex,
                          parameter,
                          sizeof(OS_ConfigServiceLibTypes_Parameter_t));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
         return err;
@@ -67,7 +67,7 @@ addInt32Parameter(
 
     parameterIndex++;
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 static
@@ -92,7 +92,7 @@ addStringParameter(
                          parameterIndex,
                          parameter,
                          sizeof(OS_ConfigServiceLibTypes_Parameter_t));;
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
         return err;
@@ -101,7 +101,7 @@ addStringParameter(
     parameterIndex++;
     stringIndex++;
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 static
@@ -147,7 +147,7 @@ addBlobParameter(
                          parameterIndex,
                          parameter,
                          sizeof(OS_ConfigServiceLibTypes_Parameter_t));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
         return err;
@@ -156,7 +156,7 @@ addBlobParameter(
     blobIndex += calcNumberOfBlocks;
     parameterIndex++;
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 OS_Error_t
@@ -177,7 +177,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
                          sensorDomainIndex,
                          &domain,
                          sizeof(domain));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
         return err;
@@ -196,7 +196,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               sensorDomainIndex,
               MQTT_PAYLOAD_NAME,
               sizeof(MQTT_PAYLOAD_VALUE));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -212,7 +212,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               sensorDomainIndex,
               MQTT_TOPIC_NAME,
               sizeof(MQTT_TOPIC_VALUE));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -231,7 +231,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               cloudConnectorDomainIndex,
               &domain,
               sizeof(domain));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
         return err;
@@ -245,7 +245,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               cloudConnectorDomainIndex,
               SERVER_PORT_NAME,
               0);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -261,7 +261,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               cloudConnectorDomainIndex,
               CLOUD_SAS_NAME,
               sizeof(CLOUD_SAS_VALUE));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -277,7 +277,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               cloudConnectorDomainIndex,
               CLOUD_DOMAIN_NAME,
               sizeof(CLOUD_DOMAIN_VALUE));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -292,7 +292,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               &parameter,
               cloudConnectorDomainIndex,
               SERVER_ADDRESS_NAME);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -307,7 +307,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               &parameter,
               cloudConnectorDomainIndex,
               CLOUD_DEVICE_ID_NAME);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -323,7 +323,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               cloudConnectorDomainIndex,
               SERVER_CA_CERT_NAME,
               sizeof(SERVER_CA_CERT_PEM_VALUE));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -342,7 +342,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               nwStackDomainIndex,
               &domain,
               sizeof(domain));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_writeRecord() failed with: %d", err);
         return err;
@@ -355,7 +355,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               &parameter,
               nwStackDomainIndex,
               ETH_ADDR);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -370,7 +370,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               &parameter,
               nwStackDomainIndex,
               ETH_GATEWAY_ADDR);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -385,7 +385,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
               &parameter,
               nwStackDomainIndex,
               ETH_SUBNET_MASK);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR(
             "OS_ConfigServiceBackend_writeRecord() failed \
@@ -395,7 +395,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 
     Debug_LOG_INFO("Domains and parameters initialized.");
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 
 }
 
@@ -404,15 +404,15 @@ create_system_config_backend(void)
 {
     OS_Error_t pm_result = partition_manager_get_info_partition(PARTITION_ID,
                                                      &pm_partition_data);
-    if (pm_result != SEOS_SUCCESS)
+    if (pm_result != OS_SUCCESS)
     {
         Debug_LOG_ERROR("Fail to get partition info: %d!",
                         pm_partition_data.partition_id);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
     OS_Error_t fs_result = OS_Filesystem_init(pm_partition_data.partition_id, 0);
-    if (fs_result != SEOS_SUCCESS)
+    if (fs_result != OS_SUCCESS)
     {
         Debug_LOG_ERROR("Fail to init partition: %d!", fs_result);
         return fs_result;
@@ -421,7 +421,7 @@ create_system_config_backend(void)
     if ( (phandle = OS_Filesystem_open(pm_partition_data.partition_id)) < 0)
     {
         Debug_LOG_ERROR("Fail to open partition: %d!", pm_partition_data.partition_id);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
     if (OS_Filesystem_create(
@@ -434,18 +434,18 @@ create_system_config_backend(void)
             0,  // default value: count file/dir entries: FAT12/FAT16 = 16; FAT32 = 0
             0,  // default value: count header sectors: 512
             FS_PARTITION_OVERWRITE_CREATE)
-        != SEOS_SUCCESS)
+        != OS_SUCCESS)
     {
         Debug_LOG_ERROR("Fail to create filesystem on partition: %d!",
                         pm_partition_data.partition_id);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
-    if (OS_Filesystem_mount(phandle) != SEOS_SUCCESS)
+    if (OS_Filesystem_mount(phandle) != OS_SUCCESS)
     {
         Debug_LOG_ERROR("Fail to mount filesystem on partition: %d!",
                         pm_partition_data.partition_id);
-        return SEOS_ERROR_GENERIC;
+        return OS_ERROR_GENERIC;
     }
 
     OS_ConfigServiceInstanceStore_t* serverInstanceStore =
@@ -457,14 +457,14 @@ create_system_config_backend(void)
     Debug_LOG_INFO("Setting up filesystem backend...");
 
     OS_Error_t err = createFileBackends(phandle);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("createFileBackends() failed with: %d", err);
         return err;
     }
 
     err = initializeFileBackends(configLib, phandle);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("initializeFileBackends() failed with: %d", err);
         return err;
@@ -472,13 +472,13 @@ create_system_config_backend(void)
 
     // Create the empty parameters in the instance.
     err = initializeDomainsAndParameters(configLib);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("initializeDomainsAndParameters() failed with: %d", err);
         return err;
     }
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 OS_Error_t
@@ -499,7 +499,7 @@ createFileBackends(hPartition_t phandle)
                          phandle,
                          3, // Total amount of domains used
                          sizeof(OS_ConfigServiceLibTypes_Domain_t));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         return err;
     }
@@ -514,7 +514,7 @@ createFileBackends(hPartition_t phandle)
               phandle,
               11, // Total amount of parameters in the backend
               sizeof(OS_ConfigServiceLibTypes_Parameter_t));
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         return err;
     }
@@ -526,7 +526,7 @@ createFileBackends(hPartition_t phandle)
               phandle,
               5, // Total amount of string parameters in the backend
               OS_CONFIG_LIB_PARAMETER_MAX_STRING_LENGTH);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         return err;
     }
@@ -538,14 +538,14 @@ createFileBackends(hPartition_t phandle)
               phandle,
               60,  // Total amount of blob blocks needed to store all the blob type parameters
               OS_CONFIG_LIB_PARAMETER_MAX_BLOB_BLOCK_LENGTH);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         return err;
     }
 
     Debug_LOG_INFO("File backends created.");
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
 
 OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
@@ -566,7 +566,7 @@ OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
                          name,
                          phandle);
     Debug_LOG_DEBUG("Domain name: %s", name.buffer);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
                         name.buffer, err);
@@ -579,7 +579,7 @@ OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               &parameterBackend,
               name,
               phandle);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
                         name.buffer, err);
@@ -592,7 +592,7 @@ OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               &stringBackend,
               name,
               phandle);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
                         name.buffer, err);
@@ -605,7 +605,7 @@ OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               &blobBackend,
               name,
               phandle);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceBackend_initializeFileBackend() for file %s failed with: %d",
                         name.buffer, err);
@@ -619,7 +619,7 @@ OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
               &domainBackend,
               &stringBackend,
               &blobBackend);
-    if (err != SEOS_SUCCESS)
+    if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigServiceLib_Init() failed with: %d", err);
         return err;
@@ -627,5 +627,5 @@ OS_Error_t initializeFileBackends(OS_ConfigServiceLib_t* configLib,
 
     Debug_LOG_INFO("File backends initialized.");
 
-    return SEOS_SUCCESS;
+    return OS_SUCCESS;
 }
