@@ -153,16 +153,16 @@ void pre_init(void)
     // attach observed object to subject
     OS_LoggerSubject_attach(
         (OS_LoggerAbstractSubject_Handle_t*)&subject,
-        (OS_LoggerAbstractObserver_Handle_t*)&filesystem);
+        &filesystem);
 
     OS_LoggerSubject_attach(
         (OS_LoggerAbstractSubject_Handle_t*)&subject,
-        (OS_LoggerAbstractObserver_Handle_t*)&console);
+        &console);
 
     // Emitter configuration
     OS_LoggerSubject_attach(
         (OS_LoggerAbstractSubject_Handle_t*)&subject_log_server,
-        (OS_LoggerAbstractObserver_Handle_t*)&console_log_server);
+        &console_log_server);
 
     // set up log filter layer
     OS_LoggerFilter_ctor(&filter_admin,          Debug_LOG_LEVEL_INFO);
