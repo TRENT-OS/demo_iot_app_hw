@@ -197,7 +197,6 @@ Timestamp_get_timestamp(Time_t* tm, Timestamp_t* t_stamp)
 
     if (nullptr)
     {
-        // Debug_printf
         return false;
     }
 
@@ -233,7 +232,6 @@ Timestamp_create_timestamp(const char* date, const char* time)
 
     if (nullptr)
     {
-        // Debug_printf
         return false;
     }
 
