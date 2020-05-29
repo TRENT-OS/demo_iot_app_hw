@@ -16,7 +16,7 @@
 #include "Logger/Server/OS_LoggerOutputFileSystem.h"
 
 #include "OS_Filesystem.h"
-#include "seos_pm_api.h"
+#include "OS_PartitionManager.h"
 
 #include <stdio.h>
 
@@ -73,16 +73,16 @@ static bool
 filesystem_init(void)
 {
     hPartition_t phandle;
-    pm_disk_data_t pm_disk_data;
-    pm_partition_data_t pm_partition_data;
+    OS_PartitionManagerDataTypes_DiskData_t pm_disk_data;
+    OS_PartitionManagerDataTypes_PartitionData_t pm_partition_data;
 
-    if (partition_manager_get_info_disk(&pm_disk_data) != OS_SUCCESS)
+    if (OS_PartitionManager_getInfoDisk(&pm_disk_data) != OS_SUCCESS)
     {
         printf("Fail to get disk info!\n");
         return false;
     }
 
-    if (partition_manager_get_info_partition(PARTITION_ID,
+    if (OS_PartitionManager_getInfoPartition(PARTITION_ID,
                                              &pm_partition_data) != OS_SUCCESS)
     {
         printf("Fail to get partition info: %d!\n", pm_partition_data.partition_id);

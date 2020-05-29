@@ -10,7 +10,7 @@
 #include "LibDebug/Debug.h"
 
 #include "OS_Error.h"
-#include "seos_api_network_stack.h"
+#include "OS_NetworkStackConf.h"
 #include "OS_ConfigService.h"
 #include "helper_func.h"
 #include <camkes.h>
@@ -20,7 +20,7 @@ char DEV_ADDR[20];
 char GATEWAY_ADDR[20];
 char SUBNET_MASK[20];
 
-static seos_network_stack_config_t param_config =
+static os_network_stack_config_t param_config =
 {
     .dev_addr      =   DEV_ADDR,
     .gateway_addr  =   GATEWAY_ADDR,
@@ -37,7 +37,7 @@ int run()
 
     // can't make this "static const" or even "static" because the data ports
     // are allocated at runtime
-    seos_camkes_network_stack_config_t camkes_config =
+    os_camkes_network_stack_config_t camkes_config =
     {
         .notify_init_done        = event_network_init_done_emit,
         .wait_loop_event         = event_tick_or_data_wait,
@@ -144,16 +144,16 @@ int run()
     Debug_LOG_INFO("Retrieved TAP  0 SUBNETMASK: %s", SUBNET_MASK);
 
 
-    ret = seos_network_stack_run(&camkes_config, &param_config);
+    ret = OS_NetworkStack_run(&camkes_config, &param_config);
     if (ret != OS_SUCCESS)
     {
-        Debug_LOG_FATAL("[NwStack '%s'] seos_network_stack_run() failed, error %d",
+        Debug_LOG_FATAL("[NwStack '%s'] OS_NetworkStack_run() failed, error %d",
                         get_instance_name(), ret);
         return ret;
     }
 
 
-    // actually, seos_network_stack_run() is not supposed to return with
+    // actually, OS_NetworkStack_run() is not supposed to return with
     // OS_SUCCESS. We have to assume this is a graceful shutdown for some
     // reason
     Debug_LOG_WARNING("[NwStack '%s'] graceful termination",

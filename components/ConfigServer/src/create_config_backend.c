@@ -20,7 +20,7 @@ static uint8_t blobIndex = 0;
 static uint8_t stringIndex = 0;
 
 hPartition_t phandle;
-pm_partition_data_t pm_partition_data;
+OS_PartitionManagerDataTypes_PartitionData_t pm_partition_data;
 
 
 static
@@ -402,7 +402,7 @@ initializeDomainsAndParameters(OS_ConfigServiceLib_t* configLib)
 OS_Error_t
 create_system_config_backend(void)
 {
-    OS_Error_t pm_result = partition_manager_get_info_partition(PARTITION_ID,
+    OS_Error_t pm_result = OS_PartitionManager_getInfoPartition(PARTITION_ID,
                                                      &pm_partition_data);
     if (pm_result != OS_SUCCESS)
     {

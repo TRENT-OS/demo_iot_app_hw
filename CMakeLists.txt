@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7.2)
 
-seos_set_config_file(system_config.h)
+os_set_config_file(system_config.h)
 
 project(system_config C)
 add_library(${PROJECT_NAME} INTERFACE)
@@ -8,7 +8,7 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/include/seos_mqtt")
 
-seos_use_libs(
+os_use_libs(
     OS_LIBS
     OS_CHANMUX
     OS_NETWORK_DRIVER_TAP_PROXY
