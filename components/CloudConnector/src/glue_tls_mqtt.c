@@ -184,6 +184,8 @@ glue_tls_init(const char* serverIpAddress,
         return ret;
     }
 
+    Debug_LOG_INFO("TCP connection established successfully");
+
     return ret;
 }
 
