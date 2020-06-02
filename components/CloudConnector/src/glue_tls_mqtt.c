@@ -178,6 +178,11 @@ glue_tls_init(const char* serverIpAddress,
     }
 
     ret = OS_NetworkSocket_create(NULL, &socketCfg, &socket);
+    if (ret != OS_SUCCESS)
+    {
+        Debug_LOG_ERROR("OS_NetworkSocket_create() failed with: %d", ret);
+        return ret;
+    }
 
     return ret;
 }
