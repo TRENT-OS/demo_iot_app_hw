@@ -60,7 +60,7 @@ qemu-system-arm  ${QEMU_PARAMS[@]} $@ 2> qemu_stderr.txt &
 sleep 1
 
 # start proxy app
-${PROXY_PATH}/proxy_app -c TCP:4444 -t 1  > seos_proxy_app.out &
+${PROXY_PATH}/proxy_app -c TCP:4444 -t 1  > proxy_app.out &
 sleep 1
 
 fg
