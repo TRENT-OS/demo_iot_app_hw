@@ -569,11 +569,6 @@ int CC_FSM_ctor()
     return 0;
 }
 
-//------------------------------------------------------------------------------
-void CC_FSM_dtor()
-{
-}
-
 OS_Error_t
 cloudConnector_interface_write()
 {
