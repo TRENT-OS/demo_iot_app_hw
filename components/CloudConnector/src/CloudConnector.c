@@ -101,7 +101,7 @@ do_tls_handshake(void)
         return ret;
     }
 
-    return ret;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
     options->will.retained          = 0;
     options->will.topicName.cstring = "will topic";
 
-    return ret;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ static int do_mqtt_connect(MQTT_client_t* client,
         return -1;
     }
 
-    return ret;
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -440,7 +440,13 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
 
     //Unblock the CloudConnector_interface_write
     ret = sem_post();
-    return ret;
+    if (ret != 0)
+    {
+        Debug_LOG_ERROR("sem_post() failed with code %d", ret);
+        return ret;
+    }
+
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -500,12 +506,13 @@ static int handle_CC_FSM_NEW_MESSAGE(CC_FSM_t* self)
     }
 
     ret = sem_post();
-    if (ret)
+    if (ret != 0)
     {
-        Debug_LOG_ERROR("%s(): Failed to post to semaphore! Error %d", __func__, ret);
+        Debug_LOG_ERROR("sem_post() failed with code %d", ret);
+        return ret;
     }
 
-    return ret;
+    return 0;
 }
 
 //==============================================================================

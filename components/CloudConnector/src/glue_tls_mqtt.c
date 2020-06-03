@@ -186,7 +186,7 @@ glue_tls_init(const char* serverIpAddress,
 
     Debug_LOG_INFO("TCP connection established successfully");
 
-    return ret;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ glue_tls_handshake(void)
         return ret;
     }
 
-    return ret;
+    return OS_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
