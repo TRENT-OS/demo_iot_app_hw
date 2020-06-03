@@ -69,7 +69,7 @@ init_socket_config(OS_Network_Socket_t* socketConfig,
     socketConfig->domain = OS_AF_INET;
     socketConfig->type   = OS_SOCK_STREAM;
     socketConfig->port   = serverPort;
-    socketConfig->name   = serverIpAddress;
+    strncpy(socketConfig->name, serverIpAddress, sizeof(socketConfig->name)-1);
 
     return OS_SUCCESS;
 }
