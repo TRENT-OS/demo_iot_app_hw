@@ -11,9 +11,7 @@ add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/include/seos_mqtt")
 os_use_libs(
     OS_LIBS
     OS_CHANMUX
-    OS_NETWORK_DRIVER_TAP_PROXY
     OS_CRYPTO
-    OS_NW_STACK
     OS_PARTITION_MANAGER
     OS_FILESYSTEM_CORE
     OS_FILESYSTEM_FAT
@@ -160,7 +158,6 @@ DeclareCAmkESComponent(CloudConnector
         components/CloudConnector/src/glue_tls_mqtt.c
         components/common/common.c
         include/util/helper_func.c
-        ${OS_LIBS_DIR}/seos_nwstack/network-client-lib/seos_nw_api_interface.c
     C_FLAGS
         -Wall -Werror
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT
@@ -172,6 +169,7 @@ DeclareCAmkESComponent(CloudConnector
         seos_tls
         seos_configuration
         seos_logger
+        os_network_api
 )
 
 #-------------------------------------------------------------------------------
@@ -204,7 +202,7 @@ DeclareCAmkESComponent(NwStack
         system_config
         seos_core_api
         seos_libs
-        seos_nw_lib
+        os_network_lib
         seos_logger
         seos_configuration
 )
