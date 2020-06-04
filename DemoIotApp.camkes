@@ -204,7 +204,10 @@ assembly {
         nwDriver.chanMux_rpc_attributes         = CHANMUX_ID_NIC;
         partitionManager.chanMux_rpc_attributes = CHANMUX_ID_PM;
 
-        CONFIGURE_INSTANCE_UART(uartDrv, 0xE0000000, 59)
+        CONFIGURE_INSTANCE_UART(
+            uartDrv,
+            CFG_CHANMUX_DEFAULT_UART_PHYS_ADDR,
+            CFG_CHANMUX_DEFAULT_UART_INTR)
 
         /* timer */
         timebase.reg_paddr = 0xF8001000;    // paddr of mmio registers
