@@ -36,7 +36,7 @@ entropy(
 static OS_Tls_Config_t tlsCfg =
 {
     .mode = OS_Tls_MODE_LIBRARY,
-    .config.library = {
+    .library = {
         .socket = {
             .recv   = recvFunc,
             .send   = sendFunc,
@@ -162,13 +162,13 @@ glue_tls_init(const char* serverIpAddress,
         return ret;
     }
 
-    tlsCfg.config.library.socket.context = &socket;
-    tlsCfg.config.library.crypto.handle = hCrypto;
+    tlsCfg.library.socket.context = &socket;
+    tlsCfg.library.crypto.handle = hCrypto;
 
-    memcpy(tlsCfg.config.server.library.crypto.caCert, caCert,
-           sizeof(tlsCfg.config.server.library.crypto.caCert));
+    memcpy(tlsCfg.library.crypto.caCert, caCert,
+           sizeof(tlsCfg.library.crypto.caCert));
     Debug_LOG_DEBUG("Assigned ServerCert: %s",
-                    tlsCfg.config.server.library.crypto.caCert);
+                    tlsCfg.library.crypto.caCert);
 
     ret = OS_Tls_init(&tlsContext, &tlsCfg);
     if (ret != OS_SUCCESS)
