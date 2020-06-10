@@ -8,12 +8,6 @@ cmake_minimum_required(VERSION 3.7.2)
 
 os_set_config_file(system_config.h)
 
-project(system_config C)
-add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
-
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/include/mqtt")
-
 os_use_libs(
     OS_LIBS
     OS_CHANMUX
@@ -27,14 +21,20 @@ os_use_libs(
     OS_LOGGER
 )
 
+add_subdirectory("include/mqtt")
 
+
+#-------------------------------------------------------------------------------
+project(system_config C)
+add_library(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+
+
+#-------------------------------------------------------------------------------
 project(demo_iot_app C)
 
-
-#-------------------------------------------------------------------------------
-# Component Admin
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(Admin
+DeclareCAmkESComponent(
+    Admin
     INCLUDES
         include/util
     SOURCES
@@ -44,7 +44,7 @@ DeclareCAmkESComponent(Admin
         include/util/helper_func.c
     C_FLAGS
         -Wall -Werror
-        -DOS_CONFIG_SERVICE_CAMKES_CLIENT     # indicates a camkes configuration client is being built
+        -DOS_CONFIG_SERVICE_CAMKES_CLIENT
     LIBS
         system_config
         os_core_api
@@ -53,10 +53,8 @@ DeclareCAmkESComponent(Admin
         os_logger
 )
 
-#-------------------------------------------------------------------------------
-# Component PartitionManager
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(PartitionManager
+DeclareCAmkESComponent(
+    PartitionManager
     SOURCES
         components/PartitionManager/src/PartitionManager.c
     C_FLAGS
@@ -71,10 +69,8 @@ DeclareCAmkESComponent(PartitionManager
         proxy_nvm
 )
 
-#-------------------------------------------------------------------------------
-# Component SensorTemp
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(SensorTemp
+DeclareCAmkESComponent(
+    SensorTemp
     INCLUDES
         include/util
     SOURCES
@@ -83,7 +79,7 @@ DeclareCAmkESComponent(SensorTemp
         include/util/helper_func.c
     C_FLAGS
         -Wall -Werror
-        -DOS_CONFIG_SERVICE_CAMKES_CLIENT    # indicates a camkes configuration server will be used
+        -DOS_CONFIG_SERVICE_CAMKES_CLIENT
     LIBS
         system_config
         os_libs
@@ -93,10 +89,8 @@ DeclareCAmkESComponent(SensorTemp
         os_mqtt
 )
 
-#-------------------------------------------------------------------------------
-# Component ConfigServer
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(ConfigServer
+DeclareCAmkESComponent(
+    ConfigServer
     SOURCES
         components/ConfigServer/src/ConfigServer.c
         components/ConfigServer/src/create_config_backend.c
@@ -104,14 +98,11 @@ DeclareCAmkESComponent(ConfigServer
     C_FLAGS
         -Wall
         -Werror
-        # filesystem
         -DOS_CONFIG_SERVICE_BACKEND_FILESYSTEM
         #-DCONFIG_SERVER_BACKEND_MEMORY
         -DOS_FS_BUILD_AS_LIB_BASIC_HANDLE
-        # partition manager
         -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
-        # config server
-        -DOS_CONFIG_SERVICE_CAMKES_SERVER     # indicates a camkes configuration server is being built
+        -DOS_CONFIG_SERVICE_CAMKES_SERVER
     LIBS
         system_config
         os_libs
@@ -124,18 +115,14 @@ DeclareCAmkESComponent(ConfigServer
         os_logger
 )
 
-#-------------------------------------------------------------------------------
-# Component LogServer
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(LogServer
+DeclareCAmkESComponent(
+    LogServer
     SOURCES
         components/LogServer/src/LogServer.c
     C_FLAGS
         -Wall
         -Werror
-        # filesystem
         -DOS_FS_BUILD_AS_LIB_BASIC_HANDLE
-        # partition manager
         -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
         system_config
@@ -148,10 +135,8 @@ DeclareCAmkESComponent(LogServer
         os_filesystem_spiffs
 )
 
-#-------------------------------------------------------------------------------
-# Component CloudConnector
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(CloudConnector
+DeclareCAmkESComponent(
+    CloudConnector
     INCLUDES
         include
         include/util
@@ -178,19 +163,14 @@ DeclareCAmkESComponent(CloudConnector
         os_network_api
 )
 
-#-------------------------------------------------------------------------------
-# Component ChanMux
-#-------------------------------------------------------------------------------
 DeclareCAmkESComponent_ChanMux(
     ChanMux
     components/ChanMux/ChanMux.c
     system_config
 )
 
-#-------------------------------------------------------------------------------
-# Component NwStack
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(NwStack
+DeclareCAmkESComponent(
+    NwStack
     INCLUDES
         include/util
     SOURCES
@@ -213,26 +193,18 @@ DeclareCAmkESComponent(NwStack
         os_configuration
 )
 
-#-------------------------------------------------------------------------------
-# Component NwDriver
-#-------------------------------------------------------------------------------
 DeclareCAmkESComponent_NIC_ChanMux(
     NwDriver
     CHANMUX_CHANNEL_NIC_CTRL
     CHANMUX_CHANNEL_NIC_DATA
 )
 
-#-------------------------------------------------------------------------------
-# Component UART
-#-------------------------------------------------------------------------------
 DeclareCAmkESComponent_UART(
     UART
 )
 
-#-------------------------------------------------------------------------------
-# Component TimerClient
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(TimerClient
+DeclareCAmkESComponent(
+    TimerClient
     SOURCES
         components/TimerClient/src/Timer_Client.c
     C_FLAGS
@@ -244,10 +216,8 @@ DeclareCAmkESComponent(TimerClient
         os_libs
 )
 
-#-------------------------------------------------------------------------------
-# Component TimeServer
-#-------------------------------------------------------------------------------
-DeclareCAmkESComponent(TimeServer
+DeclareCAmkESComponent(
+    TimeServer
     INCLUDES
         components/TimeServer/include
         components/TimeServer/timestamp
