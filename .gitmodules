@@ -1,3 +1,6 @@
 [submodule "include/seos_mqtt"]
 	path = include/seos_mqtt
 	url = ../../rdpar/seos_mqtt.git
+[submodule "include/mqtt"]
+	path = include/mqtt
+	url = ../../rdpar/seos_mqtt.git

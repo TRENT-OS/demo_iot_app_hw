@@ -6,7 +6,7 @@ project(system_config C)
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/include/seos_mqtt")
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/include/mqtt")
 
 os_use_libs(
     OS_LIBS
@@ -41,10 +41,10 @@ DeclareCAmkESComponent(Admin
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT     # indicates a camkes configuration client is being built
     LIBS
         system_config
-        seos_core_api
-        seos_libs
-        seos_configuration
-        seos_logger
+        os_core_api
+        os_libs
+        os_configuration
+        os_logger
 )
 
 #-------------------------------------------------------------------------------
@@ -59,9 +59,9 @@ DeclareCAmkESComponent(PartitionManager
         -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
         system_config
-        seos_libs
-        seos_partition_manager
-        seos_logger
+        os_libs
+        os_partition_manager
+        os_logger
         proxy_nvm
 )
 
@@ -80,11 +80,11 @@ DeclareCAmkESComponent(SensorTemp
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT    # indicates a camkes configuration server will be used
     LIBS
         system_config
-        seos_libs
-        seos_core_api
-        seos_configuration
-        seos_logger
-        seos_mqtt
+        os_libs
+        os_core_api
+        os_configuration
+        os_logger
+        os_mqtt
 )
 
 #-------------------------------------------------------------------------------
@@ -108,14 +108,14 @@ DeclareCAmkESComponent(ConfigServer
         -DOS_CONFIG_SERVICE_CAMKES_SERVER     # indicates a camkes configuration server is being built
     LIBS
         system_config
-        seos_libs
-        seos_core_api
-        seos_configuration
-        seos_partition_manager_api
-        seos_filesystem_core
-        seos_filesystem_fat
-        seos_filesystem_spiffs
-        seos_logger
+        os_libs
+        os_core_api
+        os_configuration
+        os_partition_manager_api
+        os_filesystem_core
+        os_filesystem_fat
+        os_filesystem_spiffs
+        os_logger
 )
 
 #-------------------------------------------------------------------------------
@@ -133,13 +133,13 @@ DeclareCAmkESComponent(LogServer
         -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
         system_config
-        seos_core_api
-        seos_libs
-        seos_log_server_backend_filesystem
-        seos_partition_manager_api
-        seos_filesystem_core
-        seos_filesystem_fat
-        seos_filesystem_spiffs
+        os_core_api
+        os_libs
+        os_log_server_backend_filesystem
+        os_partition_manager_api
+        os_filesystem_core
+        os_filesystem_fat
+        os_filesystem_spiffs
 )
 
 #-------------------------------------------------------------------------------
@@ -162,13 +162,13 @@ DeclareCAmkESComponent(CloudConnector
         -Wall -Werror
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT
     LIBS
-        seos_core_api
-        seos_libs
-        seos_crypto
-        seos_mqtt
-        seos_tls
-        seos_configuration
-        seos_logger
+        os_core_api
+        os_libs
+        os_crypto
+        os_mqtt
+        os_tls
+        os_configuration
+        os_logger
         os_network_api
 )
 
@@ -200,11 +200,11 @@ DeclareCAmkESComponent(NwStack
         -DCFG_ETH_SUBNET_MASK=ETH_SUBNET_MASK
     LIBS
         system_config
-        seos_core_api
-        seos_libs
+        os_core_api
+        os_libs
         os_network_lib
-        seos_logger
-        seos_configuration
+        os_logger
+        os_configuration
 )
 
 #-------------------------------------------------------------------------------
@@ -234,8 +234,8 @@ DeclareCAmkESComponent(TimerClient
         -Werror
     LIBS
         system_config
-        seos_core_api
-        seos_libs
+        os_core_api
+        os_libs
 )
 
 #-------------------------------------------------------------------------------
