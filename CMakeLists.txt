@@ -8,19 +8,6 @@ cmake_minimum_required(VERSION 3.7.2)
 
 os_set_config_file(system_config.h)
 
-os_use_libs(
-    OS_LIBS
-    OS_CHANMUX
-    OS_CRYPTO
-    OS_PARTITION_MANAGER
-    OS_FILESYSTEM_CORE
-    OS_FILESYSTEM_FAT
-    OS_FILESYSTEM_SPIFFS
-    OS_CONFIGURATION
-    OS_TLS
-    OS_LOGGER
-)
-
 add_subdirectory("include/mqtt")
 
 
