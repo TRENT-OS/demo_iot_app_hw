@@ -6,6 +6,8 @@
 
 #include "glue_tls_mqtt.h"
 
+#include <camkes.h>
+
 // decrease send/recv max length to increase robustness
 #define MAX_NW_SIZE 2048
 
@@ -25,13 +27,6 @@ recvFunc(
     void*          ctx,
     unsigned char* buf,
     size_t         len);
-
-static int
-entropy(
-    void*          ctx,
-    unsigned char* buf,
-    size_t         len);
-
 
 static OS_Tls_Config_t tlsCfg =
 {
@@ -56,7 +51,8 @@ static OS_Tls_Config_t tlsCfg =
 static OS_Crypto_Config_t cryptoCfg =
 {
     .mode = OS_Crypto_MODE_LIBRARY_ONLY,
-    .library.rng.entropy = entropy
+    .library.entropy = OS_CRYPTO_ASSIGN_EntropySource(entropySource_rpc_read,
+                                                      entropySource_dp),
 };
 
 // Private static functions ----------------------------------------------------
@@ -117,17 +113,6 @@ recvFunc(
     }
 
     return n;
-}
-
-static int
-entropy(
-    void*          ctx,
-    unsigned char* buf,
-    size_t         len)
-{
-    // This would be the platform specific function to obtain entropy
-    memset(buf, 0, len);
-    return 0;
 }
 
 //------------------------------------------------------------------------------

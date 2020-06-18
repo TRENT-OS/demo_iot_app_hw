@@ -6,6 +6,8 @@
 
 import <std_connector.camkes>;
 
+import <if_OS_EntropySource.camkes>;
+
 import "components/PartitionManager/PartitionManager.camkes";
 import "components/Sensor/Sensor.camkes";
 import "components/CloudConnector/CloudConnector.camkes";
@@ -28,6 +30,8 @@ DECLARE_COMPONENT_NIC_ChanMux(NwDriver)
 #define CHANMUX_UPPER_INTERFACES "components/ChanMux/ChanMux_upper_interface.camkes"
 #include "ChanMux/ChanMux.camkes"
 
+#include "EntropySource/camkes/EntropySource.camkes"
+DECLARE_COMPONENT_EntropySource(EntropySource)
 
 assembly {
     composition {
@@ -103,6 +107,11 @@ assembly {
         connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_dataport_buf, to logServer.dataport_buf_cloudConnector);
 
+        DECLARE_AND_CONNECT_INSTANCE_EntropySource(
+            EntropySource,
+            entropySource,
+            cloudConnector.entropySource_rpc,
+            cloudConnector.entropySource_dp)
 
         //----------------------------------------------------------------------
         // Network Driver #1

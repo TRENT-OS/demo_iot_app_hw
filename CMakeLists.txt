@@ -217,6 +217,9 @@ DeclareCAmkESComponent(
         -Werror
 )
 
+DeclareCAmkESComponent_EntropySource(
+    EntropySource
+)
 
 DeclareAndCreateCamkESSystem(DemoIotApp.camkes)
 GenerateSimulateScript()

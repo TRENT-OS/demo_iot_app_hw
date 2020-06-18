@@ -8,6 +8,7 @@
 import "CloudConnectorInf.camkes";
 import <if_OS_socket.camkes>;
 import <if_OS_ConfigService.camkes>;
+import <if_OS_EntropySource.camkes>;
 import "../TimeServer/TimeServerInf.camkes";
 import <if_OS_Logger.camkes>;
 
@@ -26,6 +27,11 @@ component CloudConnector {
     uses        if_OS_socket                network_stack_rpc;
     dataport    Buf                         NwAppDataPort;
     consumes    ServiceReady                event_network_stack_init_done;
+
+    //-------------------------------------------------
+    // EntropySource
+    uses        if_OS_EntropySource         entropySource_rpc;
+    dataport    Buf                         entropySource_dp;
 
     //---------------------------------------------------
     // Configuration server
