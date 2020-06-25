@@ -24,6 +24,7 @@ DeclareCAmkESComponent(
     PartitionManager
     SOURCES
         components/PartitionManager/src/PartitionManager.c
+        components/PartitionManager/src/RamDisk.c
     C_FLAGS
         -Wall
         -Werror

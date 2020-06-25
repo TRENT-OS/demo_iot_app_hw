@@ -4,41 +4,30 @@
    *  Copyright (C) 2020, Hensoldt Cyber GmbH
 */
 
-#include "api_pm.h"                 // include path to partition_manager must be set in cmakelists.txt
-#include "ChanMuxNvmDriver.h"
-#include "LibDebug/Debug.h"         // needs seos_libs
+#include "api_pm.h"
 
-#include <camkes.h>
+#include "RamDisk.h"
+#include "DiskData.h"
 
-
-static const ChanMuxClientConfig_t chanMuxClientConfig =
-{
-    .port  = CHANMUX_DATAPORT_DUPLEX_SHARED_ASSIGN(chanMux_port),
-    .wait  = chanMux_event_hasData_wait,
-    .write = chanMux_rpc_write,
-    .read  = chanMux_rpc_read
+static RamDisk_Config_t ramCfg = {
+    .mode       = RamDisk_Init_COPY_BUFFER,
+    .compressed = true,
+    .size       = sizeof(diskData),
+    .ptr        = diskData,
 };
-
-static ChanMuxNvmDriver chanMuxNvmDriver;
+static RamDisk_t* ramDisk;
 
 void api_pm_component__init(void)
 {
-    OS_Error_t pm_stat;
+    OS_Error_t err;
 
-    if (!ChanMuxNvmDriver_ctor(
-            &chanMuxNvmDriver,
-            &chanMuxClientConfig))
+    if ((err = RamDisk_ctor(&ramDisk, &ramCfg)) != OS_SUCCESS)
     {
-        Debug_LOG_ERROR("Failed to construct ChanMuxNvmDriver!");
-        return;
+        Debug_LOG_ERROR("RamDisk_ctor() failed with %d", err);
     }
 
-    pm_stat = api_pm_partition_manager_init(
-                  ChanMuxNvmDriver_get_nvm(&chanMuxNvmDriver));
-    if (pm_stat != OS_SUCCESS)
+    if ((err = api_pm_partition_manager_init(ramDisk)) != OS_SUCCESS)
     {
-        Debug_LOG_ERROR("Fail to init partition manager, ret: %d", pm_stat);
-        return;
+        Debug_LOG_ERROR("api_pm_partition_manager_init() failed with %d", err);
     }
-
 }
