@@ -55,6 +55,7 @@ DeclareCAmkESComponent(
         os_configuration
         os_logger
         os_mqtt
+        TimeServer_client
 )
 
 DeclareCAmkESComponent(
@@ -101,6 +102,7 @@ DeclareCAmkESComponent(
         os_filesystem_core
         os_filesystem_fat
         os_filesystem_spiffs
+        TimeServer_client
 )
 
 DeclareCAmkESComponent(
@@ -129,6 +131,7 @@ DeclareCAmkESComponent(
         os_configuration
         os_logger
         os_network_api
+        TimeServer_client
 )
 
 DeclareCAmkESComponent_ChanMux(
@@ -182,24 +185,15 @@ DeclareCAmkESComponent(
         system_config
         os_core_api
         os_libs
-)
-
-DeclareCAmkESComponent(
-    TimeServer
-    INCLUDES
-        components/TimeServer/include
-        components/TimeServer/timestamp
-    SOURCES
-        components/TimeServer/src/main.c
-        components/TimeServer/src/time_server.c
-        components/TimeServer/timestamp/timestamp.c
-    C_FLAGS
-        -Wall
-        -Werror
+        TimeServer_client
 )
 
 DeclareCAmkESComponent_EntropySource(
     EntropySource
+)
+
+DeclareCAmkESComponent_TimeServer(
+    TimeServer
 )
 
 DeclareAndCreateCamkESSystem(DemoIotApp.camkes)

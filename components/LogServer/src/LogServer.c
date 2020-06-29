@@ -6,6 +6,7 @@
 
 
 #include "LibDebug/Debug.h"
+#include "TimeServer.h"
 
 #include "Logger/Server/OS_LoggerFile.h"
 
@@ -127,6 +128,12 @@ filesystem_init(void)
     return true;
 }
 
+static uint64_t
+get_time_sec(
+    void)
+{
+    return TimeServer_getTime(TimeServer_PRECISION_SEC);
+}
 
 void pre_init(void)
 {
@@ -177,7 +184,7 @@ void pre_init(void)
     OS_LoggerConsumerCallback_ctor(
         &log_consumer_callback,
         API_LOG_SERVER_GET_SENDER_ID,
-        api_time_server_get_timestamp);
+        get_time_sec);
 
     // set up log consumer layer
     OS_LoggerConsumer_ctor(&log_consumer_configSrv,      DATABUFFER_SERVER_01, &filter_configSrv,      &log_consumer_callback, &subject, NULL, CLIENT_CONFIGSRV_ID, "CONFIG-SERVER");

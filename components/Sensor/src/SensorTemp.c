@@ -5,6 +5,7 @@
  */
 
 #include "LibDebug/Debug.h"
+#include "TimeServer.h"
 
 #include "OS_ConfigService.h"
 
@@ -114,7 +115,7 @@ int run()
     {
         CloudConnector_write(serializedMsg, (void*)cloudConnectorDataPort,
                              len);
-        api_time_server_sleep(SECS_TO_SLEEP * S_IN_MSEC);
+        TimeServer_sleep(TimeServer_PRECISION_SEC, SECS_TO_SLEEP);
     }
 
     return 0;
