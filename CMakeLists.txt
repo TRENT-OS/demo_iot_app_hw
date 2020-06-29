@@ -134,12 +134,6 @@ DeclareCAmkESComponent(
         TimeServer_client
 )
 
-DeclareCAmkESComponent_ChanMux(
-    ChanMux
-    components/ChanMux/ChanMux.c
-    system_config
-)
-
 DeclareCAmkESComponent(
     NwStack
     INCLUDES
@@ -164,14 +158,8 @@ DeclareCAmkESComponent(
         os_configuration
 )
 
-DeclareCAmkESComponent_NIC_ChanMux(
+DeclareCAmkESComponent_NIC_Dummy(
     NwDriver
-    CHANMUX_CHANNEL_NIC_CTRL
-    CHANMUX_CHANNEL_NIC_DATA
-)
-
-DeclareCAmkESComponent_UART(
-    UART
 )
 
 DeclareCAmkESComponent(
