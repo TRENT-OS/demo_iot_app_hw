@@ -10,7 +10,7 @@
 #include "LibDebug/Debug.h"
 
 #include "OS_Error.h"
-#include "OS_NetworkStackConf.h"
+#include "OS_NetworkStack.h"
 #include "OS_ConfigService.h"
 #include "OS_Dataport.h"
 #include "helper_func.h"
@@ -30,7 +30,7 @@ char DEV_ADDR[20];
 char GATEWAY_ADDR[20];
 char SUBNET_MASK[20];
 
-static os_network_stack_config_t param_config =
+static OS_NetworkStack_AddressConfig_t param_config =
 {
     .dev_addr      =   DEV_ADDR,
     .gateway_addr  =   GATEWAY_ADDR,
@@ -44,7 +44,7 @@ int run()
 
     // can't make this "static const" or even "static" because the data ports
     // are allocated at runtime
-    os_camkes_network_stack_config_t camkes_config =
+    OS_NetworkStack_CamkesConfig_t camkes_config =
     {
         .notify_init_done        = event_network_init_done_emit,
         .wait_loop_event         = event_tick_or_data_wait,
