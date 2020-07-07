@@ -53,14 +53,11 @@ int run()
         {
             .notify_loop        = event_internal_emit,
 
-            .notify_write       = e_write_emit,
-            .wait_write         = c_write_wait,
+            .socketCB_lock      = socketControlBlockMutex_lock,
+            .socketCB_unlock    = socketControlBlockMutex_unlock,
 
-            .notify_read        = e_read_emit,
-            .wait_read          = c_read_wait,
-
-            .notify_connection  = e_conn_emit,
-            .wait_connection    = c_conn_wait,
+            .stackTS_lock       = stackThreadSafeMutex_lock,
+            .stackTS_unlock     = stackThreadSafeMutex_unlock,
         },
 
         .drv_nic =
@@ -81,11 +78,24 @@ int run()
         .app =
         {
             .notify_init_done   = event_network_init_done_emit,
-
-            .port = OS_DATAPORT_ASSIGN(port_app_io)
-
         }
     };
+
+    static OS_NetworkStack_SocketResources_t socks = {
+        .notify_write       = e_write_emit,
+        .wait_write         = c_write_wait,
+
+        .notify_read        = e_read_emit,
+        .wait_read          = c_read_wait,
+
+        .notify_connection  = e_conn_emit,
+        .wait_connection    = c_conn_wait,
+
+        .buf = OS_DATAPORT_ASSIGN(port_app_io)
+    };
+
+    camkes_config.internal.number_of_sockets = 1;
+    camkes_config.internal.sockets = &socks;
 
     OS_Error_t ret;
 

@@ -16,6 +16,8 @@
 #include "MQTT_client.h"
 #include "MQTTServer.h"
 
+#include "OS_NetworkStackClient.h"
+
 #include "LibUtil/managedBuffer.h"
 
 /* Defines -------------------------------------------------------------------*/
@@ -605,9 +607,24 @@ cloudConnector_interface_write()
     return OS_SUCCESS;
 }
 
+static void
+init_network_client_api()
+{
+    static OS_NetworkStackClient_SocketDataports_t config;
+    static OS_Dataport_t dataport = OS_DATAPORT_ASSIGN(NwAppDataPort);
+
+    config.number_of_sockets = 1;
+
+    config.dataport = &dataport;
+    OS_NetworkStackClient_init(&config);
+}
+
 //------------------------------------------------------------------------------
+
 int run()
 {
+    init_network_client_api();
+
     Debug_LOG_INFO("Starting CloudConnector...");
 
     CC_FSM_t* self = &cc_fsm;
