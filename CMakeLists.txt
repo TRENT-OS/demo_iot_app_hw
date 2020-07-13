@@ -141,6 +141,8 @@ DeclareCAmkESComponent_StorageServer(
 DeclareCAmkESComponent_RamDisk(
     RamDisk
     system_config
+    IMAGE
+        ${CMAKE_CURRENT_LIST_DIR}/flash.c
 )
 
 DeclareCAmkESComponent(
