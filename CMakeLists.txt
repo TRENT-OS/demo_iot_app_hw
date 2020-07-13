@@ -21,23 +21,6 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 project(demo_iot_app C)
 
 DeclareCAmkESComponent(
-    PartitionManager
-    SOURCES
-        components/PartitionManager/src/PartitionManager.c
-        components/PartitionManager/src/RamDisk.c
-    C_FLAGS
-        -Wall
-        -Werror
-        -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
-    LIBS
-        system_config
-        os_libs
-        os_partition_manager
-        os_logger
-        proxy_nvm
-)
-
-DeclareCAmkESComponent(
     SensorTemp
     INCLUDES
         include/util
@@ -68,19 +51,13 @@ DeclareCAmkESComponent(
         -Wall
         -Werror
         -DOS_CONFIG_SERVICE_BACKEND_FILESYSTEM
-        #-DCONFIG_SERVER_BACKEND_MEMORY
-        -DOS_FS_BUILD_AS_LIB_BASIC_HANDLE
-        -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
         -DOS_CONFIG_SERVICE_CAMKES_SERVER
     LIBS
         system_config
         os_libs
         os_core_api
         os_configuration
-        os_partition_manager_api
-        os_filesystem_core
-        os_filesystem_fat
-        os_filesystem_spiffs
+        os_filesystem
         os_logger
 )
 
@@ -91,17 +68,12 @@ DeclareCAmkESComponent(
     C_FLAGS
         -Wall
         -Werror
-        -DOS_FS_BUILD_AS_LIB_BASIC_HANDLE
-        -DOS_PARTITION_MANAGER_BUILD_AS_COMPONENT
     LIBS
         system_config
         os_core_api
         os_libs
         os_log_server_backend_filesystem
-        os_partition_manager_api
-        os_filesystem_core
-        os_filesystem_fat
-        os_filesystem_spiffs
+        os_filesystem
         TimeServer_client
 )
 
@@ -160,6 +132,15 @@ DeclareCAmkESComponent(
 
 DeclareCAmkESComponent_NIC_Dummy(
     NwDriver
+)
+
+DeclareCAmkESComponent_StorageServer(
+    StorageServer
+)
+
+DeclareCAmkESComponent_RamDisk(
+    RamDisk
+    system_config
 )
 
 DeclareCAmkESComponent(

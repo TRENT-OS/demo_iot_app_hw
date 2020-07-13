@@ -9,7 +9,6 @@ import <std_connector.camkes>;
 import <if_OS_EntropySource.camkes>;
 import <if_OS_Timer.camkes>;
 
-import "components/PartitionManager/PartitionManager.camkes";
 import "components/Sensor/Sensor.camkes";
 import "components/CloudConnector/CloudConnector.camkes";
 import "components/TimerClient/TimerClient.camkes";
@@ -28,6 +27,12 @@ DECLARE_COMPONENT_TimeServer(TimeServer)
 #include "EntropySource/camkes/EntropySource.camkes"
 DECLARE_COMPONENT_EntropySource(EntropySource)
 
+#include "StorageServer/camkes/StorageServer.camkes"
+DECLARE_COMPONENT_StorageServer(StorageServer)
+
+#include "RamDisk/RamDisk.camkes"
+DECLARE_COMPONENT_RamDisk(RamDisk)
+
 assembly {
     composition {
 
@@ -35,15 +40,6 @@ assembly {
         // LogServer
         //----------------------------------------------------------------------
         component  LogServer        logServer;
-
-        connection seL4RPCCall      logServer_partitionManager_inf      (from logServer.api_pm_component, to partitionManager.api_pm_component);
-        connection seL4SharedData   logServer_partitionManager_data     (from logServer.pm_dataport_buf,  to partitionManager.pm_dataport_buf_logServer);
-
-
-        //----------------------------------------------------------------------
-        // PartitionManager
-        //----------------------------------------------------------------------
-        component   PartitionManager  partitionManager;
 
 
         //----------------------------------------------------------------------
@@ -140,11 +136,20 @@ assembly {
         //----------------------------------------------------------------------
         component   ConfigServer     configServer;
 
-        connection  seL4RPCCall      configServer_pm                   (from configServer.api_pm_component, to partitionManager.api_pm_component);
-        connection  seL4SharedData   configServer_pm_data              (from configServer.pm_dataport_buf,  to partitionManager.pm_dataport_buf_configServer);
-
         connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface,   to logServer.log_server_interface);
         connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_dataport_buf, to logServer.dataport_buf_configServer);
+
+
+        //----------------------------------------------------------------------
+        // StorageServer
+        //----------------------------------------------------------------------
+        component RamDisk   ramDisk;
+
+        DECLARE_AND_CONNECT_INSTANCE_StorageServer(
+            StorageServer, storageServer,
+            ramDisk.storage_rpc, ramDisk.storage_port,
+            configServer.storage_rpc, configServer.storage_dp,
+            logServer.storage_rpc, logServer.storage_dp)
     }
     configuration {
         /* client id's */
@@ -156,6 +161,14 @@ assembly {
 
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
+
+        CONFIGURE_INSTANCE_StorageServer(
+            storageServer,
+            0, 1*1024*1024,
+            1*1024*1024, 1*1024*1024)
+
+        configServer.storage_rpc_attributes = 1;
+        logServer.storage_rpc_attributes = 2;
     }
 }
 
