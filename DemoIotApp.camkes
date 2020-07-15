@@ -30,8 +30,11 @@ DECLARE_COMPONENT_EntropySource(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 DECLARE_COMPONENT_StorageServer(StorageServer)
 
-#include "RamDisk/RamDisk.camkes"
-DECLARE_COMPONENT_RamDisk(RamDisk)
+#include "SPI/SPI.camkes"
+DECLARE_COMPONENT_SPI(SPI)
+
+#include "Storage_Flash/Storage_Flash_SPI.camkes"
+DECLARE_COMPONENT_Storage_Flash_SPI(Flash)
 
 assembly {
     composition {
@@ -115,6 +118,22 @@ assembly {
 
 
         //----------------------------------------------------------------------
+        // StorageServer
+        //----------------------------------------------------------------------
+        DECLARE_AND_CONNECT_INSTANCE_SPI(SPI, spi)
+
+        DECLARE_AND_CONNECT_INSTANCE_Storage_Flash_SPI(
+            Flash, flash,
+            spi.spi_rpc, spi.spi_port)
+
+        DECLARE_AND_CONNECT_INSTANCE_StorageServer(
+            StorageServer, storageServer,
+            flash.storage_rpc, flash.storage_port,
+            configServer.storage_rpc, configServer.storage_dp,
+            logServer.storage_rpc, logServer.storage_dp)
+
+
+        //----------------------------------------------------------------------
         // TimeServer
         //----------------------------------------------------------------------
         DECLARE_AND_CONNECT_INSTANCE_TimeServer(
@@ -123,7 +142,8 @@ assembly {
             timerClient.timeServer_rpc,
             cloudConnector.timeServer_rpc,
             logServer.timeServer_rpc,
-            sensorTemp.timeServer_rpc)
+            sensorTemp.timeServer_rpc,
+            flash.timeServer_rpc)
 
 
         //----------------------------------------------------------------------
@@ -133,18 +153,6 @@ assembly {
 
         connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface,   to logServer.log_server_interface);
         connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_dataport_buf, to logServer.dataport_buf_configServer);
-
-
-        //----------------------------------------------------------------------
-        // StorageServer
-        //----------------------------------------------------------------------
-        component RamDisk   ramDisk;
-
-        DECLARE_AND_CONNECT_INSTANCE_StorageServer(
-            StorageServer, storageServer,
-            ramDisk.storage_rpc, ramDisk.storage_port,
-            configServer.storage_rpc, configServer.storage_dp,
-            logServer.storage_rpc, logServer.storage_dp)
     }
     configuration {
         /* client id's */
@@ -166,6 +174,9 @@ assembly {
 
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
+
+        // gpio base register and size, includes the spi base register
+        CONFIGURE_INSTANCE_SPI(spi, 0x3F200000, 0x8000)
     }
 }
 

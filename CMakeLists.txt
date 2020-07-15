@@ -138,13 +138,6 @@ DeclareCAmkESComponent_StorageServer(
     StorageServer
 )
 
-DeclareCAmkESComponent_RamDisk(
-    RamDisk
-    system_config
-    IMAGE
-        ${CMAKE_CURRENT_LIST_DIR}/flash.c
-)
-
 DeclareCAmkESComponent(
     TimerClient
     SOURCES
@@ -156,6 +149,16 @@ DeclareCAmkESComponent(
         system_config
         os_core_api
         os_libs
+        TimeServer_client
+)
+
+DeclareCAmkESComponent_SPI(
+    SPI
+)
+
+DeclareCAmkESComponent_Storage_Flash_SPI(
+    Flash
+    LIBS
         TimeServer_client
 )
 
