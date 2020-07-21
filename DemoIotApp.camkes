@@ -159,8 +159,10 @@ assembly {
             CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE,
             LOGSERVER_STORAGE_OFFSET,    LOGSERVER_STORAGE_SIZE)
 
-        configServer.storage_rpc_attributes = CONFIGSERVER_STORAGE_ID;
-        logServer.storage_rpc_attributes    = LOGGER_STORAGE_ID;
+        ASSIGN_CLIENT_BADGE_StorageServer(
+            configServer, storage_rpc, CONFIGSERVER_STORAGE_ID)
+        ASSIGN_CLIENT_BADGE_StorageServer(
+            logServer, storage_rpc, LOGGER_STORAGE_ID)
 
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
