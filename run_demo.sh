@@ -51,7 +51,13 @@ shift 3
 
 # create provisioned partition from XML file
 echo "Creating provisioned partition"
-${CPT_PATH}/cpt -i ${SCRIPTPATH}/configuration/config.xml -o nvm_06
+
+# run the tool with the configuration file provided by the system. The created
+# image needs to be named "nvm_06", since the system makes use of the Proxy App
+# which expects the NVM file name to follow the naming convention
+# "nvm_[channelID]". The system makes use of the first NVM channel of the Proxy,
+# which maps to the channel number six of the App -> nvm_06
+${DIR_BIN_SDK}/cpt -i ${CURRENT_SCRIPT_DIR}/configuration/config.xml -o nvm_06
 sleep 1
 
 QEMU_PARAMS=(
