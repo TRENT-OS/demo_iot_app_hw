@@ -63,14 +63,21 @@
 #endif // !defined(CAMKES_TOOL_PROCESSING)
 
 //-----------------------------------------------------------------------------
+// Network
+//-----------------------------------------------------------------------------
+#ifndef OS_NETWORK_MAXIMUM_SOCKET_NO
+#define OS_NETWORK_MAXIMUM_SOCKET_NO 16
+#endif
+#define OS_NETWORK_STACK_USE_CONFIGSERVER
+
+//-----------------------------------------------------------------------------
 // IDS
 //-----------------------------------------------------------------------------
 
 #define CONFIGSERVER_LOGGER_ID      10
 #define CLOUDCONNECTOR_LOGGER_ID    20
 #define SENSOR_LOGGER_ID            30
-#define NWDRIVER_LOGGER_ID          40
-#define NWSTACK_LOGGER_ID           50
+#define NWSTACK_LOGGER_ID           40
 
 #define CONFIGSERVER_STORAGE_ID     1
 #define LOGGER_STORAGE_ID           2

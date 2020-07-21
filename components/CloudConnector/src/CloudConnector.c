@@ -20,6 +20,8 @@
 
 #include "LibUtil/managedBuffer.h"
 
+#include "util/loop_defines.h"
+
 /* Defines -------------------------------------------------------------------*/
 // the following defines are the parameter names that need to match the settings
 // in the configuration xml file. These will be passed to the configServer
@@ -610,12 +612,22 @@ cloudConnector_interface_write()
 static void
 init_network_client_api()
 {
-    static OS_NetworkStackClient_SocketDataports_t config;
-    static OS_Dataport_t dataport = OS_DATAPORT_ASSIGN(NwAppDataPort);
+static OS_NetworkStackClient_SocketDataports_t config;
 
-    config.number_of_sockets = 1;
+    config.number_of_sockets = OS_NETWORK_MAXIMUM_SOCKET_NO;
+    static OS_Dataport_t dataports[OS_NETWORK_MAXIMUM_SOCKET_NO] = {0};
 
-    config.dataport = &dataport;
+
+    int i = 0;
+
+#define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
+#define LOOP_ELEMENT                                                     \
+    GEN_ID(OS_Dataport_t t) = OS_DATAPORT_ASSIGN(GEN_ID(NwAppDataPort)); \
+    dataports[i] = GEN_ID(t);                                            \
+    i++;
+#include "util/loop.h"
+
+    config.dataport = dataports;
     OS_NetworkStackClient_init(&config);
 }
 

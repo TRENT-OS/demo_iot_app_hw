@@ -4,6 +4,8 @@
    *  Copyright (C) 2020, Hensoldt Cyber GmbH
 */
 
+#include "system_config.h"
+#include "include/util/loop_defines.h"
 
 import "if_CloudConnector.camkes";
 
@@ -25,8 +27,12 @@ component CloudConnector {
     //-------------------------------------------------
     // Networking
     uses        if_OS_Socket                network_stack_rpc;
-    dataport    Buf                         NwAppDataPort;
-    consumes    ServiceReady                event_network_stack_init_done;
+    consumes    EventServiceReady           event_network_stack_init_done;
+
+#define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
+#define LOOP_ELEMENT \
+    GEN_ID(dataport Buf NwAppDataPort);
+#include "include/util/loop.h"
 
     //-------------------------------------------------
     // EntropySource

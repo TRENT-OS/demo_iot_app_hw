@@ -1,20 +1,21 @@
 /*
- *  Network Stack CAmkES wrapper
+ *  OS Network Stack CAmkES wrapper
  *
- *  Copyright (C) 2020, Hensoldt Cyber GmbH
+ *  Copyright (C) 2019, Hensoldt Cyber GmbH
  *
  */
 
 #include "system_config.h"
 
 #include "LibDebug/Debug.h"
-
 #include "OS_Error.h"
 #include "OS_NetworkStack.h"
-#include "OS_ConfigService.h"
-#include "OS_Dataport.h"
-#include "helper_func.h"
+#include "TimeServer.h"
 #include <camkes.h>
+#include "OS_Dataport.h"
+#include "OS_Network.h"
+#include "helper_func.h"
+#include "loop_defines.h"
 
 /* Defines -------------------------------------------------------------------*/
 // the following defines are the parameter names that need to match the settings
@@ -30,75 +31,19 @@ char DEV_ADDR[20];
 char GATEWAY_ADDR[20];
 char SUBNET_MASK[20];
 
-static OS_NetworkStack_AddressConfig_t param_config =
+
+static const OS_NetworkStack_AddressConfig_t config =
 {
-    .dev_addr      =   DEV_ADDR,
-    .gateway_addr  =   GATEWAY_ADDR,
-    .subnet_mask   =   SUBNET_MASK
+    .dev_addr      = DEV_ADDR,
+    .gateway_addr  = GATEWAY_ADDR,
+    .subnet_mask   = SUBNET_MASK
 };
 
-//------------------------------------------------------------------------------
-int run()
+#ifdef OS_NETWORK_STACK_USE_CONFIGSERVER
+OS_Error_t
+read_ip_from_config_server(void)
 {
-    Debug_LOG_INFO("[NwStack '%s'] starting", get_instance_name());
-
-    // can't make this "static const" or even "static" because the data ports
-    // are allocated at runtime
-    OS_NetworkStack_CamkesConfig_t camkes_config =
-    {
-        .notify_init_done        = event_network_init_done_emit,
-        .wait_loop_event         = event_tick_or_data_wait,
-
-        .internal =
-        {
-            .notify_loop        = event_internal_emit,
-
-            .socketCB_lock      = socketControlBlockMutex_lock,
-            .socketCB_unlock    = socketControlBlockMutex_unlock,
-
-            .stackTS_lock       = stackThreadSafeMutex_lock,
-            .stackTS_unlock     = stackThreadSafeMutex_unlock,
-        },
-
-        .drv_nic =
-        {
-            // NIC -> Stack
-            .from = OS_DATAPORT_ASSIGN(port_nic_from),
-
-            // Stack -> NIC
-            .to = OS_DATAPORT_ASSIGN(port_nic_to),
-
-            .rpc =
-            {
-                .dev_write      = nic_driver_tx_data,
-                .get_mac        = nic_driver_get_mac,
-            }
-        },
-
-        .app =
-        {
-            .notify_init_done   = event_network_init_done_emit,
-        }
-    };
-
-    static OS_NetworkStack_SocketResources_t socks = {
-        .notify_write       = e_write_emit,
-        .wait_write         = c_write_wait,
-
-        .notify_read        = e_read_emit,
-        .wait_read          = c_read_wait,
-
-        .notify_connection  = e_conn_emit,
-        .wait_connection    = c_conn_wait,
-
-        .buf = OS_DATAPORT_ASSIGN(port_app_io)
-    };
-
-    camkes_config.internal.number_of_sockets = 1;
-    camkes_config.internal.sockets = &socks;
-
     OS_Error_t ret;
-
     // Create a handle to the remote library instance.
     OS_ConfigServiceHandle_t serverLibWithFSBackend;
 
@@ -128,7 +73,7 @@ int run()
                         CFG_ETH_ADDR, ret);
         return ret;
     }
-    Debug_LOG_INFO("Retrieved TAP 0 IP Addr: %s", DEV_ADDR);
+    Debug_LOG_INFO("[NwStack '%s'] IP ADDR: %s", get_instance_name(), DEV_ADDR);
 
     ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                          DOMAIN_NWSTACK,
@@ -141,7 +86,8 @@ int run()
                         CFG_ETH_GATEWAY_ADDR, ret);
         return ret;
     }
-    Debug_LOG_INFO("Retrieved TAP 0 GATEWAY ADDR: %s", GATEWAY_ADDR);
+    Debug_LOG_INFO("[NwStack '%s'] GATEWAY ADDR: %s", get_instance_name(),
+                   GATEWAY_ADDR);
 
     ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
                                          DOMAIN_NWSTACK,
@@ -154,17 +100,111 @@ int run()
                         CFG_ETH_SUBNET_MASK, ret);
         return ret;
     }
-    Debug_LOG_INFO("Retrieved TAP  0 SUBNETMASK: %s", SUBNET_MASK);
+    Debug_LOG_INFO("[NwStack '%s'] SUBNETMASK: %s", get_instance_name(),
+                   SUBNET_MASK);
+
+    return OS_SUCCESS;
+}
+#endif
 
 
-    ret = OS_NetworkStack_run(&camkes_config, &param_config);
+//------------------------------------------------------------------------------
+// network stack's PicTCP OS adaption layer calls this.
+uint64_t
+Timer_getTimeMs(void)
+{
+    return TimeServer_getTime(TimeServer_PRECISION_MSEC);
+}
+
+//------------------------------------------------------------------------------
+int run(void)
+{
+    Debug_LOG_INFO("[NwStack '%s'] starting", get_instance_name());
+
+    #define LOOP_ELEMENT \
+        { \
+            .notify_write      = GEN_EMIT(e_write), \
+            .wait_write        = GEN_WAIT(c_write), \
+            .notify_read       = GEN_EMIT(e_read), \
+            .wait_read         = GEN_WAIT(c_read), \
+            .notify_connection = GEN_EMIT(e_conn), \
+            .wait_connection   = GEN_WAIT(c_conn), \
+            .buf               = OS_DATAPORT_ASSIGN(GEN_ID(nwStack_port)), \
+            .accepted_handle   = -1, \
+        },
+
+    static OS_NetworkStack_SocketResources_t socks[OS_NETWORK_MAXIMUM_SOCKET_NO] = {
+        #define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
+        #include "loop.h" // places LOOP_ELEMENT here for LOOP_COUNT times
+    };
+
+    static const OS_NetworkStack_CamkesConfig_t camkes_config =
+    {
+        .notify_init_done        = nwStack_event_ready_emit,
+        .wait_loop_event         = c_tick_or_data_wait,
+
+        .internal =
+        {
+            .notify_loop        = e_tick_or_data_emit,
+
+            .allocator_lock     = allocatorMutex_lock,
+            .allocator_unlock   = allocatorMutex_unlock,
+
+            .nwStack_lock       = nwstackMutex_lock,
+            .nwStack_unlock     = nwstackMutex_unlock,
+
+            .socketCB_lock      = socketControlBlockMutex_lock,
+            .socketCB_unlock    = socketControlBlockMutex_unlock,
+
+            .stackTS_lock       = stackThreadSafeMutex_lock,
+            .stackTS_unlock     = stackThreadSafeMutex_unlock,
+
+            .number_of_sockets = OS_NETWORK_MAXIMUM_SOCKET_NO,
+            .sockets           = socks,
+        },
+
+        .drv_nic =
+        {
+            .from = OS_DATAPORT_ASSIGN(nic_port_from),
+
+            .to = OS_DATAPORT_ASSIGN(nic_port_to),
+
+            .rpc =
+            {
+                .dev_write      = nic_driver_tx_data,
+                .get_mac        = nic_driver_get_mac,
+            }
+        },
+
+        .app =
+        {
+            .notify_init_done   = nwStack_event_ready_emit,
+
+        }
+    };
+
+    OS_Error_t ret;
+#ifdef OS_NETWORK_STACK_USE_CONFIGSERVER
+    ret = read_ip_from_config_server();
+    if (ret != OS_SUCCESS)
+    {
+        Debug_LOG_FATAL("[NwStack '%s'] Read from config failed, error %d",
+                        get_instance_name(), ret);
+        return -1;
+    }
+#endif
+
+    // The Ticker component sends us a tick every second. Currently there is
+    // no dedicated interface to enable and disable the tick. because we don't
+    // need this. OS_NetworkStack_run() is not supposed to return.
+
+    ret = OS_NetworkStack_run(&camkes_config, &config);
     if (ret != OS_SUCCESS)
     {
         Debug_LOG_FATAL("[NwStack '%s'] OS_NetworkStack_run() failed, error %d",
                         get_instance_name(), ret);
-        return ret;
+        return -1;
     }
-
 
     // actually, OS_NetworkStack_run() is not supposed to return with
     // OS_SUCCESS. We have to assume this is a graceful shutdown for some

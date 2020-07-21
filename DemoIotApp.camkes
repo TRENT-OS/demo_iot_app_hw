@@ -11,15 +11,13 @@ import <if_OS_Timer.camkes>;
 
 import "components/Sensor/Sensor.camkes";
 import "components/CloudConnector/CloudConnector.camkes";
-import "components/TimerClient/TimerClient.camkes";
 import "components/LogServer/LogServer.camkes";
 import "components/NwStack/network_stack.camkes";
 import "components/ConfigServer/ConfigServer.camkes";
+import "components/Ticker/Ticker.camkes";
 
+#include "include/util/loop_defines.h"
 #include "system_config.h"
-
-#include "NIC_Dummy/NIC_Dummy.camkes"
-DECLARE_COMPONENT_NIC_Dummy(NwDriver)
 
 #include "TimeServer/camkes/TimeServer.camkes"
 DECLARE_COMPONENT_TimeServer(TimeServer)
@@ -35,6 +33,12 @@ DECLARE_COMPONENT_SPI(SPI)
 
 #include "Storage_Flash/Storage_Flash_SPI.camkes"
 DECLARE_COMPONENT_Storage_Flash_SPI(Flash)
+
+#include "NIC_RPi/NIC_RPi.camkes"
+DECLARE_COMPONENT_MAILBOX_HW(MAILBOX)
+DECLARE_COMPONENT_USB_HW(USB)
+DECLARE_COMPONENT_NIC_DRV(NIC)
+
 
 assembly {
     composition {
@@ -65,9 +69,8 @@ assembly {
         //----------------------------------------------------------------------
         component  CloudConnector       cloudConnector;
 
-        connection seL4Notification     NwAppInitDone                    (from nwStack.event_network_init_done,   to cloudConnector.event_network_stack_init_done);
+        connection seL4Notification     NwAppInitDone                    (from nwStack.nwStack_event_ready,   to cloudConnector.event_network_stack_init_done);
         connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.network_stack_rpc,    to nwStack.network_stack_rpc);
-        connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.NwAppDataPort,        to nwStack.port_app_io);
 
         connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.cfg_dataport_buf,       to configServer.cfg_dataport_cloudConnector);
@@ -81,40 +84,50 @@ assembly {
             cloudConnector.entropy_rpc,
             cloudConnector.entropy_port)
 
-        //----------------------------------------------------------------------
-        // Network Driver #1
-        //----------------------------------------------------------------------
-        DECLARE_AND_CONNECT_INSTANCE_NIC_Dummy(
-            NwDriver, nwDriver,
-            nwStack.nic_driver, nwStack.port_nic_to, nwStack.port_nic_from, nwStack.event_tick_or_data,
-            logServer.log_server_interface, logServer.dataport_buf_nwDriver)
+#define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
+#define LOOP_ELEMENT \
+        connection seL4SharedData GEN_NAME(cloudConnector, nwStack)(from cloudConnector.GEN_ID(NwAppDataPort), to nwStack.GEN_ID(nwStack_port));
+#include "include/util/loop.h"
 
+        //----------------------------------------------------------------------
+        // Ethernet Driver
+        //----------------------------------------------------------------------
+        DECLARE_AND_CONNECT_INSTANCE_NIC_DRV_HW(MAILBOX, mailbox, USB, usb, NIC, nwDriver)
+
+        //----------------------------------------------------------------------
+        // Ticker
+        // It's a very pragmatic approach to create a 1 second tick for each
+        // network stack. Actually, we don't need this, because the TimeServer
+        // should provide two timers per client, one for timeouts and once for
+        // the periodic tick.
+        //----------------------------------------------------------------------
+        component Ticker ticker;
+        connection seL4NotificationNative nwStack_tick (from ticker.nwStack_event_tick, to nwStack.c_tick_or_data);
 
         //----------------------------------------------------------------------
         // Network Stack
         //----------------------------------------------------------------------
         component  NwStack                nwStack;
 
-        connection seL4NotificationNative NwStackdataAvail2                (from nwStack.event_internal, to nwStack.event_tick_or_data);
-        connection seL4Notification       NwStackEventsRxd1                (from nwStack.e_write,        to nwStack.c_write);
-        connection seL4Notification       NwStackEventsRxd2                (from nwStack.e_read,         to nwStack.c_read);
-        connection seL4Notification       NwStackEventsRxd3                (from nwStack.e_conn,         to nwStack.c_conn);
+#define COMPONENT nwStack
+#define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
+#define LOOP_ELEMENT \
+        connection seL4Notification GEN_NAME(COMPONENT, _a)(from COMPONENT.GEN_ID(e_write), to COMPONENT.GEN_ID(c_write)); \
+        connection seL4Notification GEN_NAME(COMPONENT, _b)(from COMPONENT.GEN_ID(e_read), to COMPONENT.GEN_ID(c_read));   \
+        connection seL4Notification GEN_NAME(COMPONENT, _c)(from COMPONENT.GEN_ID(e_conn), to COMPONENT.GEN_ID(c_conn));
+#include "include/util/loop.h"
+#undef COMPONENT
 
-        connection seL4RPCCall            nwStack_timerClient              (from nwStack.Timer,          to timerClient.TimerClient);
-
-        connection seL4NotificationNative NwStackdataAvail3                (from timerClient.e_timeout_nwstacktick, to nwStack.event_tick_or_data);
+        connection seL4NotificationNative NwStackdataAvail1                (from nwDriver.nic_event_hasData,     to nwStack.c_tick_or_data);
+        connection seL4RPCCall            nwStack_NwDriver                 (from nwStack.nic_driver,             to nwDriver.nic_rpc);
+        connection seL4SharedData         NwDriver_NwStack_ReadConnection  (from nwDriver.nic_port_to,           to nwStack.nic_port_from);
+        connection seL4SharedData         NwDriver_NwStack_WriteConnection (from nwDriver.nic_port_from,         to nwStack.nic_port_to);
 
         connection seL4RPCCall            NwStack_configuration_server     (from nwStack.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData         NwStack_config_data              (from nwStack.cfg_dataport_buf,       to configServer.cfg_dataport_nwStack);
 
         connection seL4RPCCall            NwStack_logServer                (from nwStack.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData         NwStack_logServer_data           (from nwStack.logServer_dataport_buf, to logServer.dataport_buf_nwStack);
-
-
-        //----------------------------------------------------------------------
-        // TimerClient
-        //----------------------------------------------------------------------
-        component  TimerClient timerClient;
 
 
         //----------------------------------------------------------------------
@@ -139,11 +152,14 @@ assembly {
         DECLARE_AND_CONNECT_INSTANCE_TimeServer(
             TimeServer,
             timeServer,
-            timerClient.timeServer_rpc,
             cloudConnector.timeServer_rpc,
             logServer.timeServer_rpc,
             sensorTemp.timeServer_rpc,
-            flash.timeServer_rpc)
+            flash.timeServer_rpc,
+            ticker.timeServer_rpc,
+            nwDriver.timeServer_rpc,
+            nwStack.timeServer_rpc
+        )
 
 
         //----------------------------------------------------------------------
@@ -159,7 +175,6 @@ assembly {
         configServer.log_server_interface_attributes =       CONFIGSERVER_LOGGER_ID;
         cloudConnector.log_server_interface_attributes =     CLOUDCONNECTOR_LOGGER_ID;
         sensorTemp.log_server_interface_attributes =         SENSOR_LOGGER_ID;
-        nwDriver.log_server_interface_attributes =           NWDRIVER_LOGGER_ID;
         nwStack.log_server_interface_attributes =            NWSTACK_LOGGER_ID;
 
         CONFIGURE_INSTANCE_StorageServer(
@@ -177,6 +192,12 @@ assembly {
 
         // gpio base register and size, includes the spi base register
         CONFIGURE_INSTANCE_SPI(spi, 0x3F200000, 0x8000)
+
+        CONFIGURE_INSTANCE_MAILBOX_HW(mailbox, 0x3F00B000, 0x1000)
+
+        CONFIGURE_INSTANCE_USB_HW(usb, 0x3F980000, 0x1000, 73)
+
+        CONFIGURE_INSTANCE_NIC_DRV(nwDriver, 4*40960)
     }
 }
 
