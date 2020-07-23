@@ -41,10 +41,6 @@
 #define CONFIGSERVER_STORAGE_OFFSET 0
 #define CONFIGSERVER_STORAGE_SIZE   (1024*1024)
 
-#define LOGSERVER_STORAGE_OFFSET    (1024*1024)
-#define LOGSERVER_STORAGE_SIZE      (1024*1024)
-
-
 //-----------------------------------------------------------------------------
 // LOGGER
 //-----------------------------------------------------------------------------

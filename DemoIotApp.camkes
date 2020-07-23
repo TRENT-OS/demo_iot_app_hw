@@ -142,8 +142,7 @@ assembly {
         DECLARE_AND_CONNECT_INSTANCE_StorageServer(
             StorageServer, storageServer,
             flash.storage_rpc, flash.storage_port,
-            configServer.storage_rpc, configServer.storage_dp,
-            logServer.storage_rpc, logServer.storage_dp)
+            configServer.storage_rpc, configServer.storage_dp)
 
 
         //----------------------------------------------------------------------
@@ -179,13 +178,10 @@ assembly {
 
         CONFIGURE_INSTANCE_StorageServer(
             storageServer,
-            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE,
-            LOGSERVER_STORAGE_OFFSET,    LOGSERVER_STORAGE_SIZE)
+            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE)
 
         ASSIGN_CLIENT_BADGE_StorageServer(
             configServer, storage_rpc, CONFIGSERVER_STORAGE_ID)
-        ASSIGN_CLIENT_BADGE_StorageServer(
-            logServer, storage_rpc, LOGGER_STORAGE_ID)
 
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
