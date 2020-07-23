@@ -39,7 +39,7 @@
 // StorageServer
 //-----------------------------------------------------------------------------
 #define CONFIGSERVER_STORAGE_OFFSET 0
-#define CONFIGSERVER_STORAGE_SIZE   (1024*1024)
+#define CONFIGSERVER_STORAGE_SIZE   (128*1024)
 
 //-----------------------------------------------------------------------------
 // LOGGER
