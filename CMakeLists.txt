@@ -152,11 +152,7 @@ DeclareCAmkESComponent(
         TimeServer_client
 )
 
-DeclareCAmkESComponent_SPI(
-    SPI
-)
-
-DeclareCAmkESComponent_Storage_Flash_SPI(
+DeclareCAmkESComponent_RPI_SPI_Flash(
     Flash
     LIBS
         TimeServer_client

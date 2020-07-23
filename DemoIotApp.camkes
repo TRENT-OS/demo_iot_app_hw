@@ -28,11 +28,8 @@ DECLARE_COMPONENT_EntropySource(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 DECLARE_COMPONENT_StorageServer(StorageServer)
 
-#include "SPI/SPI.camkes"
-DECLARE_COMPONENT_SPI(SPI)
-
-#include "Storage_Flash/Storage_Flash_SPI.camkes"
-DECLARE_COMPONENT_Storage_Flash_SPI(Flash)
+#include "RPI_SPI_Flash/RPI_SPI_Flash.camkes"
+DECLARE_COMPONENT_RPI_SPI_FLASH_DRV(Flash)
 
 #include "NIC_RPi/NIC_RPi.camkes"
 DECLARE_COMPONENT_MAILBOX_HW(MAILBOX)
@@ -133,11 +130,8 @@ assembly {
         //----------------------------------------------------------------------
         // StorageServer
         //----------------------------------------------------------------------
-        DECLARE_AND_CONNECT_INSTANCE_SPI(SPI, spi)
-
-        DECLARE_AND_CONNECT_INSTANCE_Storage_Flash_SPI(
-            Flash, flash,
-            spi.spi_rpc, spi.spi_port)
+        DECLARE_AND_CONNECT_INSTANCE_RPI_SPI_FLASH(
+            Flash, flash)
 
         DECLARE_AND_CONNECT_INSTANCE_StorageServer(
             StorageServer, storageServer,
@@ -186,8 +180,7 @@ assembly {
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
 
-        // gpio base register and size, includes the spi base register
-        CONFIGURE_INSTANCE_SPI(spi, 0x3F200000, 0x8000)
+        CONFIGURE_INSTANCE_RPI_SPI_FLASH(flash)
 
         CONFIGURE_INSTANCE_MAILBOX_HW(mailbox, 0x3F00B000, 0x1000)
 
