@@ -107,7 +107,7 @@ int run()
     int len = MQTTSerialize_publish(serializedMsg,
                                     sizeof(serializedMsg),
                                     0,
-                                    0,
+                                    1,
                                     0,
                                     1,
                                     mqttTopic,
