@@ -20,6 +20,8 @@ target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 #-------------------------------------------------------------------------------
 project(demo_iot_app C)
 
+set(LibUtilsDefaultZfLogLevel 5 CACHE STRING "" FORCE)
+
 DeclareCAmkESComponent(
     SensorTemp
     INCLUDES
