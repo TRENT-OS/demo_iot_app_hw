@@ -164,8 +164,11 @@ int run(void)
 
         .drv_nic =
         {
-            .from = OS_DATAPORT_ASSIGN(nic_port_from),
-
+            .from =
+            {
+                .io = (void**)( &(nic_port_from)),
+                .size = NIC_DRIVER_RINGBUFFER_NUMBER_ELEMENTS
+            },
             .to = OS_DATAPORT_ASSIGN(nic_port_to),
 
             .rpc =
