@@ -6,16 +6,11 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
-os_set_config_file(system_config.h)
+os_set_config_file(
+    system_config.h
+    CONFIG_PROJECT_NAME system_config)
 
 add_subdirectory("include/mqtt")
-
-
-#-------------------------------------------------------------------------------
-project(system_config C)
-add_library(${PROJECT_NAME} INTERFACE)
-target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_LIST_DIR})
-
 
 #-------------------------------------------------------------------------------
 project(demo_iot_app C)
