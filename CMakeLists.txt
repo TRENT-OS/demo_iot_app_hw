@@ -6,9 +6,7 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
-os_set_config_file(
-    system_config.h
-    CONFIG_PROJECT_NAME system_config)
+os_set_config_file(system_config.h CREATE_CONFIG_PROJECT)
 
 add_subdirectory("include/mqtt")
 
