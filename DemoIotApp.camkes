@@ -145,15 +145,14 @@ assembly {
         DECLARE_AND_CONNECT_INSTANCE_TimeServer(
             TimeServer,
             timeServer,
-            cloudConnector.timeServer_rpc,
-            logServer.timeServer_rpc,
-            sensorTemp.timeServer_rpc,
-            flash.timeServer_rpc,
-            ticker.timeServer_rpc,
-            nwDriver.timeServer_rpc,
-            nwStack.timeServer_rpc
+            cloudConnector.timeServer_rpc,  cloudConnector.timeServer_notify,
+            logServer.timeServer_rpc,       logServer.timeServer_notify,
+            sensorTemp.timeServer_rpc,      sensorTemp.timeServer_notify,
+            flash.timeServer_rpc,           flash.timeServer_notify,
+            ticker.timeServer_rpc,          ticker.timeServer_notify,
+            nwDriver.timeServer_rpc,        nwDriver.timeServer_notify,
+            nwStack.timeServer_rpc,         nwStack.timeServer_notify
         )
-
 
         //----------------------------------------------------------------------
         // ConfigServer
@@ -176,6 +175,21 @@ assembly {
 
         ASSIGN_CLIENT_BADGE_StorageServer(
             configServer, storage_rpc, CONFIGSERVER_STORAGE_ID)
+
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            cloudConnector, timeServer_rpc, TIMESERVER_CC_ID)
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            logServer, timeServer_rpc, TIMESERVER_LS_ID)
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            sensorTemp, timeServer_rpc, TIMESERVER_ST_ID)
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            flash, timeServer_rpc, TIMESERVER_FL_ID)
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            ticker, timeServer_rpc, TIMESERVER_TK_ID)
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            nwDriver, timeServer_rpc, TIMESERVER_ND_ID)
+        ASSIGN_CLIENT_BADGE_TimeServer(
+            nwStack, timeServer_rpc, TIMESERVER_NS_ID)
 
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;

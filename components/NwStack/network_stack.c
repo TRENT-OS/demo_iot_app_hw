@@ -31,6 +31,10 @@ char DEV_ADDR[20];
 char GATEWAY_ADDR[20];
 char SUBNET_MASK[20];
 
+static const if_OS_Timer_t timer =
+    IF_OS_TIMER_ASSIGN(
+        timeServer_rpc,
+        timeServer_notify);
 
 static const OS_NetworkStack_AddressConfig_t config =
 {
@@ -112,7 +116,17 @@ read_ip_from_config_server(void)
 uint64_t
 Timer_getTimeMs(void)
 {
-    return TimeServer_getTime(TimeServer_PRECISION_MSEC);
+    OS_Error_t err;
+    uint64_t ms;
+
+    if ((err = TimeServer_getTime(&timer, TimeServer_PRECISION_MSEC,
+                                  &ms)) != OS_SUCCESS)
+    {
+        Debug_LOG_ERROR("TimeServer_getTime() failed with %d", err);
+        ms = 0;
+    }
+
+    return ms;
 }
 
 //------------------------------------------------------------------------------

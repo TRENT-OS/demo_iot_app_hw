@@ -6,9 +6,8 @@
  */
 
 #include "LibDebug/Debug.h"
-#include "TimeServer.h"
-#include <camkes.h>
 
+#include <camkes.h>
 
 //------------------------------------------------------------------------------
 int run(void)
@@ -23,14 +22,10 @@ int run(void)
         return -1;
     }
 
-    seL4_CPtr timeServer_notification = timeServer_rpc_notification();
-
     // uint64_t timestamp = TimeServer_getTime(TimeServer_PRECISION_NSEC);
     for(;;)
     {
-        seL4_Word badge = 0;
-
-        seL4_Wait(timeServer_notification, &badge);
+        timeServer_notify_wait();
 
         // uint64_t timestamp_new = TimeServer_getTime(TimeServer_PRECISION_NSEC);
         // uint64_t  delta = timestamp_new - timestamp;

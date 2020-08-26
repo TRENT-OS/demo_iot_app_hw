@@ -33,6 +33,11 @@ OS_ConfigServiceHandle_t serverLibWithFSBackend;
 static unsigned char payload[128]; // arbitrary max expected length
 static char topic[128];
 
+static const if_OS_Timer_t timer =
+    IF_OS_TIMER_ASSIGN(
+        timeServer_rpc,
+        timeServer_notify);
+
 static OS_Error_t
 initializeSensor(void)
 {
@@ -118,7 +123,11 @@ int run()
     {
         CloudConnector_write(serializedMsg, (void*)cloudConnectorDataPort,
                              len);
-        TimeServer_sleep(TimeServer_PRECISION_SEC, SECS_TO_SLEEP);
+        if ((ret = TimeServer_sleep(&timer, TimeServer_PRECISION_SEC,
+                                    SECS_TO_SLEEP)) != OS_SUCCESS)
+        {
+            Debug_LOG_ERROR("TimeServer_sleep() failed with %d", ret);
+        }
     }
 
     return 0;

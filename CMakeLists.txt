@@ -146,7 +146,6 @@ DeclareCAmkESComponent(
     LIBS
         os_core_api
         os_libs
-        TimeServer_client
 )
 
 DeclareCAmkESComponent_RPI_SPI_Flash(

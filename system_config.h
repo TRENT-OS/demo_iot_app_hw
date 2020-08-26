@@ -41,6 +41,19 @@
 #define CONFIGSERVER_STORAGE_OFFSET 0
 #define CONFIGSERVER_STORAGE_SIZE   (128*1024)
 
+
+//-----------------------------------------------------------------------------
+// TimeServer clients
+//-----------------------------------------------------------------------------
+#define TIMESERVER_CC_ID         1
+#define TIMESERVER_LS_ID         2
+#define TIMESERVER_ST_ID         3
+#define TIMESERVER_FL_ID         4
+#define TIMESERVER_TK_ID         5
+#define TIMESERVER_ND_ID         6
+#define TIMESERVER_NS_ID         7
+
+
 //-----------------------------------------------------------------------------
 // LOGGER
 //-----------------------------------------------------------------------------

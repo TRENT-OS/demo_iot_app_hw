@@ -22,7 +22,10 @@ component CloudConnector {
 
     provides    if_CloudConnector           cloudConnector_interface;
 
+    //-------------------------------------------------
+    // Timer
     uses        if_OS_Timer                 timeServer_rpc;
+    consumes    TimerReady                  timeServer_notify;
 
     //-------------------------------------------------
     // Networking
