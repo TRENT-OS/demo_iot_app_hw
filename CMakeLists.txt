@@ -1,5 +1,5 @@
 #
-# IoT Demo
+# IoT Demo on RaspberryPi 3B+
 #
 # Copyright (C) 2019-2020, Hensoldt Cyber GmbH
 #
