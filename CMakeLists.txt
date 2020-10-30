@@ -157,7 +157,7 @@ DeclareCAmkESComponent_EntropySource(
     EntropySource
 )
 
-DeclareCAmkESComponent_TimeServer(
+TimeServer_DeclareCAmkESComponent(
     TimeServer
 )
 
