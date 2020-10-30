@@ -177,26 +177,14 @@ assembly {
         ASSIGN_CLIENT_BADGE_StorageServer(
             configServer, storage_rpc, CONFIGSERVER_STORAGE_ID)
 
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            cloudConnector.timeServer_rpc, TIMESERVER_CC_ID
-        )
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            logServer.timeServer_rpc, TIMESERVER_LS_ID
-        )
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            sensorTemp.timeServer_rpc, TIMESERVER_ST_ID
-        )
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            flash.timeServer_rpc, TIMESERVER_FL_ID
-        )
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            ticker.timeServer_rpc, TIMESERVER_TK_ID
-        )
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            nwDriver.timeServer_rpc, TIMESERVER_ND_ID
-        )
-        TimeServer_CLIENT_ASSIGN_BADGE(
-            nwStack.timeServer_rpc, TIMESERVER_NS_ID
+        TimeServer_CLIENT_ASSIGN_BADGES(
+            cloudConnector.timeServer_rpc,
+            logServer.timeServer_rpc,
+            sensorTemp.timeServer_rpc,
+            flash.timeServer_rpc,
+            ticker.timeServer_rpc,
+            nwDriver.timeServer_rpc,
+            nwStack.timeServer_rpc
         )
 
         /* assign an initial value to semaphore */
