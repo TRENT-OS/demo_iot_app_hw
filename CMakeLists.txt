@@ -131,7 +131,7 @@ DeclareCAmkESComponent_NIC_RPi(
     NIC
 )
 
-DeclareCAmkESComponent_StorageServer(
+StorageServer_DeclareCAmkESComponent(
     StorageServer
 )
 
