@@ -15,6 +15,7 @@
 
 #include "Logger/Client/OS_LoggerEmitter.h"
 
+#include "custom_log_format.h"
 
 #include <stdio.h>
 
@@ -45,7 +46,6 @@ static OS_LoggerFilter_Handle_t filter_configSrv,
 static OS_LoggerConsumer_Handle_t log_consumer_configSrv,
        log_consumer_cloudCon, log_consumer_sensorTemp, log_consumer_nwStack;
 static OS_LoggerConsumerCallback_t log_consumer_callback;
-static OS_LoggerFormat_Handle_t format;
 static OS_LoggerSubject_Handle_t subject;
 static OS_LoggerOutput_Handle_t console;
 
@@ -87,18 +87,15 @@ void pre_init(void)
     // set up consumer chain
     OS_LoggerConsumerChain_getInstance();
 
-    // set up log format layer
-    OS_LoggerFormat_ctor(&format);
-
     // register objects to observe
     OS_LoggerSubject_ctor(&subject);
     // Emitter configuration
     OS_LoggerSubject_ctor(&subject_log_server);
 
     // set up backend
-    OS_LoggerOutputConsole_ctor(&console, &format);
+    OS_LoggerOutputConsole_ctor(&console, &custom_log_format);
     // Emitter configuration
-    OS_LoggerOutputConsole_ctor(&console_log_server, &format);
+    OS_LoggerOutputConsole_ctor(&console_log_server, &custom_log_format);
 
     OS_LoggerSubject_attach(
         (OS_LoggerAbstractSubject_Handle_t*)&subject,
