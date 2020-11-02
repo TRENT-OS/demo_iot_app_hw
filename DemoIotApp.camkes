@@ -180,8 +180,8 @@ assembly {
             storageServer,
             CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE
         )
-        StorageServer_CLIENT_ASSIGN_BADGE(
-            configServer.storage_rpc, CONFIGSERVER_STORAGE_ID
+        StorageServer_CLIENT_ASSIGN_BADGES(
+            configServer.storage_rpc
         )
 
         TimeServer_CLIENT_ASSIGN_BADGES(
