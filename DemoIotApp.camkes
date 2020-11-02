@@ -26,7 +26,7 @@ TimeServer_COMPONENT_DECLARE(TimeServer)
 DECLARE_COMPONENT_EntropySource(EntropySource)
 
 #include "StorageServer/camkes/StorageServer.camkes"
-DECLARE_COMPONENT_StorageServer(StorageServer)
+StorageServer_COMPONENT_DECLARE(StorageServer)
 
 #include "RPI_SPI_Flash/RPI_SPI_Flash.camkes"
 DECLARE_COMPONENT_RPI_SPI_FLASH_DRV(Flash)
@@ -133,10 +133,16 @@ assembly {
         DECLARE_AND_CONNECT_INSTANCE_RPI_SPI_FLASH(
             Flash, flash)
 
-        DECLARE_AND_CONNECT_INSTANCE_StorageServer(
-            StorageServer, storageServer,
-            flash.storage_rpc, flash.storage_port,
-            configServer.storage_rpc, configServer.storage_dp)
+        component StorageServer storageServer;
+
+        StorageServer_INSTANCE_CONNECT(
+            storageServer,
+            flash.storage_rpc, flash.storage_port
+        )
+        StorageServer_INSTANCE_CONNECT_CLIENTS(
+            storageServer,
+            configServer.storage_rpc, configServer.storage_dp
+        )
 
 
         //----------------------------------------------------------------------
@@ -170,12 +176,13 @@ assembly {
         sensorTemp.log_server_interface_attributes =         SENSOR_LOGGER_ID;
         nwStack.log_server_interface_attributes =            NWSTACK_LOGGER_ID;
 
-        CONFIGURE_INSTANCE_StorageServer(
+        StorageServer_INSTANCE_CONFIGURE_CLIENTS(
             storageServer,
-            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE)
-
-        ASSIGN_CLIENT_BADGE_StorageServer(
-            configServer, storage_rpc, CONFIGSERVER_STORAGE_ID)
+            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE
+        )
+        StorageServer_CLIENT_ASSIGN_BADGE(
+            configServer.storage_rpc, CONFIGSERVER_STORAGE_ID
+        )
 
         TimeServer_CLIENT_ASSIGN_BADGES(
             cloudConnector.timeServer_rpc,
