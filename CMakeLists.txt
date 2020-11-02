@@ -153,7 +153,7 @@ DeclareCAmkESComponent_RPI_SPI_Flash(
         TimeServer_client
 )
 
-DeclareCAmkESComponent_EntropySource(
+EntropySource_DeclareCAmkESComponent(
     EntropySource
 )
 
