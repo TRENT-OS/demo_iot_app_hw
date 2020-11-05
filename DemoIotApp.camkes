@@ -23,7 +23,7 @@ import "components/Ticker/Ticker.camkes";
 TimeServer_COMPONENT_DECLARE(TimeServer)
 
 #include "EntropySource/camkes/EntropySource.camkes"
-DECLARE_COMPONENT_EntropySource(EntropySource)
+EntropySource_COMPONENT_DECLARE(EntropySource)
 
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DECLARE(StorageServer)
@@ -75,8 +75,9 @@ assembly {
         connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_dataport_buf, to logServer.dataport_buf_cloudConnector);
 
-        DECLARE_AND_CONNECT_INSTANCE_EntropySource(
-            EntropySource,
+        component  EntropySource        entropySource;
+
+        EntropySource_INSTANCE_CONNECT_CLIENT(
             entropySource,
             cloudConnector.entropy_rpc,
             cloudConnector.entropy_port)
