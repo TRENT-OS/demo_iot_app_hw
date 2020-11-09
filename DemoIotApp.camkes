@@ -32,9 +32,9 @@ StorageServer_COMPONENT_DECLARE(StorageServer)
 DECLARE_COMPONENT_RPI_SPI_FLASH_DRV(Flash)
 
 #include "NIC_RPi/NIC_RPi.camkes"
-DECLARE_COMPONENT_MAILBOX_HW(MAILBOX)
-DECLARE_COMPONENT_USB_HW(USB)
-DECLARE_COMPONENT_NIC_DRV(NIC, NIC_DRIVER_RINGBUFFER_SIZE)
+NIC_RPi_COMPONENT_DECLARE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
+NIC_RPi_Mailbox_COMPONENT_DECLARE(NIC_RPi_Mailbox)
+NIC_RPi_USB_COMPONENT_DECLARE(NIC_RPi_USB)
 
 
 assembly {
@@ -90,7 +90,15 @@ assembly {
         //----------------------------------------------------------------------
         // Ethernet Driver
         //----------------------------------------------------------------------
-        DECLARE_AND_CONNECT_INSTANCE_NIC_DRV_HW(MAILBOX, mailbox, USB, usb, NIC, nwDriver)
+        component NIC_RPi           nic;
+        component NIC_RPi_Mailbox   nic_mailbox;
+        component NIC_RPi_USB       nic_usb;
+
+        NIC_RPi_INSTANCE_CONNECT(
+            nic,
+            nic_mailbox,
+            nic_usb
+        )
 
         //----------------------------------------------------------------------
         // Ticker
@@ -116,10 +124,10 @@ assembly {
 #include "include/util/loop.h"
 #undef COMPONENT
 
-        connection seL4NotificationNative NwStackdataAvail1                (from nwDriver.nic_event_hasData,     to nwStack.c_tick_or_data);
-        connection seL4RPCCall            nwStack_NwDriver                 (from nwStack.nic_driver,             to nwDriver.nic_rpc);
-        connection seL4SharedData         NwDriver_NwStack_ReadConnection  (from nwDriver.nic_port_to,           to nwStack.nic_port_from);
-        connection seL4SharedData         NwDriver_NwStack_WriteConnection (from nwDriver.nic_port_from,         to nwStack.nic_port_to);
+        NIC_RPi_INSTANCE_CONNECT_CLIENT(
+            nic,
+            nwStack.nic_driver, nwStack.nic_port_to, nwStack.nic_port_from, nwStack.c_tick_or_data
+        )
 
         connection seL4RPCCall            NwStack_configuration_server     (from nwStack.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData         NwStack_config_data              (from nwStack.cfg_dataport_buf,       to configServer.cfg_dataport_nwStack);
@@ -158,7 +166,7 @@ assembly {
             sensorTemp.timeServer_rpc,      sensorTemp.timeServer_notify,
             flash.timeServer_rpc,           flash.timeServer_notify,
             ticker.timeServer_rpc,          ticker.timeServer_notify,
-            nwDriver.timeServer_rpc,        nwDriver.timeServer_notify,
+            nic.timeServer_rpc,             nic.timeServer_notify,
             nwStack.timeServer_rpc,         nwStack.timeServer_notify
         )
 
@@ -191,7 +199,7 @@ assembly {
             sensorTemp.timeServer_rpc,
             flash.timeServer_rpc,
             ticker.timeServer_rpc,
-            nwDriver.timeServer_rpc,
+            nic.timeServer_rpc,
             nwStack.timeServer_rpc
         )
 
@@ -200,11 +208,16 @@ assembly {
 
         CONFIGURE_INSTANCE_RPI_SPI_FLASH(flash)
 
-        CONFIGURE_INSTANCE_MAILBOX_HW(mailbox, 0x3F00B000, 0x1000)
-
-        CONFIGURE_INSTANCE_USB_HW(usb, 0x3F980000, 0x1000, 73)
-
-        CONFIGURE_INSTANCE_NIC_DRV(nwDriver, 4*40960)
+        NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
+            nic_mailbox
+        )
+        NIC_RPi_USB_INSTANCE_CONFIGURE_SELF(
+            nic_usb
+        )
+        NIC_RPi_INSTANCE_CONFIGURE(
+            nic,
+            4*40960
+        )
     }
 }
 
