@@ -28,8 +28,9 @@ EntropySource_COMPONENT_DECLARE(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DECLARE(StorageServer)
 
-#include "RPI_SPI_Flash/RPI_SPI_Flash.camkes"
-DECLARE_COMPONENT_RPI_SPI_FLASH_DRV(Flash)
+#include "RPI_SPI_Flash/RPi_SPI_Flash.camkes"
+RPi_SPI_Flash_COMPONENT_DECLARE(RPi_SPI_Flash)
+RPi_SPI_Flash_HW_COMPONENT_DECLARE(RPi_SPI_Flash_HW)
 
 #include "NIC_RPi/NIC_RPi.camkes"
 NIC_RPi_COMPONENT_DECLARE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
@@ -137,11 +138,19 @@ assembly {
 
 
         //----------------------------------------------------------------------
+        // FLASH
+        //----------------------------------------------------------------------
+        component   RPi_SPI_Flash       flash;
+        component   RPi_SPI_Flash_HW    flash_hw;
+
+        RPi_SPI_Flash_INSTANCE_CONNECT(
+            flash,
+            flash_hw
+        )
+
+        //----------------------------------------------------------------------
         // StorageServer
         //----------------------------------------------------------------------
-        DECLARE_AND_CONNECT_INSTANCE_RPI_SPI_FLASH(
-            Flash, flash)
-
         component StorageServer storageServer;
 
         StorageServer_INSTANCE_CONNECT(
@@ -206,7 +215,9 @@ assembly {
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
 
-        CONFIGURE_INSTANCE_RPI_SPI_FLASH(flash)
+        RPi_SPI_Flash_HW_INSTANCE_CONFIGURE_SELF(
+            flash_hw
+        )
 
         NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
             nic_mailbox
