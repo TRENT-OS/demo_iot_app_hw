@@ -148,7 +148,7 @@ DeclareCAmkESComponent(
 )
 
 RPi_SPI_Flash_DeclareCAmkESComponent(
-    Flash
+    RPi_SPI_Flash
     LIBS
         TimeServer_client
 )
