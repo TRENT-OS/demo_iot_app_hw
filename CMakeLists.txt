@@ -127,7 +127,7 @@ DeclareCAmkESComponent(
         TimeServer_client
 )
 
-DeclareCAmkESComponent_NIC_RPi(
+NIC_RPi_DeclareCAmkESComponent(
     NIC
 )
 
