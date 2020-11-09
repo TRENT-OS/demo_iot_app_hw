@@ -128,7 +128,7 @@ DeclareCAmkESComponent(
 )
 
 NIC_RPi_DeclareCAmkESComponent(
-    NIC
+    NIC_RPi
 )
 
 StorageServer_DeclareCAmkESComponent(
