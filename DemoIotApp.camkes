@@ -20,22 +20,22 @@ import "components/Ticker/Ticker.camkes";
 #include "system_config.h"
 
 #include "TimeServer/camkes/TimeServer.camkes"
-TimeServer_COMPONENT_DECLARE(TimeServer)
+TimeServer_COMPONENT_DEFINE(TimeServer)
 
 #include "EntropySource/camkes/EntropySource.camkes"
-EntropySource_COMPONENT_DECLARE(EntropySource)
+EntropySource_COMPONENT_DEFINE(EntropySource)
 
 #include "StorageServer/camkes/StorageServer.camkes"
-StorageServer_COMPONENT_DECLARE(StorageServer)
+StorageServer_COMPONENT_DEFINE(StorageServer)
 
 #include "RPI_SPI_Flash/RPi_SPI_Flash.camkes"
-RPi_SPI_Flash_COMPONENT_DECLARE(RPi_SPI_Flash)
-RPi_SPI_Flash_HW_COMPONENT_DECLARE(RPi_SPI_Flash_HW)
+RPi_SPI_Flash_COMPONENT_DEFINE(RPi_SPI_Flash)
+RPi_SPI_Flash_HW_COMPONENT_DEFINE(RPi_SPI_Flash_HW)
 
 #include "NIC_RPi/NIC_RPi.camkes"
-NIC_RPi_COMPONENT_DECLARE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
-NIC_RPi_Mailbox_COMPONENT_DECLARE(NIC_RPi_Mailbox)
-NIC_RPi_USB_COMPONENT_DECLARE(NIC_RPi_USB)
+NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
+NIC_RPi_Mailbox_COMPONENT_DEFINE(NIC_RPi_Mailbox)
+NIC_RPi_USB_COMPONENT_DEFINE(NIC_RPi_USB)
 
 
 assembly {
