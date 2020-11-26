@@ -28,7 +28,7 @@ EntropySource_COMPONENT_DEFINE(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DEFINE(StorageServer)
 
-#include "RPI_SPI_Flash/RPi_SPI_Flash.camkes"
+#include "RPi_SPI_Flash/RPi_SPI_Flash.camkes"
 RPi_SPI_Flash_COMPONENT_DEFINE(RPi_SPI_Flash)
 RPi_SPI_Flash_HW_COMPONENT_DEFINE(RPi_SPI_Flash_HW)
 
