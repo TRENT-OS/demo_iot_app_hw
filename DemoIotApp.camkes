@@ -24,10 +24,11 @@ StorageServer_COMPONENT_DEFINE(StorageServer)
 RPi_SPI_Flash_COMPONENT_DEFINE(RPi_SPI_Flash)
 RPi_SPI_Flash_HW_COMPONENT_DEFINE(RPi_SPI_Flash_HW)
 
-#include "NIC_RPi/NIC_RPi.camkes"
+#include "NIC_RPi/RPi_NIC.camkes"
 NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
 NIC_RPi_Mailbox_COMPONENT_DEFINE(NIC_RPi_Mailbox)
-NIC_RPi_USB_COMPONENT_DEFINE(NIC_RPi_USB)
+NIC_RPi_Systimer_COMPONENT_DEFINE(NIC_RPi_Systimer)
+NIC_RPi_Genet_COMPONENT_DEFINE(NIC_RPi_Genet)
 
 #include "NetworkStack_PicoTcp/camkes/NetworkStack_PicoTcp.camkes"
 //------------------------------------------------------------------------------
@@ -135,14 +136,16 @@ assembly
         //----------------------------------------------------------------------
         // Ethernet Driver
         //----------------------------------------------------------------------
-        component NIC_RPi           nic;
-        component NIC_RPi_Mailbox   nic_mailbox;
-        component NIC_RPi_USB       nic_usb;
+        component NIC_RPi               nic;
+        component NIC_RPi_Mailbox       nic_mailbox;
+        component NIC_RPi_Systimer      nic_systimer;
+        component NIC_RPi_Genet         nic_genet;
 
         NIC_RPi_INSTANCE_CONNECT(
             nic,
             nic_mailbox,
-            nic_usb
+            nic_systimer,
+            nic_genet
         )
 
         //----------------------------------------------------------------------
@@ -276,8 +279,11 @@ assembly
         NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
             nic_mailbox
         )
-        NIC_RPi_USB_INSTANCE_CONFIGURE_SELF(
-            nic_usb
+        NIC_RPi_Systimer_INSTANCE_CONFIGURE_SELF(
+            nic_systimer
+        )
+        NIC_RPi_Genet_INSTANCE_CONFIGURE_SELF(
+            nic_genet
         )
         NIC_RPi_INSTANCE_CONFIGURE(
             nic,
