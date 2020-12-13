@@ -33,9 +33,17 @@
 //-----------------------------------------------------------------------------
 // StorageServer
 //-----------------------------------------------------------------------------
-#define CONFIGSERVER_STORAGE_OFFSET 0
-#define CONFIGSERVER_STORAGE_SIZE   (128*1024)
+// 129 MiB reserved for GPT and BOOT partition
+#define GPT_STORAGE_SIZE            (1*1024*1024)
+#define BOOT_STORAGE_SIZE           (128*1024*1024)
 
+// 128 MiB
+#define CONFIGSERVER_STORAGE_OFFSET (GPT_STORAGE_SIZE + BOOT_STORAGE_SIZE)
+#define CONFIGSERVER_STORAGE_SIZE   (128*1024*1024)
+
+// 1 GiB
+#define LOGSERVER_STORAGE_OFFSET    (CONFIGSERVER_STORAGE_OFFSET + CONFIGSERVER_STORAGE_SIZE)
+#define LOGSERVER_STORAGE_SIZE      (1024*1024*1024)
 
 //-----------------------------------------------------------------------------
 // LOGGER
