@@ -1,3 +1,4 @@
+/*  Copyright (C) 2020, Hensoldt Cyber GmbH */
 #ifndef LOOP_COUNT
 #error "LOOP_COUNT not set"
 #endif
