@@ -323,7 +323,7 @@ assembly
         )
         NIC_RPi_INSTANCE_CONFIGURE(
             nic,
-            4 * 40960
+            128*40960
         )
     }
 }
