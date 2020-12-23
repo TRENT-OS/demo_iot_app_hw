@@ -28,7 +28,7 @@ DeclareCAmkESComponent(
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT
     LIBS
         system_config
-        os_libs
+        lib_debug
         os_core_api
         os_configuration
         os_logger
@@ -49,7 +49,7 @@ DeclareCAmkESComponent(
         -DOS_CONFIG_SERVICE_CAMKES_SERVER
     LIBS
         system_config
-        os_libs
+        lib_debug
         os_core_api
         os_configuration
         os_filesystem
@@ -67,7 +67,7 @@ DeclareCAmkESComponent(
     LIBS
         system_config
         os_core_api
-        os_libs
+        lib_debug
         os_log_server_backend_filesystem
         os_filesystem
         TimeServer_client
@@ -92,7 +92,9 @@ DeclareCAmkESComponent(
         -DOS_CONFIG_SERVICE_CAMKES_CLIENT
     LIBS
         os_core_api
-        os_libs
+        lib_compiler
+        lib_debug
+        lib_util
         os_crypto
         os_mqtt
         os_tls
@@ -119,7 +121,7 @@ DeclareCAmkESComponent(
     LIBS
         system_config
         os_core_api
-        os_libs
+        lib_debug
         os_network_lib
         os_logger
         os_configuration
@@ -143,7 +145,7 @@ DeclareCAmkESComponent(
         -Werror
     LIBS
         os_core_api
-        os_libs
+        lib_debug
 )
 
 RPi_SPI_Flash_DeclareCAmkESComponent(

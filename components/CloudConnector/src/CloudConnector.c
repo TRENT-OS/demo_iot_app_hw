@@ -4,7 +4,7 @@
  * Copyright (C) 2020, Hensoldt Cyber GmbH
  */
 
-#include "LibDebug/Debug.h"
+#include "lib_debug/Debug.h"
 #include "TimeServer.h"
 
 #include <string.h>
@@ -18,7 +18,7 @@
 
 #include "OS_NetworkStackClient.h"
 
-#include "LibUtil/managedBuffer.h"
+#include "lib_util/managedBuffer.h"
 
 #include "util/loop_defines.h"
 
