@@ -28,9 +28,12 @@ EntropySource_COMPONENT_DEFINE(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DEFINE(StorageServer)
 
-#include "RPi_SPI_Flash/RPi_SPI_Flash.camkes"
-RPi_SPI_Flash_COMPONENT_DEFINE(RPi_SPI_Flash)
-RPi_SPI_Flash_HW_COMPONENT_DEFINE(RPi_SPI_Flash_HW)
+#include "RPI_SD/RPI_SD.camkes"
+DECLARE_COMPONENT_SYSTIMER_HW(SYSTIMER)
+DECLARE_COMPONENT_MAILBOX_HW(MAILBOX)
+DECLARE_COMPONENT_SDHOST_HW(SDHOST)
+DECLARE_COMPONENT_EMMC_HW(EMMC)
+DECLARE_COMPONENT_RPI_SD_DRV(RPI_SD)
 
 #include "NIC_RPi/NIC_RPi.camkes"
 NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
@@ -138,14 +141,14 @@ assembly {
 
 
         //----------------------------------------------------------------------
-        // FLASH
+        // integrated RPI SD
         //----------------------------------------------------------------------
-        component   RPi_SPI_Flash       flash;
-        component   RPi_SPI_Flash_HW    flash_hw;
-
-        RPi_SPI_Flash_INSTANCE_CONNECT(
-            flash,
-            flash_hw
+        DECLARE_AND_CONNECT_INSTANCE_SD_DRV_HW(
+            MAILBOX, mailbox, 
+            SDHOST, sdhost, 
+            EMMC, emmc,
+            SYSTIMER, systimer,
+            RPI_SD, sd
         )
 
         //----------------------------------------------------------------------
@@ -155,13 +158,13 @@ assembly {
 
         StorageServer_INSTANCE_CONNECT(
             storageServer,
-            flash.storage_rpc, flash.storage_port
+            sd.storage_rpc, sd.storage_port
         )
         StorageServer_INSTANCE_CONNECT_CLIENTS(
             storageServer,
-            configServer.storage_rpc, configServer.storage_dp
+            configServer.storage_rpc, configServer.storage_dp,
+            logServer.storage_rpc, logServer.storage_dp
         )
-
 
         //----------------------------------------------------------------------
         // TimeServer
@@ -173,7 +176,7 @@ assembly {
             cloudConnector.timeServer_rpc,  cloudConnector.timeServer_notify,
             logServer.timeServer_rpc,       logServer.timeServer_notify,
             sensorTemp.timeServer_rpc,      sensorTemp.timeServer_notify,
-            flash.timeServer_rpc,           flash.timeServer_notify,
+            sd.timeServer_rpc,              sd.timeServer_notify,
             ticker.timeServer_rpc,          ticker.timeServer_notify,
             nic.timeServer_rpc,             nic.timeServer_notify,
             nwStack.timeServer_rpc,         nwStack.timeServer_notify
@@ -196,17 +199,19 @@ assembly {
 
         StorageServer_INSTANCE_CONFIGURE_CLIENTS(
             storageServer,
-            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE
+            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE,
+            LOGSERVER_STORAGE_OFFSET,    LOGSERVER_STORAGE_SIZE
         )
         StorageServer_CLIENT_ASSIGN_BADGES(
-            configServer.storage_rpc
+            configServer.storage_rpc,
+            logServer.storage_rpc
         )
 
         TimeServer_CLIENT_ASSIGN_BADGES(
             cloudConnector.timeServer_rpc,
             logServer.timeServer_rpc,
             sensorTemp.timeServer_rpc,
-            flash.timeServer_rpc,
+            sd.timeServer_rpc,
             ticker.timeServer_rpc,
             nic.timeServer_rpc,
             nwStack.timeServer_rpc
@@ -215,9 +220,18 @@ assembly {
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
 
-        RPi_SPI_Flash_HW_INSTANCE_CONFIGURE_SELF(
-            flash_hw
-        )
+        //----------------------------------------------------------------------
+        // integrated SD configuration 
+        //----------------------------------------------------------------------
+        CONFIGURE_INSTANCE_SYSTIMER_HW(systimer, 0x3F003000, 0x1000)
+        
+        CONFIGURE_INSTANCE_MAILBOX_HW(mailbox, 0x3F00B000, 0x1000)
+        
+        CONFIGURE_INSTANCE_SDHOST_HW(sdhost, 0x3F202000, 0x1000, 120)
+        
+        CONFIGURE_INSTANCE_EMMC_HW(emmc, 0x3F300000, 0x1000, 126)
+        
+        CONFIGURE_INSTANCE_SD_DRV(sd, 4*40960)
 
         NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
             nic_mailbox
