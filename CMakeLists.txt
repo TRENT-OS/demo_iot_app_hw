@@ -148,8 +148,8 @@ DeclareCAmkESComponent(
         lib_debug
 )
 
-RPi_SPI_Flash_DeclareCAmkESComponent(
-    RPi_SPI_Flash
+RPi_SPI_SD_DeclareCAmkESComponent (
+    RPi_SPI_SD
     LIBS
         TimeServer_client
 )

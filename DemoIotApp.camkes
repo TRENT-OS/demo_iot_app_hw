@@ -28,9 +28,9 @@ EntropySource_COMPONENT_DEFINE(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DEFINE(StorageServer)
 
-#include "RPi_SPI_Flash/RPi_SPI_Flash.camkes"
-RPi_SPI_Flash_COMPONENT_DEFINE(RPi_SPI_Flash)
-RPi_SPI_Flash_HW_COMPONENT_DEFINE(RPi_SPI_Flash_HW)
+#include "RPi_SPI_SD/RPi_SPI_SD.camkes"
+RPi_SPI_SD_COMPONENT_DEFINE(RPi_SPI_SD)
+RPi_SPI_SD_HW_COMPONENT_DEFINE(RPi_SPI_SD_HW)
 
 #include "NIC_RPi/NIC_RPi.camkes"
 NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
@@ -136,16 +136,14 @@ assembly {
         connection seL4RPCCall            NwStack_logServer                (from nwStack.log_server_interface,   to logServer.log_server_interface);
         connection seL4SharedData         NwStack_logServer_data           (from nwStack.logServer_dataport_buf, to logServer.dataport_buf_nwStack);
 
-
         //----------------------------------------------------------------------
-        // FLASH
+        // RPI SPI SD 
         //----------------------------------------------------------------------
-        component   RPi_SPI_Flash       flash;
-        component   RPi_SPI_Flash_HW    flash_hw;
-
-        RPi_SPI_Flash_INSTANCE_CONNECT(
-            flash,
-            flash_hw
+        component RPi_SPI_SD spi_sd;
+        component RPi_SPI_SD_HW spi_sd_hw;
+        RPi_SPI_SD_INSTANCE_CONNECT(
+            spi_sd,
+            spi_sd_hw
         )
 
         //----------------------------------------------------------------------
@@ -155,13 +153,13 @@ assembly {
 
         StorageServer_INSTANCE_CONNECT(
             storageServer,
-            flash.storage_rpc, flash.storage_port
+            spi_sd.storage_rpc, spi_sd.storage_port
         )
         StorageServer_INSTANCE_CONNECT_CLIENTS(
             storageServer,
-            configServer.storage_rpc, configServer.storage_dp
+            configServer.storage_rpc, configServer.storage_dp,
+            logServer.storage_rpc, logServer.storage_dp
         )
-
 
         //----------------------------------------------------------------------
         // TimeServer
@@ -173,7 +171,7 @@ assembly {
             cloudConnector.timeServer_rpc,  cloudConnector.timeServer_notify,
             logServer.timeServer_rpc,       logServer.timeServer_notify,
             sensorTemp.timeServer_rpc,      sensorTemp.timeServer_notify,
-            flash.timeServer_rpc,           flash.timeServer_notify,
+            spi_sd.timeServer_rpc,          spi_sd.timeServer_notify,
             ticker.timeServer_rpc,          ticker.timeServer_notify,
             nic.timeServer_rpc,             nic.timeServer_notify,
             nwStack.timeServer_rpc,         nwStack.timeServer_notify
@@ -196,17 +194,19 @@ assembly {
 
         StorageServer_INSTANCE_CONFIGURE_CLIENTS(
             storageServer,
-            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE
+            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE,
+            LOGSERVER_STORAGE_OFFSET,    LOGSERVER_STORAGE_SIZE
         )
         StorageServer_CLIENT_ASSIGN_BADGES(
-            configServer.storage_rpc
+            configServer.storage_rpc,
+            logServer.storage_rpc
         )
 
         TimeServer_CLIENT_ASSIGN_BADGES(
             cloudConnector.timeServer_rpc,
             logServer.timeServer_rpc,
             sensorTemp.timeServer_rpc,
-            flash.timeServer_rpc,
+            spi_sd.timeServer_rpc,
             ticker.timeServer_rpc,
             nic.timeServer_rpc,
             nwStack.timeServer_rpc
@@ -215,9 +215,10 @@ assembly {
         /* assign an initial value to semaphore */
         cloudConnector.sem_value = 0;
 
-        RPi_SPI_Flash_HW_INSTANCE_CONFIGURE_SELF(
-            flash_hw
-        )
+        //----------------------------------------------------------------------
+        // SPI SD configuration
+        //----------------------------------------------------------------------
+        RPi_SPI_SD_HW_INSTANCE_CONFIGURE_SELF(spi_sd_hw)
 
         NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
             nic_mailbox
