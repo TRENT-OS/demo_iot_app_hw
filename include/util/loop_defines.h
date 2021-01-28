@@ -1,4 +1,4 @@
-/*  Copyright (C) 2020, Hensoldt Cyber GmbH */
+/*  Copyright (C) 2020-2021, HENSOLDT Cyber GmbH */
 #define CONCAT_IMPL(X, Y) X##Y
 
 #define MACRO_CONCAT(X, Y) CONCAT_IMPL(X, Y)
