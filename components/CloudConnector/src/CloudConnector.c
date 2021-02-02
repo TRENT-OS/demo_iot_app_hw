@@ -18,7 +18,7 @@
 
 #include "OS_NetworkStackClient.h"
 
-#include "lib_util/managedBuffer.h"
+#include "lib_utils/managedBuffer.h"
 
 #include "util/loop_defines.h"
 
