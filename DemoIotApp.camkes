@@ -67,7 +67,6 @@ assembly {
         //----------------------------------------------------------------------
         component  CloudConnector       cloudConnector;
 
-        connection seL4Notification     NwAppInitDone                    (from nwStack.nwStack_event_ready,   to cloudConnector.event_network_stack_init_done);
         connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.network_stack_rpc,    to nwStack.network_stack_rpc);
 
         connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
