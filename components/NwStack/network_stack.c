@@ -15,7 +15,6 @@
 #include "OS_Dataport.h"
 #include "OS_Network.h"
 #include "helper_func.h"
-#include "loop_defines.h"
 
 /* Defines -------------------------------------------------------------------*/
 // the following defines are the parameter names that need to match the settings
@@ -136,21 +135,19 @@ void post_init()
 {
     Debug_LOG_INFO("[NwStack '%s'] starting", get_instance_name());
 
-    #define LOOP_ELEMENT \
-        { \
-            .notify_write      = GEN_EMIT(e_write), \
-            .wait_write        = GEN_WAIT(c_write), \
-            .notify_read       = GEN_EMIT(e_read), \
-            .wait_read         = GEN_WAIT(c_read), \
-            .notify_connection = GEN_EMIT(e_conn), \
-            .wait_connection   = GEN_WAIT(c_conn), \
-            .buf               = OS_DATAPORT_ASSIGN(GEN_ID(nwStack_port)), \
-            .accepted_handle   = -1, \
-        },
+    static OS_NetworkStack_SocketResources_t
+    socks =
+    {
+        .notify_write       = e_write_emit,
+        .wait_write         = c_write_wait,
 
-    static OS_NetworkStack_SocketResources_t socks[OS_NETWORK_MAXIMUM_SOCKET_NO] = {
-        #define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
-        #include "loop.h" // places LOOP_ELEMENT here for LOOP_COUNT times
+        .notify_read        = e_read_emit,
+        .wait_read          = c_read_wait,
+
+        .notify_connection  = e_conn_emit,
+        .wait_connection    = c_conn_wait,
+
+        .buf = OS_DATAPORT_ASSIGN(nwStack_port)
     };
 
     static const OS_NetworkStack_CamkesConfig_t camkes_config =
@@ -174,7 +171,7 @@ void post_init()
             .stackTS_unlock     = stackThreadSafeMutex_unlock,
 
             .number_of_sockets = OS_NETWORK_MAXIMUM_SOCKET_NO,
-            .sockets           = socks,
+            .sockets           = &socks,
         },
 
         .drv_nic =

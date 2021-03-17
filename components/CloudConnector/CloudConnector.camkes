@@ -5,7 +5,6 @@
 */
 
 #include "system_config.h"
-#include "include/util/loop_defines.h"
 
 import "if_CloudConnector.camkes";
 
@@ -30,11 +29,7 @@ component CloudConnector {
     //-------------------------------------------------
     // Networking
     uses        if_OS_Socket                network_stack_rpc;
-
-#define LOOP_COUNT OS_NETWORK_MAXIMUM_SOCKET_NO
-#define LOOP_ELEMENT \
-    GEN_ID(dataport Buf NwAppDataPort);
-#include "include/util/loop.h"
+    dataport    Buf                         nwStack_dp;
 
     //-------------------------------------------------
     // EntropySource
