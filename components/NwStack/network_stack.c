@@ -45,7 +45,6 @@ static const OS_NetworkStack_AddressConfig_t config =
 
 static bool initSuccessfullyCompleted = false;
 
-#ifdef OS_NETWORK_STACK_USE_CONFIGSERVER
 OS_Error_t
 read_ip_from_config_server(void)
 {
@@ -110,8 +109,6 @@ read_ip_from_config_server(void)
 
     return OS_SUCCESS;
 }
-#endif
-
 
 //------------------------------------------------------------------------------
 // network stack's PicTCP OS adaption layer calls this.
@@ -194,7 +191,7 @@ void post_init()
     };
 
     OS_Error_t ret;
-#ifdef OS_NETWORK_STACK_USE_CONFIGSERVER
+
     ret = read_ip_from_config_server();
     if (ret != OS_SUCCESS)
     {
@@ -202,7 +199,6 @@ void post_init()
                         get_instance_name(), ret);
         return;
     }
-#endif
 
     ret = OS_NetworkStack_init(&camkes_config, &config);
     if (ret != OS_SUCCESS)

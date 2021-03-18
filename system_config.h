@@ -67,7 +67,6 @@
 #ifndef OS_NETWORK_MAXIMUM_SOCKET_NO
 #define OS_NETWORK_MAXIMUM_SOCKET_NO 1
 #endif
-#define OS_NETWORK_STACK_USE_CONFIGSERVER
 
 //-----------------------------------------------------------------------------
 // IDS
