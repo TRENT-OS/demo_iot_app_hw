@@ -17,8 +17,9 @@ component NwStack {
 
     control;
 
-    emits      EventDataAvailable   e_tick_or_data;
-    consumes   EventDataAvailable   c_tick_or_data; // event also from NIC and Timer
+    consumes    EventDataAvailable      event_tick_or_data;
+
+    emits       EventDataAvailable      event_internal;
 
     emits       NwStack_WrEv            e_write;
     consumes    NwStack_WrEv            c_write;
@@ -50,16 +51,17 @@ component NwStack {
     //---------------------------------------------------
     // interface to ConfigurationServer
     uses     if_OS_ConfigService OS_ConfigServiceServer;
-    dataport Buf                 cfg_dataport_buf;
+    dataport Buf                 configServer_port;
 
     //-------------------------------------------------
     // interface to LogServer
-    dataport    Buf                     logServer_dataport_buf;
-    uses        if_OS_Logger            log_server_interface;
+    dataport    Buf                     logServer_port;
+    uses        if_OS_Logger            logServer_rpc;
 
     //-------------------------------------------------
     // interface Application
     provides    if_OS_Socket            network_stack_rpc;
-    dataport    Buf                     nwStack_port;
+    // Each socket requires a separate shared data space / dataport.
+    dataport    Buf                     network_stack_port;
 
 }

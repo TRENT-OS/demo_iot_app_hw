@@ -462,7 +462,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
 
     Debug_LOG_INFO("CloudConnector initialized" );
 
-    //Unblock the CloudConnector_interface_write
+    //Unblock the cloudConnector_rpc_write
     ret = sem_post();
     if (ret != 0)
     {
@@ -476,7 +476,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
 //------------------------------------------------------------------------------
 static int handle_CC_FSM_NEW_MESSAGE(CC_FSM_t* self)
 {
-    const char* receivedBuf = (const char*) sensorDataPort;
+    const char* receivedBuf = (const char*) sensor_port;
     CC_FSM_PAHO_NetCtx_t* netCtx_server = &(self->paho.server_netCtx);
 
     Debug_LOG_INFO("New message received from client", __func__);
@@ -594,7 +594,7 @@ int CC_FSM_ctor()
 }
 
 OS_Error_t
-cloudConnector_interface_write()
+cloudConnector_rpc_write()
 {
     CC_FSM_t* self = &cc_fsm;
 
@@ -619,8 +619,8 @@ cloudConnector_interface_write()
 static void
 init_network_client_api()
 {
-static OS_NetworkStackClient_SocketDataports_t config;
-    static OS_Dataport_t dataport = OS_DATAPORT_ASSIGN(nwStack_dp);
+    static OS_NetworkStackClient_SocketDataports_t config;
+    static OS_Dataport_t dataport = OS_DATAPORT_ASSIGN(network_stack_port);
 
     config.number_of_sockets = OS_NETWORK_MAXIMUM_SOCKET_NO;
 

@@ -54,7 +54,7 @@ read_ip_from_config_server(void)
 
     static OS_ConfigService_ClientCtx_t ctx =
     {
-        .dataport = OS_DATAPORT_ASSIGN(cfg_dataport_buf)
+        .dataport = OS_DATAPORT_ASSIGN(configServer_port)
     };
     ret = OS_ConfigService_createHandleRemote(
                                         &ctx,
@@ -147,16 +147,16 @@ void post_init()
         .notify_connection  = e_conn_emit,
         .wait_connection    = c_conn_wait,
 
-        .buf = OS_DATAPORT_ASSIGN(nwStack_port)
+        .buf = OS_DATAPORT_ASSIGN(network_stack_port)
     };
 
     static const OS_NetworkStack_CamkesConfig_t camkes_config =
     {
-        .wait_loop_event         = c_tick_or_data_wait,
+        .wait_loop_event         = event_tick_or_data_wait,
 
         .internal =
         {
-            .notify_loop        = e_tick_or_data_emit,
+            .notify_loop        = event_internal_emit,
 
             .allocator_lock     = allocatorMutex_lock,
             .allocator_unlock   = allocatorMutex_unlock,

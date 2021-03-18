@@ -43,7 +43,7 @@ initializeSensor(void)
 {
     static OS_ConfigService_ClientCtx_t ctx =
     {
-        .dataport = OS_DATAPORT_ASSIGN(cfg_dataport_buf)
+        .dataport = OS_DATAPORT_ASSIGN(configServer_port)
     };
     OS_Error_t err = OS_ConfigService_createHandleRemote(
                          &ctx,
@@ -61,7 +61,7 @@ static OS_Error_t
 CloudConnector_write(unsigned char* msg, void* dataPort, size_t len)
 {
     memcpy(dataPort, msg, len);
-    OS_Error_t err = cloudConnector_interface_write();
+    OS_Error_t err = cloudConnector_rpc_write();
     return err;
 }
 
@@ -121,7 +121,7 @@ int run()
 
     for (;;)
     {
-        CloudConnector_write(serializedMsg, (void*)cloudConnectorDataPort,
+        CloudConnector_write(serializedMsg, (void*)cloudConnector_port,
                              len);
         if ((ret = TimeServer_sleep(&timer, TimeServer_PRECISION_SEC,
                                     SECS_TO_SLEEP)) != OS_SUCCESS)

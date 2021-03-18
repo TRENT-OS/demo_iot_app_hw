@@ -52,14 +52,14 @@ assembly
         //----------------------------------------------------------------------
         component  SensorTemp       sensorTemp;
 
-        connection seL4SharedData   cloudConnectorData_sensorTempData   (from sensorTemp.cloudConnectorDataPort,   to cloudConnector.sensorDataPort);
-        connection seL4RPCCall      cloudConnector_sensorTemp           (from sensorTemp.cloudConnector_interface, to cloudConnector.cloudConnector_interface);
+        connection seL4SharedData   cloudConnectorData_sensorTempData   (from sensorTemp.cloudConnector_port, to cloudConnector.sensor_port);
+        connection seL4RPCCall      cloudConnector_sensorTemp           (from sensorTemp.cloudConnector_rpc,  to cloudConnector.cloudConnector_rpc);
 
         connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.cfg_dataport_buf,       to configServer.cfg_dataport_sensorTemp);
+        connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.configServer_port,       to configServer.sensor_port);
 
-        connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.log_server_interface,   to logServer.log_server_interface);
-        connection seL4SharedData   sensorTemp_logServer_data           (from sensorTemp.logServer_dataport_buf, to logServer.dataport_buf_sensorTemp);
+        connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.logServer_rpc,   to logServer.logServer_rpc);
+        connection seL4SharedData   sensorTemp_logServer_data           (from sensorTemp.logServer_port, to logServer.sensor_port);
 
 
         //----------------------------------------------------------------------
@@ -67,14 +67,14 @@ assembly
         //----------------------------------------------------------------------
         component  CloudConnector       cloudConnector;
 
-        connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.network_stack_rpc,    to nwStack.network_stack_rpc);
-        connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.nwStack_dp,        to nwStack.nwStack_port);
+        connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.network_stack_rpc,      to nwStack.network_stack_rpc);
+        connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.network_stack_port,     to nwStack.network_stack_port);
 
         connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.cfg_dataport_buf,       to configServer.cfg_dataport_cloudConnector);
+        connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.configServer_port,       to configServer.cloudConnector_port);
 
-        connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.log_server_interface,   to logServer.log_server_interface);
-        connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_dataport_buf, to logServer.dataport_buf_cloudConnector);
+        connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.logServer_rpc,   to logServer.logServer_rpc);
+        connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_port, to logServer.cloudConnector_port);
 
         component  EntropySource        entropySource;
 
@@ -104,28 +104,28 @@ assembly
         // the periodic tick.
         //----------------------------------------------------------------------
         component Ticker ticker;
-        connection seL4NotificationNative nwStack_tick (from ticker.nwStack_event_tick, to nwStack.c_tick_or_data);
+        connection seL4NotificationNative nwStack_tick (from ticker.e_timeout_nwstacktick, to nwStack.event_tick_or_data);
 
         //----------------------------------------------------------------------
         // Network Stack
         //----------------------------------------------------------------------
         component  NwStack                nwStack;
 
-        connection seL4NotificationNative NwStackdataAvail2                (from nwStack.e_tick_or_data, to nwStack.c_tick_or_data);
+        connection seL4NotificationNative NwStackdataAvail2                (from nwStack.event_internal, to nwStack.event_tick_or_data);
         connection seL4Notification       NwStackEventsRxd1                (from nwStack.e_write,        to nwStack.c_write);
         connection seL4Notification       NwStackEventsRxd2                (from nwStack.e_read,         to nwStack.c_read);
         connection seL4Notification       NwStackEventsRxd3                (from nwStack.e_conn,         to nwStack.c_conn);
 
         NIC_RPi_INSTANCE_CONNECT_CLIENT(
             nic,
-            nwStack.nic_driver, nwStack.nic_port_to, nwStack.nic_port_from, nwStack.c_tick_or_data
+            nwStack.nic_driver, nwStack.nic_port_to, nwStack.nic_port_from, nwStack.event_tick_or_data
         )
 
         connection seL4RPCCall            NwStack_configuration_server     (from nwStack.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData         NwStack_config_data              (from nwStack.cfg_dataport_buf,       to configServer.cfg_dataport_nwStack);
+        connection seL4SharedData         NwStack_config_data              (from nwStack.configServer_port,       to configServer.nwStack_port);
 
-        connection seL4RPCCall            NwStack_logServer                (from nwStack.log_server_interface,   to logServer.log_server_interface);
-        connection seL4SharedData         NwStack_logServer_data           (from nwStack.logServer_dataport_buf, to logServer.dataport_buf_nwStack);
+        connection seL4RPCCall            NwStack_logServer                (from nwStack.logServer_rpc,   to logServer.logServer_rpc);
+        connection seL4SharedData         NwStack_logServer_data           (from nwStack.logServer_port, to logServer.nwStack_port);
 
 
         //----------------------------------------------------------------------
@@ -150,7 +150,7 @@ assembly
         )
         StorageServer_INSTANCE_CONNECT_CLIENTS(
             storageServer,
-            configServer.storage_rpc, configServer.storage_dp
+            configServer.storage_rpc, configServer.storage_port
         )
 
 
@@ -175,15 +175,15 @@ assembly
         //----------------------------------------------------------------------
         component   ConfigServer     configServer;
 
-        connection  seL4RPCCall      configServer_logServer            (from configServer.log_server_interface,   to logServer.log_server_interface);
-        connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_dataport_buf, to logServer.dataport_buf_configServer);
+        connection  seL4RPCCall      configServer_logServer            (from configServer.logServer_rpc,   to logServer.logServer_rpc);
+        connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_port, to logServer.configServer_port);
     }
     configuration {
         /* client id's */
-        configServer.log_server_interface_attributes =       CONFIGSERVER_LOGGER_ID;
-        cloudConnector.log_server_interface_attributes =     CLOUDCONNECTOR_LOGGER_ID;
-        sensorTemp.log_server_interface_attributes =         SENSOR_LOGGER_ID;
-        nwStack.log_server_interface_attributes =            NWSTACK_LOGGER_ID;
+        configServer.logServer_rpc_attributes =       CONFIGSERVER_LOGGER_ID;
+        cloudConnector.logServer_rpc_attributes =     CLOUDCONNECTOR_LOGGER_ID;
+        sensorTemp.logServer_rpc_attributes =         SENSOR_LOGGER_ID;
+        nwStack.logServer_rpc_attributes =            NWSTACK_LOGGER_ID;
 
         StorageServer_INSTANCE_CONFIGURE_CLIENTS(
             storageServer,

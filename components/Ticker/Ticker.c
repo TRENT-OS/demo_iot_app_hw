@@ -36,6 +36,6 @@ int run(void)
         // timestamp = timestamp_new;
 
         // send tick to network stack
-        nwStack_event_tick_emit();
+        e_timeout_nwstacktick_emit();
     }
 }

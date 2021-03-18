@@ -13,5 +13,5 @@ component Ticker {
     uses        if_OS_Timer         timeServer_rpc;
     consumes    TimerReady          timeServer_notify;
 
-    emits  EventDataAvailable  nwStack_event_tick;
+    emits       EventDataAvailable  e_timeout_nwstacktick;
 }
