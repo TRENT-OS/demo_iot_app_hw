@@ -22,18 +22,9 @@ int run(void)
         return -1;
     }
 
-    // uint64_t timestamp = TimeServer_getTime(TimeServer_PRECISION_NSEC);
-    for(;;)
+    for (;;)
     {
         timeServer_notify_wait();
-
-        // uint64_t timestamp_new = TimeServer_getTime(TimeServer_PRECISION_NSEC);
-        // uint64_t  delta = timestamp_new - timestamp;
-        // Debug_LOG_ERROR(
-        //     "tick, delta %" PRIu64 ".%" PRIu64 " sec",
-        //     delta / NS_IN_S,
-        //     delta % NS_IN_S);
-        // timestamp = timestamp_new;
 
         // send tick to network stack
         e_timeout_nwstacktick_emit();

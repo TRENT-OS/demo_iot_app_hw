@@ -26,7 +26,6 @@
 #define MQTT_TOPIC_NAME         "MQTT_Topic"
 
 #define SECS_TO_SLEEP   5
-#define S_IN_MSEC       1000
 
 OS_ConfigServiceHandle_t hConfig;
 
