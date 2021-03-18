@@ -8,13 +8,14 @@
 #include "system_config.h"
 
 #include "lib_debug/Debug.h"
+
 #include "OS_Error.h"
 #include "OS_NetworkStack.h"
 #include "TimeServer.h"
-#include <camkes.h>
+#include "OS_ConfigService.h"
 #include "OS_Dataport.h"
-#include "OS_Network.h"
 #include "helper_func.h"
+#include <camkes.h>
 
 /* Defines -------------------------------------------------------------------*/
 // the following defines are the parameter names that need to match the settings
