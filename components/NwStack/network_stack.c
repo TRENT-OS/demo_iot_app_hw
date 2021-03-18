@@ -50,15 +50,15 @@ read_ip_from_config_server(void)
 {
     OS_Error_t ret;
     // Create a handle to the remote library instance.
-    OS_ConfigServiceHandle_t serverLibWithFSBackend;
+    OS_ConfigServiceHandle_t hConfig;
 
     static OS_ConfigService_ClientCtx_t ctx =
     {
         .dataport = OS_DATAPORT_ASSIGN(configServer_port)
     };
     ret = OS_ConfigService_createHandleRemote(
-                                        &ctx,
-                                        &serverLibWithFSBackend);
+              &ctx,
+              &hConfig);
     if (ret != OS_SUCCESS)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandleRemote() failed with :%d", ret);
@@ -66,7 +66,7 @@ read_ip_from_config_server(void)
     }
 
     // Get the needed param values one by one from config server, using below API
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_NWSTACK,
                                          CFG_ETH_ADDR,
                                          DEV_ADDR,
@@ -79,7 +79,7 @@ read_ip_from_config_server(void)
     }
     Debug_LOG_INFO("[NwStack '%s'] IP ADDR: %s", get_instance_name(), DEV_ADDR);
 
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_NWSTACK,
                                          CFG_ETH_GATEWAY_ADDR,
                                          GATEWAY_ADDR,
@@ -93,7 +93,7 @@ read_ip_from_config_server(void)
     Debug_LOG_INFO("[NwStack '%s'] GATEWAY ADDR: %s", get_instance_name(),
                    GATEWAY_ADDR);
 
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_NWSTACK,
                                          CFG_ETH_SUBNET_MASK,
                                          SUBNET_MASK,

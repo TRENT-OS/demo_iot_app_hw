@@ -46,7 +46,7 @@ static char serverIP[32];
 static char serverCert[4096];
 
 /* Instance variables --------------------------------------------------------*/
-OS_ConfigServiceHandle_t serverLibWithFSBackend;
+OS_ConfigServiceHandle_t hConfig;
 typedef struct
 {
     Network             net;
@@ -137,7 +137,7 @@ OS_Error_t
 set_mqtt_options(MQTTPacket_connectData* options)
 {
 
-    OS_Error_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    OS_Error_t ret = helper_func_getConfigParameter(&hConfig,
                                                     DOMAIN_CLOUDCONNECTOR,
                                                     CLOUD_DOMAIN_NAME,
                                                     cloudUsername,
@@ -150,7 +150,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
     }
     Debug_LOG_DEBUG("Retrieved CloudDomain: %s", cloudUsername);
 
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_CLOUDCONNECTOR,
                                          CLOUD_SAS_NAME,
                                          cloudSAS,
@@ -163,7 +163,7 @@ set_mqtt_options(MQTTPacket_connectData* options)
     }
     Debug_LOG_DEBUG("Retrieved CloudSAS: %s", cloudSAS);
 
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_CLOUDCONNECTOR,
                                          CLOUD_DEVICE_ID_NAME,
                                          cloudDeviceName,
@@ -390,7 +390,7 @@ static int handle_MQTT_PUBLISH(CC_FSM_t* self)
 static int handle_CC_FSM_INIT(CC_FSM_t* self)
 {
 
-    OS_Error_t ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    OS_Error_t ret = helper_func_getConfigParameter(&hConfig,
                                                     DOMAIN_CLOUDCONNECTOR,
                                                     SERVER_ADDRESS_NAME,
                                                     &serverIP,
@@ -403,7 +403,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
     }
 
     uint32_t serverPort;
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_CLOUDCONNECTOR,
                                          SERVER_PORT_NAME,
                                          &serverPort,
@@ -415,7 +415,7 @@ static int handle_CC_FSM_INIT(CC_FSM_t* self)
         return ret;
     }
 
-    ret = helper_func_getConfigParameter(&serverLibWithFSBackend,
+    ret = helper_func_getConfigParameter(&hConfig,
                                          DOMAIN_CLOUDCONNECTOR,
                                          SERVER_CA_CERT_NAME,
                                          &serverCert,
@@ -552,7 +552,7 @@ int CC_FSM_ctor()
     // Initialize the memory in self
     memset(self, 0, sizeof(*self));
 
-    OS_Error_t err = init_config_handle(&serverLibWithFSBackend);
+    OS_Error_t err = init_config_handle(&hConfig);
     if (err != OS_SUCCESS)
     {
         Debug_LOG_ERROR("init_config_handle() failed with: %d", err);
