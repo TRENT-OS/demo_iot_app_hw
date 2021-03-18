@@ -64,7 +64,7 @@ static const if_OS_Timer_t timer =
 // Private functions -----------------------------------------------------------
 
 static uint64_t
-getTimeSec(
+get_time_sec(
     void)
 {
     OS_Error_t err;
@@ -118,7 +118,7 @@ void pre_init(void)
     OS_LoggerConsumerCallback_ctor(
         &log_consumer_callback,
         API_LOG_SERVER_GET_SENDER_ID,
-        getTimeSec);
+        get_time_sec);
 
     // set up log consumer layer
     OS_LoggerConsumer_ctor(&log_consumer_configSrv,      DATABUFFER_SERVER_01,
