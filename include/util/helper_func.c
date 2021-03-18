@@ -9,9 +9,8 @@
 #include "helper_func.h"
 
 // -----------------------------------------------------------------------------
-void initializeName(
-    char* buf, size_t bufSize,
-    char const* name)
+static
+void initializeName(char* buf, size_t bufSize, char const* name)
 {
     memset(buf, 0, bufSize);
     strncpy(buf, name, bufSize - 1);
@@ -37,6 +36,7 @@ compareDomainName(
 }
 
 //------------------------------------------------------------------------------
+static
 OS_Error_t
 initializeDomainName(
     OS_ConfigServiceLibTypes_DomainName_t* domainName,
@@ -47,6 +47,8 @@ initializeDomainName(
     return OS_SUCCESS;
 }
 
+//------------------------------------------------------------------------------
+static
 OS_Error_t
 initializeParameterName(
     OS_ConfigServiceLibTypes_ParameterName_t* parameterName,

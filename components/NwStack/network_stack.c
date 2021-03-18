@@ -45,6 +45,8 @@ static const OS_NetworkStack_AddressConfig_t config =
 
 static bool initSuccessfullyCompleted = false;
 
+//------------------------------------------------------------------------------
+static
 OS_Error_t
 read_ip_from_config_server(void)
 {
