@@ -5,7 +5,6 @@
  */
 
 #include "lib_debug/Debug.h"
-#include "TimeServer.h"
 
 #include "OS_ConfigService.h"
 
@@ -26,17 +25,12 @@
 #define MQTT_TOPIC_NAME         "MQTT_Topic"
 
 // send a new message to the cloudConnector every five seconds
-#define SECS_TO_SLEEP   5
+#define SEC_TO_SLEEP   5
 
 OS_ConfigServiceHandle_t hConfig;
 
 static unsigned char payload[128]; // arbitrary max expected length
 static char topic[128];
-
-static const if_OS_Timer_t timer =
-    IF_OS_TIMER_ASSIGN(
-        timeServer_rpc,
-        timeServer_notify);
 
 static OS_Error_t
 initializeSensor(void)
@@ -52,6 +46,15 @@ initializeSensor(void)
     {
         Debug_LOG_ERROR("OS_ConfigService_createHandleRemote() failed with :%d", err);
         return err;
+    }
+
+    // set up a tick with the local timer ID 1. The local timer ID 0 is used for
+    // the sleep() function of the TimeServer
+    int ret = timeServer_rpc_periodic(1, (NS_IN_S*SEC_TO_SLEEP));
+    if (0 != ret)
+    {
+        Debug_LOG_ERROR("timeServer_rpc_periodic() failed, code %d", ret);
+        return -1;
     }
 
     return OS_SUCCESS;
@@ -123,11 +126,7 @@ int run()
         CloudConnector_write(serializedMsg, (void*)cloudConnector_port,
                              len);
 
-        if ((ret = TimeServer_sleep(&timer, TimeServer_PRECISION_SEC,
-                                    SECS_TO_SLEEP)) != OS_SUCCESS)
-        {
-            Debug_LOG_ERROR("TimeServer_sleep() failed with %d", ret);
-        }
+        timeServer_notify_wait();
     }
 
     return 0;
