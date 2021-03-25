@@ -118,11 +118,11 @@ int run()
                                     (unsigned char*)payload,
                                     strlen((const char*)payload));
 
-
     for (;;)
     {
         CloudConnector_write(serializedMsg, (void*)cloudConnector_port,
                              len);
+
         if ((ret = TimeServer_sleep(&timer, TimeServer_PRECISION_SEC,
                                     SECS_TO_SLEEP)) != OS_SUCCESS)
         {

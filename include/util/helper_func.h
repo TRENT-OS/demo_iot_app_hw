@@ -8,11 +8,12 @@
 
 #include "OS_ConfigService.h"
 
+
 //------------------------------------------------------------------------------
 OS_Error_t
 helper_func_getConfigParameter(
-    OS_ConfigServiceHandle_t *handle,
-    const char *DomainName,
-    const char *ParameterName,
-    void *parameterBuffer,
-    size_t parameterLength);
+    OS_ConfigServiceHandle_t* handle,
+    const char* DomainName,
+    const char* ParameterName,
+    void*       parameterBuffer,
+    size_t      parameterLength);

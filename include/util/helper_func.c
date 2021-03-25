@@ -10,7 +10,10 @@
 
 // -----------------------------------------------------------------------------
 static
-void initializeName(char* buf, size_t bufSize, char const* name)
+void initializeName(
+    char* buf,
+    size_t bufSize,
+    char const* name)
 {
     memset(buf, 0, bufSize);
     strncpy(buf, name, bufSize - 1);
@@ -19,9 +22,8 @@ void initializeName(char* buf, size_t bufSize, char const* name)
 //------------------------------------------------------------------------------
 static
 OS_Error_t
-compareDomainName(
-    OS_ConfigServiceLibTypes_DomainName_t const* a,
-    OS_ConfigServiceLibTypes_DomainName_t const* b)
+compareDomainName(OS_ConfigServiceLibTypes_DomainName_t const* a,
+                  OS_ConfigServiceLibTypes_DomainName_t const* b)
 {
     for (unsigned int k = 0; k < OS_CONFIG_LIB_DOMAIN_NAME_LEN; ++k)
     {
@@ -127,8 +129,11 @@ get_parameter_element(
         return OS_ERROR_CONFIG_DOMAIN_NOT_FOUND;
     }
 
-    ret = OS_ConfigService_domainGetElement(handle, &domain, parameterName,
-                                            parameter);
+    ret = OS_ConfigService_domainGetElement(
+              handle,
+              &domain,
+              parameterName,
+              parameter);
     if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("domainGetElement() failed, ret %d", ret);
@@ -140,12 +145,11 @@ get_parameter_element(
 
 //------------------------------------------------------------------------------
 OS_Error_t
-helper_func_getConfigParameter(
-    OS_ConfigServiceHandle_t* handle,
-    const char* DomainName,
-    const char* ParameterName,
-    void* parameterBuffer,
-    size_t parameterLength)
+helper_func_getConfigParameter(OS_ConfigServiceHandle_t* handle,
+                               const char* DomainName,
+                               const char* ParameterName,
+                               void* parameterBuffer,
+                               size_t parameterLength)
 {
     OS_Error_t ret;
     size_t bytesCopied;
@@ -154,8 +158,13 @@ helper_func_getConfigParameter(
     OS_ConfigServiceLibTypes_Parameter_t parameter;
     OS_ConfigServiceHandle_t configHandle = *handle;
 
-    ret = get_parameter_element(configHandle, DomainName, ParameterName,
-                                &domainName, &parameterName, &parameter);
+    ret = get_parameter_element(
+              configHandle,
+              DomainName,
+              ParameterName,
+              &domainName,
+              &parameterName,
+              &parameter);
     if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("get_parameter_element() failed, ret %d", ret);
@@ -165,11 +174,12 @@ helper_func_getConfigParameter(
     OS_ConfigServiceLibTypes_ParameterType_t parameterType;
     OS_ConfigService_parameterGetType(&parameter, &parameterType);
 
-    ret = OS_ConfigService_parameterGetValue(configHandle,
-                                             &parameter,
-                                             parameterBuffer,
-                                             parameterLength,
-                                             &bytesCopied);
+    ret = OS_ConfigService_parameterGetValue(
+              configHandle,
+              &parameter,
+              parameterBuffer,
+              parameterLength,
+              &bytesCopied);
     if (OS_SUCCESS != ret)
     {
         Debug_LOG_ERROR("parameterGetValue() failed, ret %d", ret);

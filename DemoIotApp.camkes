@@ -13,8 +13,8 @@ import "components/Sensor/Sensor.camkes";
 import "components/CloudConnector/CloudConnector.camkes";
 import "components/LogServer/LogServer.camkes";
 import "components/NwStack/network_stack.camkes";
-import "components/ConfigServer/ConfigServer.camkes";
 import "components/Ticker/Ticker.camkes";
+import "components/ConfigServer/ConfigServer.camkes";
 
 #include "system_config.h"
 

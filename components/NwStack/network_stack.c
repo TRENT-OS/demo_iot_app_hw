@@ -131,12 +131,12 @@ Timer_getTimeMs(void)
 }
 
 //------------------------------------------------------------------------------
-void post_init()
+void
+post_init(void)
 {
     Debug_LOG_INFO("[NwStack '%s'] starting", get_instance_name());
 
-    static OS_NetworkStack_SocketResources_t
-    socks =
+    static OS_NetworkStack_SocketResources_t socks =
     {
         .notify_write       = e_write_emit,
         .wait_write         = c_write_wait,
@@ -170,8 +170,8 @@ void post_init()
             .stackTS_lock       = stackThreadSafeMutex_lock,
             .stackTS_unlock     = stackThreadSafeMutex_unlock,
 
-            .number_of_sockets = OS_NETWORK_MAXIMUM_SOCKET_NO,
-            .sockets           = &socks,
+            .number_of_sockets  = OS_NETWORK_MAXIMUM_SOCKET_NO,
+            .sockets            = &socks
         },
 
         .drv_nic =
@@ -215,7 +215,8 @@ void post_init()
 }
 
 //------------------------------------------------------------------------------
-int run(void)
+int
+run(void)
 {
     if (!initSuccessfullyCompleted)
     {
