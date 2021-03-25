@@ -13,6 +13,8 @@ add_subdirectory("include/mqtt")
 #-------------------------------------------------------------------------------
 project(demo_iot_app C)
 
+# Overwrite the default log level of the lower layers to ERROR as the output
+# otherwise gets too cluttered with debug prints.
 set(LibUtilsDefaultZfLogLevel 5 CACHE STRING "" FORCE)
 
 DeclareCAmkESComponent(

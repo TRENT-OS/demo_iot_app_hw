@@ -176,11 +176,13 @@ void post_init()
 
         .drv_nic =
         {
+            // NIC -> Stack
             .from =
             {
                 .io = (void**)( &(nic_port_from)),
                 .size = NIC_DRIVER_RINGBUFFER_NUMBER_ELEMENTS
             },
+            // Stack -> NIC
             .to = OS_DATAPORT_ASSIGN(nic_port_to),
 
             .rpc =
@@ -221,10 +223,6 @@ int run(void)
                         get_instance_name());
         return -1;
     }
-
-    // The Ticker component sends us a tick every second. Currently there is
-    // no dedicated interface to enable and disable the tick. because we don't
-    // need this. OS_NetworkStack_run() is not supposed to return.
 
     OS_Error_t ret = OS_NetworkStack_run();
     if (ret != OS_SUCCESS)

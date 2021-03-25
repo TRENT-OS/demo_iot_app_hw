@@ -27,7 +27,7 @@ compareDomainName(
     {
         if (a->name[k] != b->name[k])
         {
-            Debug_LOG_DEBUG("Error: function: %s - line: %d\n", __FUNCTION__, __LINE__);
+            Debug_LOG_DEBUG("compareDomainName() domains did not match.");
             return OS_ERROR_GENERIC;
         }
     }

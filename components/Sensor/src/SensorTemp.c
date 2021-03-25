@@ -25,6 +25,7 @@
 #define MQTT_PAYLOAD_NAME       "MQTT_Payload" // _NAME defines are stored together with the values in the config file
 #define MQTT_TOPIC_NAME         "MQTT_Topic"
 
+// send a new message to the cloudConnector every five seconds
 #define SECS_TO_SLEEP   5
 
 OS_ConfigServiceHandle_t hConfig;

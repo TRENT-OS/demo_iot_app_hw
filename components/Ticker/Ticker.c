@@ -26,7 +26,7 @@ int run(void)
     {
         timeServer_notify_wait();
 
-        // send tick to network stack
+        // send a tick to the network stack
         e_timeout_nwstacktick_emit();
     }
 }
