@@ -29,10 +29,11 @@ NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
 NIC_RPi_Mailbox_COMPONENT_DEFINE(NIC_RPi_Mailbox)
 NIC_RPi_USB_COMPONENT_DEFINE(NIC_RPi_USB)
 
+#include "components/NwStack/network_stack.camkes";
+
 import "components/Sensor/Sensor.camkes";
 import "components/CloudConnector/CloudConnector.camkes";
 import "components/LogServer/LogServer.camkes";
-import "components/NwStack/network_stack.camkes";
 import "components/Ticker/Ticker.camkes";
 import "components/ConfigServer/ConfigServer.camkes";
 
@@ -67,7 +68,7 @@ assembly
         component  CloudConnector       cloudConnector;
 
         connection seL4RPCCall          cloudConnector_nwStack           (from cloudConnector.networkStack_rpc,      to nwStack.networkStack_rpc);
-        connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.networkStack_port,     to nwStack.networkStack_port);
+        connection seL4SharedData       NwApp_dataConnection             (from cloudConnector.networkStack_port,     to nwStack.socket_1_port);
 
         connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
         connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.configServer_port,       to configServer.cloudConnector_port);
@@ -110,18 +111,13 @@ assembly
         //----------------------------------------------------------------------
         component  NwStack                nwStack;
 
-        connection seL4NotificationNative NwStackdataAvail2                (from nwStack.event_internal, to nwStack.event_tick_or_data);
-        connection seL4Notification       NwStackEventsRxd1                (from nwStack.e_write,        to nwStack.c_write);
-        connection seL4Notification       NwStackEventsRxd2                (from nwStack.e_read,         to nwStack.c_read);
-        connection seL4Notification       NwStackEventsRxd3                (from nwStack.e_conn,         to nwStack.c_conn);
+        NETWORK_STACK_CONNECT_CONFIGSERVER(nwStack, configServer)
 
-        NIC_RPi_INSTANCE_CONNECT_CLIENT(
-            nic,
-            nwStack.nic_driver, nwStack.nic_port_to, nwStack.nic_port_from, nwStack.event_tick_or_data
+        NwStack_INSTANCE_CONNECT(
+            nwStack,
+            ticker.e_timeout_nwstacktick,
+            nic
         )
-
-        connection seL4RPCCall            NwStack_configuration_server     (from nwStack.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData         NwStack_config_data              (from nwStack.configServer_port,       to configServer.nwStack_port);
 
         connection seL4RPCCall            NwStack_logServer                (from nwStack.logServer_rpc,   to logServer.logServer_rpc);
         connection seL4SharedData         NwStack_logServer_data           (from nwStack.logServer_port, to logServer.nwStack_port);
