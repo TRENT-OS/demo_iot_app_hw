@@ -9,13 +9,6 @@ import <std_connector.camkes>;
 import <if_OS_Entropy.camkes>;
 import <if_OS_Timer.camkes>;
 
-import "components/Sensor/Sensor.camkes";
-import "components/CloudConnector/CloudConnector.camkes";
-import "components/LogServer/LogServer.camkes";
-import "components/NwStack/network_stack.camkes";
-import "components/Ticker/Ticker.camkes";
-import "components/ConfigServer/ConfigServer.camkes";
-
 #include "system_config.h"
 
 #include "TimeServer/camkes/TimeServer.camkes"
@@ -36,6 +29,12 @@ NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
 NIC_RPi_Mailbox_COMPONENT_DEFINE(NIC_RPi_Mailbox)
 NIC_RPi_USB_COMPONENT_DEFINE(NIC_RPi_USB)
 
+import "components/Sensor/Sensor.camkes";
+import "components/CloudConnector/CloudConnector.camkes";
+import "components/LogServer/LogServer.camkes";
+import "components/NwStack/network_stack.camkes";
+import "components/Ticker/Ticker.camkes";
+import "components/ConfigServer/ConfigServer.camkes";
 
 assembly
 {
