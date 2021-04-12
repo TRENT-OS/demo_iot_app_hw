@@ -160,17 +160,17 @@ DeclareCAmkESComponent(
         lib_debug
 )
 
-#DeclareCAmkESComponent_RPI_SD_DRV (
-#    RPI_SD
-#    LIBS
-#        TimeServer_client
-#)
-
-RPi_SPI_SD_DeclareCAmkESComponent(
-    RPi_SPI_SD
-    LIBS
-        TimeServer_client
+RPi_SD_DeclareCAmkESComponent(
+   RPi_SD
+   LIBS
+       TimeServer_client
 )
+
+# RPi_SPI_SD_DeclareCAmkESComponent(
+#     RPi_SPI_SD
+#     LIBS
+#         TimeServer_client
+# )
 
 EntropySource_DeclareCAmkESComponent(
     EntropySource

@@ -20,16 +20,16 @@ EntropySource_COMPONENT_DEFINE(EntropySource)
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DEFINE(StorageServer)
 
-#include "RPi_SPI_SD/RPi_SPI_SD.camkes"
-RPi_SPI_SD_COMPONENT_DEFINE(RPi_SPI_SD)
-RPi_SPI_SD_HW_COMPONENT_DEFINE(RPi_SPI_SD_HW)
+// #include "RPi_SPI_SD/RPi_SPI_SD.camkes"
+// RPi_SPI_SD_COMPONENT_DEFINE(RPi_SPI_SD)
+// RPi_SPI_SD_HW_COMPONENT_DEFINE(RPi_SPI_SD_HW)
 
-// #include "RPI_SD/RPI_SD.camkes"
-// DECLARE_COMPONENT_SYSTIMER_HW(SYSTIMER)
-// DECLARE_COMPONENT_MAILBOX_HW(MAILBOX)
-// DECLARE_COMPONENT_SDHOST_HW(SDHOST)
-// DECLARE_COMPONENT_EMMC_HW(EMMC)
-// DECLARE_COMPONENT_RPI_SD_DRV(RPI_SD)
+#include "RPi_SD/RPi_SD.camkes"
+SYSTIMER_COMPONENT_DEFINE(SYSTIMER)
+MAILBOX_COMPONENT_DEFINE(MAILBOX)
+SDHOST_COMPONENT_DEFINE(SDHOST)
+EMMC_COMPONENT_DEFINE(EMMC)
+RPi_SD_COMPONENT_DEFINE(RPi_SD)
 
 #include "NIC_RPi/RPi_NIC.camkes"
 NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
@@ -190,27 +190,27 @@ assembly
 
         NetworkStack_CONNECT_LOGSERVER(nwStack, logServer)
 
-        //----------------------------------------------------------------------
-        // SPI SD
-        //----------------------------------------------------------------------
-        component   RPi_SPI_SD       sd;
-        component   RPi_SPI_SD_HW    sd_hw;
+        // //----------------------------------------------------------------------
+        // // SPI SD
+        // //----------------------------------------------------------------------
+        // component   RPi_SPI_SD       sd;
+        // component   RPi_SPI_SD_HW    sd_hw;
 
-        RPi_SPI_SD_INSTANCE_CONNECT(
-            sd,
-            sd_hw
-        )
+        // RPi_SPI_SD_INSTANCE_CONNECT(
+        //     sd,
+        //     sd_hw
+        // )
 
         //----------------------------------------------------------------------
         // integrated RPI SD
         //----------------------------------------------------------------------
-        // DECLARE_AND_CONNECT_INSTANCE_SD_DRV_HW(
-        //     MAILBOX, mailbox, 
-        //     SDHOST, sdhost, 
-        //     EMMC, emmc,
-        //     SYSTIMER, systimer,
-        //     RPI_SD, sd
-        // )
+        DECLARE_AND_CONNECT_INSTANCE_SD_DRV_HW(
+            MAILBOX, mailbox,
+            SDHOST, sdhost,
+            EMMC, emmc,
+            SYSTIMER, systimer,
+            RPi_SD, sd
+        )
 
         //----------------------------------------------------------------------
         // StorageServer
@@ -223,7 +223,7 @@ assembly
         )
         StorageServer_INSTANCE_CONNECT_CLIENTS(
             storageServer,
-            configServer.storage_rpc, configServer.storage_port
+            configServer.storage_rpc, configServer.storage_port,
             logServer.storage_rpc, logServer.storage_dp
         )
 
@@ -296,21 +296,24 @@ assembly
         cloudConnector.sem_value = 0;
 
         //----------------------------------------------------------------------
-        // integrated SD configuration 
+        // integrated SD configuration
         //----------------------------------------------------------------------
-        // CONFIGURE_INSTANCE_SYSTIMER_HW(systimer, 0x3F003000, 0x1000)
-        
-        // CONFIGURE_INSTANCE_MAILBOX_HW(mailbox, 0x3F00B000, 0x1000)
-        
-        // CONFIGURE_INSTANCE_SDHOST_HW(sdhost, 0x3F202000, 0x1000, 120)
-        
-        // CONFIGURE_INSTANCE_EMMC_HW(emmc, 0x3F300000, 0x1000, 126)
-        
-        // CONFIGURE_INSTANCE_SD_DRV(sd, 4*40960)
+        CONFIGURE_INSTANCE_SYSTIMER_HW(systimer, 0xFE003000, 0x1000)
 
-        RPi_SPI_SD_HW_INSTANCE_CONFIGURE_SELF(
-            sd_hw
-        )
+        CONFIGURE_INSTANCE_MAILBOX_HW(mailbox, 0xFE00B000, 0x1000)
+
+        CONFIGURE_INSTANCE_SDHOST_HW(sdhost, 0xFE202000, 0x1000, 152)
+
+        CONFIGURE_INSTANCE_EMMC_HW(emmc, 0xFE340000, 0x1000, 158)
+
+        CONFIGURE_INSTANCE_SD_DRV(sd, 4*40960)
+
+        //----------------------------------------------------------------------
+        // RPi SPI SD configuration
+        //----------------------------------------------------------------------
+        // RPi_SPI_SD_HW_INSTANCE_CONFIGURE_SELF(
+        //     sd_hw
+        // )
 
         NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
             nic_mailbox
