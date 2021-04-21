@@ -52,7 +52,7 @@ assembly
         //----------------------------------------------------------------------
         component  SensorTemp       sensorTemp;
 
-        connection seL4SharedData   cloudConnectorData_sensorTempData   (from sensorTemp.cloudConnector_port, to cloudConnector.sensor_port);
+        connection seL4SharedData   cloudConnectorData_sensorTemp_data  (from sensorTemp.cloudConnector_port, to cloudConnector.sensor_port);
         connection seL4RPCCall      cloudConnector_sensorTemp           (from sensorTemp.cloudConnector_rpc,  to cloudConnector.cloudConnector_rpc);
 
         connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
