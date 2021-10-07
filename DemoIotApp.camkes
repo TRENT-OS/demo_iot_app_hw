@@ -72,39 +72,60 @@ assembly
         //----------------------------------------------------------------------
         component  LogServer        logServer;
 
-
         //----------------------------------------------------------------------
         // SensorTemp
         //----------------------------------------------------------------------
-        component  SensorTemp       sensorTemp;
+        component SensorTemp sensorTemp;
 
-        connection seL4SharedData   cloudConnectorData_sensorTemp_data  (from sensorTemp.cloudConnector_port, to cloudConnector.sensor_port);
-        connection seL4RPCCall      cloudConnector_sensorTemp           (from sensorTemp.cloudConnector_rpc,  to cloudConnector.cloudConnector_rpc);
+        connection seL4SharedData cloudConnectorData_sensorTemp_data(
+            from sensorTemp.cloudConnector_port,
+            to   cloudConnector.sensor_port);
 
-        connection seL4RPCCall      sensorTemp_configServer             (from sensorTemp.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData   sensorTemp_configServer_data        (from sensorTemp.configServer_port,       to configServer.sensor_port);
+        connection seL4RPCCall cloudConnector_sensorTemp(
+            from sensorTemp.cloudConnector_rpc,
+            to   cloudConnector.cloudConnector_rpc);
 
-        connection seL4RPCCall      sensorTemp_logServer                (from sensorTemp.logServer_rpc,   to logServer.logServer_rpc);
-        connection seL4SharedData   sensorTemp_logServer_data           (from sensorTemp.logServer_port, to logServer.sensor_port);
+        connection seL4RPCCall sensorTemp_configServer(
+            from sensorTemp.OS_ConfigServiceServer,
+            to   configServer.OS_ConfigServiceServer);
 
+        connection seL4SharedData sensorTemp_configServer_data(
+            from sensorTemp.configServer_port,
+            to   configServer.sensor_port);
+
+        connection seL4RPCCall sensorTemp_logServer(
+            from sensorTemp.logServer_rpc,
+            to   logServer.logServer_rpc);
+
+        connection seL4SharedData sensorTemp_logServer_data(
+            from sensorTemp.logServer_port,
+            to   logServer.sensor_port);
 
         //----------------------------------------------------------------------
         // CloudConnector
         //----------------------------------------------------------------------
-        component  CloudConnector       cloudConnector;
+        component CloudConnector cloudConnector;
 
-        NetworkStack_PicoTcp_INSTANCE_CONNECT_CLIENTS(
-            nwStack,
-            cloudConnector, networkStack
-        )
+        connection seL4RPCCall cloudConnector_configServer(
+            from cloudConnector.OS_ConfigServiceServer,
+            to   configServer.OS_ConfigServiceServer);
 
-        connection seL4RPCCall          cloudConnector_configServer      (from cloudConnector.OS_ConfigServiceServer, to configServer.OS_ConfigServiceServer);
-        connection seL4SharedData       cloudConnector_configServer_data (from cloudConnector.configServer_port,       to configServer.cloudConnector_port);
+        connection seL4SharedData cloudConnector_configServer_data(
+            from cloudConnector.configServer_port,
+            to   configServer.cloudConnector_port);
 
-        connection seL4RPCCall          cloudConnector_logServer         (from cloudConnector.logServer_rpc,   to logServer.logServer_rpc);
-        connection seL4SharedData       cloudConnector_logServer_data    (from cloudConnector.logServer_port, to logServer.cloudConnector_port);
+        connection seL4RPCCall cloudConnector_logServer(
+            from cloudConnector.logServer_rpc,
+            to   logServer.logServer_rpc);
 
-        component  EntropySource        entropySource;
+        connection seL4SharedData cloudConnector_logServer_data(
+            from cloudConnector.logServer_port,
+            to   logServer.cloudConnector_port);
+
+        //----------------------------------------------------------------------
+        // EntropySource
+        //----------------------------------------------------------------------
+        component EntropySource entropySource;
 
         EntropySource_INSTANCE_CONNECT_CLIENT(
             entropySource,
@@ -152,13 +173,18 @@ assembly
             nic
         )
 
+        NetworkStack_PicoTcp_INSTANCE_CONNECT_CLIENTS(
+            nwStack,
+            cloudConnector, networkStack
+        )
+
         NetworkStack_CONNECT_LOGSERVER(nwStack, logServer)
 
         //----------------------------------------------------------------------
         // FLASH
         //----------------------------------------------------------------------
-        component   RPi_SPI_Flash       flash;
-        component   RPi_SPI_Flash_HW    flash_hw;
+        component RPi_SPI_Flash    flash;
+        component RPi_SPI_Flash_HW flash_hw;
 
         RPi_SPI_Flash_INSTANCE_CONNECT(
             flash,
@@ -179,7 +205,6 @@ assembly
             configServer.storage_rpc, configServer.storage_port
         )
 
-
         //----------------------------------------------------------------------
         // TimeServer
         //----------------------------------------------------------------------
@@ -187,24 +212,29 @@ assembly
 
         TimeServer_INSTANCE_CONNECT_CLIENTS(
             timeServer,
-            cloudConnector.timeServer_rpc,  cloudConnector.timeServer_notify,
-            logServer.timeServer_rpc,       logServer.timeServer_notify,
-            sensorTemp.timeServer_rpc,      sensorTemp.timeServer_notify,
-            flash.timeServer_rpc,           flash.timeServer_notify,
-            nic.timeServer_rpc,             nic.timeServer_notify,
-            nwStack.timeServer_rpc,         nwStack.timeServer_notify
+            cloudConnector.timeServer_rpc, cloudConnector.timeServer_notify,
+            logServer.timeServer_rpc,      logServer.timeServer_notify,
+            sensorTemp.timeServer_rpc,     sensorTemp.timeServer_notify,
+            flash.timeServer_rpc,          flash.timeServer_notify,
+            nic.timeServer_rpc,            nic.timeServer_notify,
+            nwStack.timeServer_rpc,        nwStack.timeServer_notify
         )
 
         //----------------------------------------------------------------------
         // ConfigServer
         //----------------------------------------------------------------------
-        component   ConfigServer     configServer;
+        component ConfigServer configServer;
 
-        connection  seL4RPCCall      configServer_logServer            (from configServer.logServer_rpc,   to logServer.logServer_rpc);
-        connection  seL4SharedData   configServer_logServer_data       (from configServer.logServer_port, to logServer.configServer_port);
+        connection seL4RPCCall configServer_logServer(
+            from configServer.logServer_rpc,
+            to   logServer.logServer_rpc);
+
+        connection seL4SharedData configServer_logServer_data(
+            from configServer.logServer_port,
+            to   logServer.configServer_port);
     }
     configuration {
-        /* client id's */
+        // Logger Client IDs
         configServer.logServer_rpc_attributes =       CONFIGSERVER_LOGGER_ID;
         cloudConnector.logServer_rpc_attributes =     CLOUDCONNECTOR_LOGGER_ID;
         sensorTemp.logServer_rpc_attributes =         SENSOR_LOGGER_ID;
@@ -236,7 +266,7 @@ assembly
             1
         )
 
-        /* assign an initial value to semaphore */
+        // Assign an initial value to semaphore.
         cloudConnector.sem_value = 0;
 
         RPi_SPI_Flash_HW_INSTANCE_CONFIGURE_SELF(
