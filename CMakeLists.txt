@@ -120,9 +120,8 @@ DeclareCAmkESComponent(
         system_config
         os_core_api
         os_configuration
-        os_socket_client
         lib_debug
-        networkStack_PicoTcp
+        networkStack_PicoTcp_api
 )
 
 NetworkStack_PicoTcp_DeclareCAmkESComponent(
