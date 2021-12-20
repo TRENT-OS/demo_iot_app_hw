@@ -48,26 +48,6 @@ static OS_Crypto_Config_t cryptoCfg =
 };
 
 // Private static functions ----------------------------------------------------
-static uint64_t
-getTimeMs(void)
-{
-    uint64_t ms;
-
-    OS_Error_t err = TimeServer_getTime(
-                         &timer,
-                         TimeServer_PRECISION_MSEC,
-                         &ms);
-
-    if (err != OS_SUCCESS)
-    {
-        Debug_LOG_ERROR("TimeServer_getTime() failed , code '%s'",
-                        Debug_OS_Error_toString(err));
-        ms = 0;
-    }
-
-    return ms;
-}
-
 static OS_Error_t
 waitForNetworkStackInit(
     const if_OS_Socket_t* const ctx)
@@ -292,6 +272,27 @@ glue_tls_handshake(void)
 }
 
 //------------------------------------------------------------------------------
+uint64_t
+glue_tls_mqtt_getTimeMs(void)
+{
+    uint64_t ms;
+
+    OS_Error_t err = TimeServer_getTime(
+                         &timer,
+                         TimeServer_PRECISION_MSEC,
+                         &ms);
+
+    if (err != OS_SUCCESS)
+    {
+        Debug_LOG_ERROR("TimeServer_getTime() failed , code '%s'",
+                        Debug_OS_Error_toString(err));
+        ms = 0;
+    }
+
+    return ms;
+}
+
+//------------------------------------------------------------------------------
 int glue_tls_mqtt_write(Network* n,
                         const unsigned char* buf,
                         int len,
@@ -299,7 +300,7 @@ int glue_tls_mqtt_write(Network* n,
 {
     Debug_ASSERT(buf != NULL);
 
-    const uint64_t entryTime = getTimeMs();
+    const uint64_t entryTime = glue_tls_mqtt_getTimeMs();
     int remainingLen = len;
     size_t writtenLen = 0;
 
@@ -324,7 +325,7 @@ int glue_tls_mqtt_write(Network* n,
         }
     }
     while ((remainingLen > 0)
-           && ((getTimeMs() - entryTime) < timeout_ms));
+           && ((glue_tls_mqtt_getTimeMs() - entryTime) < timeout_ms));
 
     if (remainingLen > 0)
     {
@@ -344,7 +345,7 @@ int glue_tls_mqtt_read(Network* n,
     Debug_ASSERT(buf != NULL);
     Debug_LOG_TRACE("%s: %d bytes, %d ms", __func__, len, timeout_ms);
 
-    const uint64_t entryTime = getTimeMs();
+    const uint64_t entryTime = glue_tls_mqtt_getTimeMs();
     int remainingLen = len;
     memset(buf, 0, len);
     size_t readLen = 0;
@@ -367,7 +368,7 @@ int glue_tls_mqtt_read(Network* n,
         }
     }
     while ((remainingLen > 0)
-           && ((getTimeMs() - entryTime) < timeout_ms));
+           && ((glue_tls_mqtt_getTimeMs() - entryTime) < timeout_ms));
 
     if (remainingLen > 0)
     {
