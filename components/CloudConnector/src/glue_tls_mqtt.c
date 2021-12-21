@@ -306,7 +306,8 @@ int glue_tls_mqtt_write(Network* n,
     size_t writtenLen = 0;
 
     // Loop until all data is sent or timeout.
-    do
+    while ((remainingLen > 0)
+           && ((glue_tls_mqtt_getTimeMs() - entryTime) < timeout_ms))
     {
         size_t actualLen = remainingLen;
         OS_Error_t ret = OS_Tls_write(
@@ -324,9 +325,7 @@ int glue_tls_mqtt_write(Network* n,
             Debug_LOG_ERROR("OS_Tls_write() failed with: %d", ret);
             return MQTT_FAILURE;
         }
-    }
-    while ((remainingLen > 0)
-           && ((glue_tls_mqtt_getTimeMs() - entryTime) < timeout_ms));
+    };
 
     if (remainingLen > 0)
     {
@@ -353,7 +352,8 @@ int glue_tls_mqtt_read(Network* n,
     size_t readLen = 0;
 
     // Loop until all data is read or timeout.
-    do
+    while ((remainingLen > 0)
+           && ((glue_tls_mqtt_getTimeMs() - entryTime) < timeout_ms))
     {
         size_t actualLen = remainingLen;
         OS_Error_t ret = OS_Tls_read(tlsContext, (buf + readLen), &actualLen);
@@ -368,9 +368,7 @@ int glue_tls_mqtt_read(Network* n,
             Debug_LOG_ERROR("OS_Tls_read() failed with: %d", ret);
             return MQTT_FAILURE;
         }
-    }
-    while ((remainingLen > 0)
-           && ((glue_tls_mqtt_getTimeMs() - entryTime) < timeout_ms));
+    };
 
     if (remainingLen > 0)
     {
