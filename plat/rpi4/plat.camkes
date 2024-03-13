@@ -1,0 +1,85 @@
+/* Copyright (C) 2024, HENSOLDT Cyber GmbH */
+#pragma once
+
+#define NIC_TIMESERVER
+
+//-----------------------------------------------------------------------------
+// StorageServer
+//-----------------------------------------------------------------------------
+// 129 MiB reserved for GPT and BOOT partition
+#define GPT_STORAGE_SIZE            (1*1024*1024)
+#define BOOT_STORAGE_SIZE           (128*1024*1024)
+
+// 128 MiB
+#define CONFIGSERVER_STORAGE_OFFSET (GPT_STORAGE_SIZE + BOOT_STORAGE_SIZE)
+#define CONFIGSERVER_STORAGE_SIZE   (128*1024*1024)
+
+// 1 GiB
+#define LOGSERVER_STORAGE_OFFSET    (CONFIGSERVER_STORAGE_OFFSET + CONFIGSERVER_STORAGE_SIZE)
+#define LOGSERVER_STORAGE_SIZE      (1024*1024*1024)
+
+//------------------------------------------------------------------------------
+// Platform related CAmkES definitions
+//------------------------------------------------------------------------------
+
+import "components/LogServer/LogServer.camkes";
+
+#include "SdHostController/SdHostController.camkes"
+SdHostController_COMPONENT_DEFINE(SdHostController);
+SdHostController_HW_COMPONENT_DEFINE(SdHostController_HW);
+
+#include "NIC_RPi4/NIC_RPi4.camkes"
+NIC_RPi4_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
+NIC_RPi4_Mailbox_COMPONENT_DEFINE(NIC_RPi_Mailbox)
+NIC_RPi4_Genet_COMPONENT_DEFINE(NIC_RPi_Genet)
+
+assembly {
+    composition {
+
+        //----------------------------------------------------------------------
+        // LogServer
+        //----------------------------------------------------------------------
+        component  LogServer        logServer;
+
+        //----------------------------------------------------------------------
+        // SdHostController
+        //----------------------------------------------------------------------
+        component   SdHostController_HW     sdhcHw;
+        component   SdHostController        storage;
+        SdHostController_INSTANCE_CONNECT(
+            storage, sdhcHw
+        )
+
+        //----------------------------------------------------------------------
+        // Ethernet Driver
+        //----------------------------------------------------------------------
+        component NIC_RPi               nic;
+        component NIC_RPi_Mailbox       nic_mailbox;
+        component NIC_RPi_Genet         nic_genet;
+
+        NIC_RPi4_INSTANCE_CONNECT(
+            nic,
+            nic_mailbox,
+            nic_genet
+        )
+
+        NIC_RPi4_INSTANCE_CONNECT_OPTIONAL_LOGGER(nic, logServer)
+    }
+
+    configuration {
+        // Use the platform specific default settings
+        SdHostController_INSTANCE_CONFIGURE(storage)
+        SdHostController_HW_INSTANCE_CONFIGURE(sdhcHw)
+
+        NIC_RPi4_Mailbox_INSTANCE_CONFIGURE_SELF(
+            nic_mailbox
+        )
+        NIC_RPi4_Genet_INSTANCE_CONFIGURE_SELF(
+            nic_genet
+        )
+        NIC_RPi4_INSTANCE_CONFIGURE(
+            nic,
+            128 * 40960
+        )
+    }
+}

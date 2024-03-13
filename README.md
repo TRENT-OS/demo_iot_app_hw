@@ -17,6 +17,10 @@ CloudConnector about every 5 seconds to send a message to the configured broker.
 seos_tests/seos_sandbox/scripts/open_trentos_build_env.sh seos_tests/seos_sandbox/build-system.sh seos_tests/src/demos/demo_iot_app_rpi3 rpi3 build-rpi3-Debug-demo_iot_app_rpi3 -DCMAKE_BUILD_TYPE=Debug
 ```
 
+```bash
+seos_tests/seos_sandbox/scripts/open_trentos_build_env.sh seos_tests/seos_sandbox/build-system.sh seos_tests/src/demos/demo_iot_app_rpi3 rpi4 build-rpi4-Debug-demo_iot_app_rpi3 -DCMAKE_BUILD_TYPE=Debug
+```
+
 1. Create `BOOT`, `CONFIGSRV` and `LOG` partition with `prepare_sd_card.sh` script:
 
 ```bash
