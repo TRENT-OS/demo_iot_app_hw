@@ -1,0 +1,83 @@
+/*
+ * i.MX6 Sabre Lite board/QEMU configuration
+ *
+ * Copyright (C) 2024, HENSOLDT Cyber GmbH
+ */
+
+#pragma once
+
+//-----------------------------------------------------------------------------
+// StorageServer
+//-----------------------------------------------------------------------------
+// 129 MiB reserved for MBR and BOOT partition
+#define MBR_STORAGE_SIZE            (1*1024*1024)
+#define BOOT_STORAGE_SIZE           (128*1024*1024)
+
+// 128 MiB
+#define CONFIGSERVER_STORAGE_OFFSET (MBR_STORAGE_SIZE + BOOT_STORAGE_SIZE)
+#define CONFIGSERVER_STORAGE_SIZE   (128*1024*1024)
+
+// 1 GiB
+#define LOGSERVER_STORAGE_OFFSET    (CONFIGSERVER_STORAGE_OFFSET + CONFIGSERVER_STORAGE_SIZE)
+#define LOGSERVER_STORAGE_SIZE      (1024*1024*1024)
+
+//------------------------------------------------------------------------------
+// Platform related CAmkES definitions
+//------------------------------------------------------------------------------
+
+import "components/LogServer/LogServer.camkes";
+
+#include "SdHostController/SdHostController.camkes"
+SdHostController_COMPONENT_DEFINE(SdHostController);
+SdHostController_HW_COMPONENT_DEFINE(SdHostController_HW);
+
+#include "NIC_iMX6/NIC_iMX6.camkes"
+
+
+// Create a i.MX6 NIC driver instance.
+#define IOT_DEMO_NIC_INSTANCE(_nic_, _logServer_) \
+    NIC_IMX6_INSTANCE(_nic_) \
+    NIC_IMX6_INSTANCE_CONNECT_OPTIONAL_LOGGER(_nic_, _logServer_)
+
+
+// Use the default configuration, but ensure we always prefer the MAC from
+// OCOTP and fall back to the MAC below only of none is set there. Since QEMU
+// does not have OCOTP, the MAC below will always be used there.
+#define IOT_DEMO_NIC_CONFIG(_nic_, _logger_id_) \
+    NIC_IMX6_MEMORY_CONFIG(_nic_) \
+    _nic_.fallback_mac = 1; \
+    _nic_.MAC_address = "\xDE\xAD\xDE\xAD\x00\x00"; \
+    _nic_.logServer_rpc_attributes = _logger_id_;
+
+
+assembly {
+    composition {
+
+        //----------------------------------------------------------------------
+        // LogServer
+        //----------------------------------------------------------------------
+        component  LogServer        logServer;
+
+        //----------------------------------------------------------------------
+        // SdHostController
+        //----------------------------------------------------------------------
+        component   SdHostController_HW     sdhcHw;
+        component   SdHostController        storage;
+        SdHostController_INSTANCE_CONNECT(
+            storage, sdhcHw
+        )
+
+        //----------------------------------------------------------------------
+        // Ethernet Driver
+        //----------------------------------------------------------------------
+        IOT_DEMO_NIC_INSTANCE(nic, logServer)
+    }
+
+    configuration {
+        // Use the platform specific default settings
+        SdHostController_INSTANCE_CONFIGURE(storage)
+        SdHostController_HW_INSTANCE_CONFIGURE(sdhcHw)
+
+        IOT_DEMO_NIC_CONFIG(nic, NIC_LOGGER_ID)
+    }
+}
