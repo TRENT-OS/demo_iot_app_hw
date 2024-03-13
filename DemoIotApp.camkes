@@ -6,28 +6,18 @@
 
 import <std_connector.camkes>;
 
-import <if_OS_Entropy.camkes>;
-import <if_OS_Timer.camkes>;
-
 #include "system_config.h"
 
+import <if_OS_Timer.camkes>;
 #include "TimeServer/camkes/TimeServer.camkes"
 TimeServer_COMPONENT_DEFINE(TimeServer)
 
+import <if_OS_Entropy.camkes>;
 #include "EntropySource/camkes/EntropySource.camkes"
 EntropySource_COMPONENT_DEFINE(EntropySource)
 
 #include "StorageServer/camkes/StorageServer.camkes"
 StorageServer_COMPONENT_DEFINE(StorageServer)
-
-#include "RPi_SPI_Flash/RPi_SPI_Flash.camkes"
-RPi_SPI_Flash_COMPONENT_DEFINE(RPi_SPI_Flash)
-RPi_SPI_Flash_HW_COMPONENT_DEFINE(RPi_SPI_Flash_HW)
-
-#include "NIC_RPi/NIC_RPi.camkes"
-NIC_RPi_COMPONENT_DEFINE(NIC_RPi, NIC_DRIVER_RINGBUFFER_SIZE)
-NIC_RPi_Mailbox_COMPONENT_DEFINE(NIC_RPi_Mailbox)
-NIC_RPi_USB_COMPONENT_DEFINE(NIC_RPi_USB)
 
 #include "NetworkStack_PicoTcp/camkes/NetworkStack_PicoTcp.camkes"
 //------------------------------------------------------------------------------
@@ -60,17 +50,13 @@ NetworkStack_PicoTcp_COMPONENT_DEFINE(
 #include "components/NwStackConfigurator/NwStackConfigurator.camkes"
 
 import "components/Sensor/Sensor.camkes";
-import "components/LogServer/LogServer.camkes";
 import "components/ConfigServer/ConfigServer.camkes";
+
+#include "plat.camkes"
 
 assembly
 {
     composition {
-
-        //----------------------------------------------------------------------
-        // LogServer
-        //----------------------------------------------------------------------
-        component  LogServer        logServer;
 
         //----------------------------------------------------------------------
         // SensorTemp
@@ -133,19 +119,6 @@ assembly
             cloudConnector.entropy_port)
 
         //----------------------------------------------------------------------
-        // Ethernet Driver
-        //----------------------------------------------------------------------
-        component NIC_RPi           nic;
-        component NIC_RPi_Mailbox   nic_mailbox;
-        component NIC_RPi_USB       nic_usb;
-
-        NIC_RPi_INSTANCE_CONNECT(
-            nic,
-            nic_mailbox,
-            nic_usb
-        )
-
-        //----------------------------------------------------------------------
         // Network Stack Configurator
         //----------------------------------------------------------------------
         component NwStackConfigurator nwStackConfigurator;
@@ -181,28 +154,18 @@ assembly
         NetworkStack_CONNECT_LOGSERVER(nwStack, logServer)
 
         //----------------------------------------------------------------------
-        // FLASH
-        //----------------------------------------------------------------------
-        component RPi_SPI_Flash    flash;
-        component RPi_SPI_Flash_HW flash_hw;
-
-        RPi_SPI_Flash_INSTANCE_CONNECT(
-            flash,
-            flash_hw
-        )
-
-        //----------------------------------------------------------------------
         // StorageServer
         //----------------------------------------------------------------------
         component StorageServer storageServer;
 
         StorageServer_INSTANCE_CONNECT(
             storageServer,
-            flash.storage_rpc, flash.storage_port
+            storage.storage_rpc, storage.storage_port
         )
         StorageServer_INSTANCE_CONNECT_CLIENTS(
             storageServer,
-            configServer.storage_rpc, configServer.storage_port
+            configServer.storage_rpc, configServer.storage_port,
+            logServer.storage_rpc, logServer.storage_port
         )
 
         //----------------------------------------------------------------------
@@ -215,8 +178,9 @@ assembly
             cloudConnector.timeServer_rpc, cloudConnector.timeServer_notify,
             logServer.timeServer_rpc,      logServer.timeServer_notify,
             sensorTemp.timeServer_rpc,     sensorTemp.timeServer_notify,
-            flash.timeServer_rpc,          flash.timeServer_notify,
+#ifdef NIC_TIMESERVER
             nic.timeServer_rpc,            nic.timeServer_notify,
+#endif
             nwStack.timeServer_rpc,        nwStack.timeServer_notify
         )
 
@@ -242,17 +206,18 @@ assembly
 
         StorageServer_INSTANCE_CONFIGURE_CLIENTS(
             storageServer,
-            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE
+            CONFIGSERVER_STORAGE_OFFSET, CONFIGSERVER_STORAGE_SIZE,
+            LOGSERVER_STORAGE_OFFSET, LOGSERVER_STORAGE_SIZE
         )
         StorageServer_CLIENT_ASSIGN_BADGES(
-            configServer.storage_rpc
+            configServer.storage_rpc,
+            logServer.storage_rpc
         )
 
         TimeServer_CLIENT_ASSIGN_BADGES(
             cloudConnector.timeServer_rpc,
             logServer.timeServer_rpc,
             sensorTemp.timeServer_rpc,
-            flash.timeServer_rpc,
             nic.timeServer_rpc,
             nwStack.timeServer_rpc
         )
@@ -268,21 +233,6 @@ assembly
 
         // Assign an initial value to semaphore.
         cloudConnector.sem_value = 0;
-
-        RPi_SPI_Flash_HW_INSTANCE_CONFIGURE_SELF(
-            flash_hw
-        )
-
-        NIC_RPi_Mailbox_INSTANCE_CONFIGURE_SELF(
-            nic_mailbox
-        )
-        NIC_RPi_USB_INSTANCE_CONFIGURE_SELF(
-            nic_usb
-        )
-        NIC_RPi_INSTANCE_CONFIGURE(
-            nic,
-            4 * 40960
-        )
     }
 }
 

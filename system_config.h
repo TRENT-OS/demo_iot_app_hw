@@ -29,14 +29,6 @@
 //-----------------------------------------------------------------------------
 #define Memory_Config_USE_STDLIB_ALLOC
 
-
-//-----------------------------------------------------------------------------
-// StorageServer
-//-----------------------------------------------------------------------------
-#define CONFIGSERVER_STORAGE_OFFSET 0
-#define CONFIGSERVER_STORAGE_SIZE   (128*1024)
-
-
 //-----------------------------------------------------------------------------
 // LOGGER
 //-----------------------------------------------------------------------------
@@ -68,7 +60,8 @@
 #define CONFIGSERVER_LOGGER_ID      10
 #define CLOUDCONNECTOR_LOGGER_ID    20
 #define SENSOR_LOGGER_ID            30
-#define NWSTACK_LOGGER_ID           40
+#define NIC_LOGGER_ID               40
+#define NWSTACK_LOGGER_ID           50
 
 #define CONFIGSERVER_STORAGE_ID     1
 #define LOGGER_STORAGE_ID           2

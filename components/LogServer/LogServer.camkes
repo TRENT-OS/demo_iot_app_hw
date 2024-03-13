@@ -16,8 +16,12 @@ component LogServer {
     dataport Buf                     configServer_port;
     dataport Buf                     cloudConnector_port;
     dataport Buf                     sensor_port;
+    dataport Buf                     nwDriver_port;
     dataport Buf                     nwStack_port;
 
     uses     if_OS_Timer             timeServer_rpc;
     consumes TimerReady              timeServer_notify;
+
+    uses     if_OS_Storage           storage_rpc;
+    dataport Buf                     storage_port;
 }

@@ -19,7 +19,7 @@
 
 static OS_FileSystem_Config_t cfg =
 {
-    .type = OS_FileSystem_Type_SPIFFS,
+    .type = OS_FileSystem_Type_FATFS,
     .size = OS_FileSystem_USE_STORAGE_MAX,
     .storage = IF_OS_STORAGE_ASSIGN(
         storage_rpc,

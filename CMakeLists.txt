@@ -12,10 +12,15 @@ find_package("os-sdk" REQUIRED)
 os_sdk_set_defaults()
 os_sdk_setup(CONFIG_FILE "system_config.h" CONFIG_PROJECT "system_config")
 
+# Set additional include paths.
+CAmkESAddCPPInclude("plat/${PLATFORM}")
+
 add_subdirectory("include/mqtt")
 
 #-------------------------------------------------------------------------------
 project(demo_iot_app C)
+
+include("plat/${PLATFORM}/plat.cmake")
 
 # Overwrite the default log level of the lower layers to ERROR as the output
 # otherwise gets too cluttered with debug prints.
@@ -138,18 +143,8 @@ NetworkStack_PicoTcp_DeclareCAmkESComponent(
         os_logger
 )
 
-NIC_RPi_DeclareCAmkESComponent(
-    NIC_RPi
-)
-
 StorageServer_DeclareCAmkESComponent(
     StorageServer
-)
-
-RPi_SPI_Flash_DeclareCAmkESComponent(
-    RPi_SPI_Flash
-    LIBS
-        TimeServer_client
 )
 
 EntropySource_DeclareCAmkESComponent(

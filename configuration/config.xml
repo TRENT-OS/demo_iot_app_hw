@@ -80,7 +80,7 @@ of 32 bytes.
                     <read>true</read>
                     <write>false</write>
                   </access_policy>
-                  <value>10.0.0.2</value>
+                  <value>10.0.0.11</value>
 
                 <param_name>ETH_GATEWAY_ADDR</param_name>
                   <type>string</type>
