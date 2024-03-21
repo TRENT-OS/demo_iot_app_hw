@@ -1,9 +1,11 @@
 /*
  * CAmkES description of the NwStackConfigurator component.
  *
- * Copyright (C) 2021, HENSOLDT Cyber GmbH
+ * Copyright (C) 2021-2024, HENSOLDT Cyber GmbH
+ * 
+ * SPDX-License-Identifier: GPL-2.0-or-later
  */
-
+ 
 #include "NetworkStack_PicoTcp/camkes/if_NetworkStack_PicoTcp_Config.camkes"
 
 import <if_OS_ConfigService.camkes>;
